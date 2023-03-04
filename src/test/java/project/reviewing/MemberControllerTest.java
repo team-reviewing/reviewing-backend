@@ -1,5 +1,6 @@
 package project.reviewing;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -7,12 +8,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.RestController;
 
 @DisplayName("MemberController 는 ")
@@ -35,5 +39,24 @@ public class MemberControllerTest {
                         .content(objectMapper.writeValueAsString(request)))
                 .andDo(print())
                 .andExpect(status().isNoContent());
+    }
+
+    @DisplayName("username에 null 또는 빈 값이 있는 경우 400을 반환한다.")
+    @NullAndEmptySource
+    @ParameterizedTest
+    void updateMemberWithInvalidUsername(final String username) throws Exception {
+        final UpdatingMemberRequest request = new UpdatingMemberRequest(username, "email@gmail.com");
+
+        mockMvc.perform(patch("/members/me")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andDo(print())
+                .andExpectAll(
+                        status().isBadRequest(),
+                        result -> assertThat(result.getResolvedException()
+                                .getClass()
+                                .isAssignableFrom(MethodArgumentNotValidException.class)
+                        ).isTrue()
+                );
     }
 }
