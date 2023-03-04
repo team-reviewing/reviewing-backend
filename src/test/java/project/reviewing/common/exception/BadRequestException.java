@@ -1,4 +1,4 @@
-package project.reviewing;
+package project.reviewing.common.exception;
 
 public class BadRequestException extends RuntimeException {
 
