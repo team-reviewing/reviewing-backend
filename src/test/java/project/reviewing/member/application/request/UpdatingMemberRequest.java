@@ -3,6 +3,7 @@ package project.reviewing.member.application.request;
 import javax.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import project.reviewing.member.domain.Member;
 
 @Getter
 @NoArgsConstructor
@@ -17,5 +18,9 @@ public class UpdatingMemberRequest {
     public UpdatingMemberRequest(final String username, final String email) {
         this.username = username;
         this.email = email;
+    }
+
+    public Member toEntity() {
+        return new Member(null, username, email, null);
     }
 }

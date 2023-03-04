@@ -18,5 +18,8 @@ public class MemberService {
     public void update(final Long memberId, final UpdatingMemberRequest updatingMemberRequest) {
         final Member member = memberRepository.findById(memberId)
                 .orElseThrow(MemberNotFoundException::new);
+        final Member updatedMember = updatingMemberRequest.toEntity();
+
+        member.update(updatedMember);
     }
 }
