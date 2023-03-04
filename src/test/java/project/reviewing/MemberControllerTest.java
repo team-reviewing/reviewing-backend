@@ -18,6 +18,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.RestController;
+import project.reviewing.member.application.request.UpdatingMemberRequest;
 
 @DisplayName("MemberController 는 ")
 @WebMvcTest(includeFilters = @Filter(type = FilterType.ANNOTATION, classes = RestController.class))
@@ -46,6 +47,25 @@ public class MemberControllerTest {
     @ParameterizedTest
     void updateMemberWithInvalidUsername(final String username) throws Exception {
         final UpdatingMemberRequest request = new UpdatingMemberRequest(username, "email@gmail.com");
+
+        mockMvc.perform(patch("/members/me")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andDo(print())
+                .andExpectAll(
+                        status().isBadRequest(),
+                        result -> assertThat(result.getResolvedException()
+                                .getClass()
+                                .isAssignableFrom(MethodArgumentNotValidException.class)
+                        ).isTrue()
+                );
+    }
+
+    @DisplayName("email에 null 또는 빈 값이 있는 경우 400을 반환한다.")
+    @NullAndEmptySource
+    @ParameterizedTest
+    void updateMemberWithInvalidEmail(final String email) throws Exception {
+        final UpdatingMemberRequest request = new UpdatingMemberRequest("username", email);
 
         mockMvc.perform(patch("/members/me")
                         .contentType(MediaType.APPLICATION_JSON)
