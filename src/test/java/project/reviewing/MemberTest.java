@@ -24,4 +24,15 @@ public class MemberTest {
                 () -> assertThat(sut.getEmail()).isEqualTo("newEmail@gmail.com")
         );
     }
+
+    @DisplayName("기존과 동일한 username으로 수정할 수 없다.")
+    @Test
+    void updateSameUsername() {
+        final Member sut = new Member(1L, "username", "email@gmail.com", "image.png");
+        final Member updatedMember = new Member(1L, "username", "newEmail@gmail.com", "image.png");
+
+        assertThatThrownBy(() -> sut.update(updatedMember))
+                .isInstanceOf(InvalidMemberException.class)
+                .hasMessage(ErrorType.SAME_USERNAME_AS_BEFORE.getMessage());
+    }
 }
