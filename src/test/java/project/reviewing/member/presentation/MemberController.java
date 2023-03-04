@@ -15,7 +15,10 @@ public class MemberController {
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PatchMapping("/me")
-    public void updateMember(@Valid @RequestBody final UpdatingMemberRequest updatingMemberRequest) {
+    public void updateMember(
+            final Long memberId,
+            @Valid @RequestBody final UpdatingMemberRequest updatingMemberRequest
+    ) {
 
     }
 }
