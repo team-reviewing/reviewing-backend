@@ -5,6 +5,8 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import project.reviewing.auth.domain.RefreshToken;
+import project.reviewing.auth.exception.InvalidTokenException;
+import project.reviewing.common.exception.ErrorType;
 import project.reviewing.member.domain.Role;
 
 import javax.crypto.SecretKey;
@@ -51,16 +53,16 @@ public class TokenProvider {
                 .compact();
     }
 
-    boolean validateJwt(String jwt) {
+    public Claims parseJwt(String jwt) {
         try {
-            Jwts.parserBuilder()
+            return Jwts.parserBuilder()
                     .setSigningKey(secretKey)
                     .build()
-                    .parseClaimsJws(jwt);
+                    .parseClaimsJws(jwt)
+                    .getBody();
         } catch (JwtException e) {
-            throw new JwtException("토큰 검증 실패");
+            throw new InvalidTokenException(ErrorType.INVALID_TOKEN);
         }
-        return false;
     }
 
     public long getAccessTokenValidTime() {
