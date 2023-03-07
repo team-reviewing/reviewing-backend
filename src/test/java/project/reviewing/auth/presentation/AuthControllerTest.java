@@ -14,10 +14,12 @@ import javax.servlet.http.Cookie;
 import java.util.Optional;
 
 import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.cookie;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static project.reviewing.common.util.CookieBuilder.NAME_ACCESS_TOKEN;
 import static project.reviewing.common.util.CookieBuilder.NAME_REFRESH_TOKEN;
 
 public class AuthControllerTest extends ControllerTest {
@@ -90,6 +92,21 @@ public class AuthControllerTest extends ControllerTest {
                 .andExpect(cookie().value("refresh_token", "New Refresh Token"))
                 .andExpect(cookie().httpOnly("refresh_token", true))
                 .andExpect(cookie().path("refresh_token", "/auth/refresh"))
+                .andDo(print());
+    }
+
+    @DisplayName("유효한 Access Token으로 logout 한다.")
+    @Test
+    void logoutTest() throws Exception {
+        final Long memberId = 1L;
+        final Role role = Role.ROLE_USER;
+        final String accessToken = tokenProvider.createAccessToken(memberId, role);
+
+        mockMvc.perform(delete("/auth/logout")
+                        .cookie(new Cookie(NAME_ACCESS_TOKEN, accessToken))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding("UTF-8"))
+                .andExpect(status().isNoContent())
                 .andDo(print());
     }
 }

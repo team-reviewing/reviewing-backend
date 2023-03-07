@@ -51,4 +51,10 @@ public class CookieBuilder {
         cookie.setHttpOnly(httpOnly);
         return cookie;
     }
+
+    public static Cookie makeRemovedCookie(final String name, final String value) {
+        return CookieBuilder.builder(name, value)
+                .maxAge(0)
+                .build();
+    }
 }

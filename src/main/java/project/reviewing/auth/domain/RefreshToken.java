@@ -6,6 +6,9 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.util.TimeZone;
 
 @Getter
 @NoArgsConstructor
@@ -20,11 +23,11 @@ public class RefreshToken {
     private String tokenString;
 
     @Column(name = "issued_at", nullable = false)
-    private Long issuedAt;
+    private LocalDateTime issuedAt;
 
     public RefreshToken(final Long memberId, final String tokenString, final Long issuedAt) {
         this.memberId = memberId;
         this.tokenString = tokenString;
-        this.issuedAt = issuedAt;
+        this.issuedAt = LocalDateTime.ofInstant(Instant.ofEpochMilli(issuedAt), TimeZone.getDefault().toZoneId());
     }
 }

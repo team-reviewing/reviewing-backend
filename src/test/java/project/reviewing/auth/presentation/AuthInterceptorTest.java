@@ -2,11 +2,8 @@ package project.reviewing.auth.presentation;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import project.reviewing.auth.application.response.LoginResponse;
-import project.reviewing.auth.infrastructure.TokenProvider;
 import project.reviewing.common.ControllerTest;
 import project.reviewing.member.domain.Role;
 
@@ -18,17 +15,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static project.reviewing.common.util.CookieBuilder.NAME_ACCESS_TOKEN;
 
-@Import({
-        TokenProvider.class
-})
 public class AuthInterceptorTest extends ControllerTest {
-
-    @Autowired
-    private TokenProvider tokenProvider;
 
     @DisplayName("정상적인 Access Token으로 API를 호출한다.")
     @Test
     void accessTokenTest() throws Exception {
+        // given
         final String authorizationCode = "code";
         String token = tokenProvider.createJwt(1L, Role.ROLE_USER, 10000L);
         final LoginResponse loginResponse = new LoginResponse(1L, token, "Refresh Token", true);
@@ -36,6 +28,7 @@ public class AuthInterceptorTest extends ControllerTest {
         given(authService.githubLogin(authorizationCode))
                 .willReturn(loginResponse);
 
+        // when then
         mockMvc.perform(post("/auth/login/github")
                         .content(authorizationCode)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -49,6 +42,7 @@ public class AuthInterceptorTest extends ControllerTest {
     @DisplayName("Access Token 만료 상태에서 API 호출 시 거부한다.")
     @Test
     void accessTokenExpirationTest() throws Exception {
+        // given
         final String authorizationCode = "code";
         String token = tokenProvider.createJwt(1L, Role.ROLE_USER, 0L);
         final LoginResponse loginResponse = new LoginResponse(1L, token, "Refresh Token", true);
@@ -56,6 +50,7 @@ public class AuthInterceptorTest extends ControllerTest {
         given(authService.githubLogin(authorizationCode))
                 .willReturn(loginResponse);
 
+        // when then
         mockMvc.perform(post("/auth/login/github")
                         .content(authorizationCode)
                         .contentType(MediaType.APPLICATION_JSON)

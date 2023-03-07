@@ -27,7 +27,7 @@ public class GlobalControllerAdvice {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(RefreshTokenException.class)
     public ErrorResponse handlerRefreshTokenException(final RefreshTokenException e, final HttpServletResponse response) {
-        response.addCookie(CookieBuilder.builder("refresh_token", "token_reset").maxAge(0).build());
+        response.addCookie(CookieBuilder.makeRemovedCookie(CookieBuilder.NAME_REFRESH_TOKEN, "removed"));
         response.addHeader("WWW-Authenticated", "Basic realm=\"/auth/login/github\"");
         return new ErrorResponse(e.getMessage());
     }

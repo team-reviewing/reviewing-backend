@@ -50,6 +50,15 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    @DeleteMapping(value = "/logout")
+    ResponseEntity<?> logout(final HttpServletRequest request, final HttpServletResponse response) {
+        authService.removeRefreshToken((long) (int) request.getAttribute("id"));
+
+        response.addCookie(CookieBuilder.makeRemovedCookie(NAME_ACCESS_TOKEN, "removed"));
+        response.addCookie(CookieBuilder.makeRemovedCookie(NAME_REFRESH_TOKEN, "removed"));
+        return ResponseEntity.noContent().build();
+    }
+
     private void addTokenPairCookie(
             final HttpServletResponse response, final String accessToken, final String refreshToken
     ) {
