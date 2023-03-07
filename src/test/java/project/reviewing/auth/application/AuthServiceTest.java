@@ -3,11 +3,9 @@ package project.reviewing.auth.application;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import project.reviewing.auth.application.response.LoginResponse;
 import project.reviewing.auth.domain.Profile;
 import project.reviewing.auth.domain.RefreshToken;
@@ -79,7 +77,7 @@ public class AuthServiceTest {
     void githubLoginTest() {
         // given
         final String authorizationCode = "code";
-        final Member member = createMember(1L, 1L, "Tom", "Tom@gmail.com", Role.ROLE_USER);
+        final Member member = createMember(1L, 1L, "Tom", "Tom@gmail.com", "https://github.com/image", Role.ROLE_USER);
         final Profile profile = new Profile(member.getId(), member.getUsername(), member.getEmail(), "imageURL", member.getGithubURL());
 
         final String accessToken = "accessToken";
@@ -106,13 +104,14 @@ public class AuthServiceTest {
     void githubProfileUpdateTest() {
         // given
         final String authorizationCode = "code";
-        final Member member = createMember(1L, 1L, "Tom", "Tom@gmail.com", Role.ROLE_USER);
+        final Member member = createMember(1L, 1L, "Tom", "Tom@gmail.com", "https://github.com/Tom/image", Role.ROLE_USER);
 
         final Member expectedMember = Member.builder()
                 .id(member.getId())
                 .githubId(member.getGithubId())
                 .username("Bob")
-                .githubURL("Bob@gmail.com")
+                .email("Bob@gmail.com")
+                .githubURL("https://github.com/Bob/image")
                 .role(Role.ROLE_USER)
                 .build();
         final Profile profile = new Profile(
@@ -142,12 +141,14 @@ public class AuthServiceTest {
     }
 
     private Member createMember(
-            final Long memberId, final Long githubId, final String username, final String githubURL, final Role role
+            final Long memberId, final Long githubId, final String username,
+            final String email, final String githubURL, final Role role
     ) {
         return memberRepository.save(Member.builder()
                 .id(memberId)
                 .githubId(githubId)
                 .username(username)
+                .email(email)
                 .githubURL(githubURL)
                 .role(role)
                 .build());

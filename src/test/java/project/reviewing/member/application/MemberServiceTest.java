@@ -33,7 +33,7 @@ public class MemberServiceTest {
         final Long memberId = 1L;
         final String imageURL = "image_url";
 
-        createMember(memberId, 123L, "username", imageURL, "githubURL", Role.ROLE_USER);
+        createMember(memberId, 123L, "username", "email", imageURL, "githubURL", Role.ROLE_USER);
 
         // when
         final MemberResponse memberResponse = memberService.findMemberProfile(memberId);
@@ -46,13 +46,14 @@ public class MemberServiceTest {
     }
 
     private Member createMember(
-            final Long memberId, final Long githubId, final String username,
+            final Long memberId, final Long githubId, final String username, final String email,
             final String imageURL, final String githubURL, final Role role
     ) {
         return memberRepository.save(Member.builder()
                 .id(memberId)
                 .githubId(githubId)
                 .username(username)
+                .email(email)
                 .imageURL(imageURL)
                 .githubURL(githubURL)
                 .role(role)
