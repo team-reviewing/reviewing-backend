@@ -25,7 +25,6 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.BDDMockito.given;
 
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-@ExtendWith(SpringExtension.class)
 @ApplicationTest
 public class AuthServiceTest {
 

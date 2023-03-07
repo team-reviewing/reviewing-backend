@@ -98,8 +98,7 @@ public class AuthControllerTest extends ControllerTest {
     @Test
     void logoutTest() throws Exception {
         final Long memberId = 1L;
-        final Role role = Role.ROLE_USER;
-        final String accessToken = tokenProvider.createAccessToken(memberId, role);
+        final String accessToken = tokenProvider.createAccessToken(memberId, Role.ROLE_USER);
 
         mockMvc.perform(delete("/auth/logout")
                         .cookie(new Cookie(CookieType.ACCESS_TOKEN, accessToken))

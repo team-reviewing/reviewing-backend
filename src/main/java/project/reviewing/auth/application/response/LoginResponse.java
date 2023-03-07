@@ -5,7 +5,7 @@ import lombok.Getter;
 @Getter
 public class LoginResponse {
 
-    private Long memberId;
+    private final Long memberId;
     private final String accessToken;
     private final String refreshToken;
     private final boolean isCreated;

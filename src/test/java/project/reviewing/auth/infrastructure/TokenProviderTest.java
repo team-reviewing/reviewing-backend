@@ -6,8 +6,7 @@ import project.reviewing.auth.exception.InvalidTokenException;
 import project.reviewing.member.domain.Role;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TokenProviderTest {
 
@@ -21,8 +20,10 @@ public class TokenProviderTest {
     void validTokenTest() {
         String token = tokenProvider.createJwt(1L, Role.ROLE_USER, 2000L);
 
-        assertDoesNotThrow(() -> tokenProvider.parseJwt(token));
-        assertThat(tokenProvider.parseJwt(token).get("id")).isEqualTo(1);
+        assertAll(
+                () -> assertDoesNotThrow(() -> tokenProvider.parseJwt(token)),
+                () -> assertThat(tokenProvider.parseJwt(token).get("id")).isEqualTo(1)
+        );
     }
 
     @DisplayName("기간이 만료된 JWT를 검증한다.")
