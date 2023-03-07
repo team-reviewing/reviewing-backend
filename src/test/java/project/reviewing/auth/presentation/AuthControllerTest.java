@@ -7,6 +7,7 @@ import project.reviewing.auth.application.response.LoginResponse;
 import project.reviewing.auth.application.response.RefreshResponse;
 import project.reviewing.auth.domain.RefreshToken;
 import project.reviewing.common.ControllerTest;
+import project.reviewing.common.util.CookieType;
 import project.reviewing.member.domain.Role;
 
 import javax.servlet.http.Cookie;
@@ -19,8 +20,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.cookie;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static project.reviewing.common.util.CookieBuilder.NAME_ACCESS_TOKEN;
-import static project.reviewing.common.util.CookieBuilder.NAME_REFRESH_TOKEN;
 
 public class AuthControllerTest extends ControllerTest {
 
@@ -83,7 +82,7 @@ public class AuthControllerTest extends ControllerTest {
 
         // when then
         mockMvc.perform(post("/auth/refresh")
-                        .cookie(new Cookie(NAME_REFRESH_TOKEN, refreshToken.getTokenString()))
+                        .cookie(new Cookie(CookieType.REFRESH_TOKEN, refreshToken.getTokenString()))
                         .contentType(MediaType.APPLICATION_JSON)
                         .characterEncoding("UTF-8"))
                 .andExpect(status().isCreated())
@@ -103,7 +102,7 @@ public class AuthControllerTest extends ControllerTest {
         final String accessToken = tokenProvider.createAccessToken(memberId, role);
 
         mockMvc.perform(delete("/auth/logout")
-                        .cookie(new Cookie(NAME_ACCESS_TOKEN, accessToken))
+                        .cookie(new Cookie(CookieType.ACCESS_TOKEN, accessToken))
                         .contentType(MediaType.APPLICATION_JSON)
                         .characterEncoding("UTF-8"))
                 .andExpect(status().isNoContent())

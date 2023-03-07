@@ -11,7 +11,7 @@ import project.reviewing.auth.domain.RefreshToken;
 import project.reviewing.auth.exception.RefreshTokenException;
 import project.reviewing.auth.infrastructure.TokenProvider;
 import project.reviewing.common.exception.ErrorType;
-import project.reviewing.common.util.CookieBuilder;
+import project.reviewing.common.util.CookieType;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -59,7 +59,7 @@ public class RefreshInterceptor implements HandlerInterceptor {
         }
 
         for (Cookie cookie : cookies) {
-            if (cookie.getName().equals(CookieBuilder.NAME_REFRESH_TOKEN)) {
+            if (cookie.getName().equals(CookieType.REFRESH_TOKEN)) {
                 return Optional.of(cookie.getValue());
             }
         }

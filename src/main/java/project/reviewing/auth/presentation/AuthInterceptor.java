@@ -8,7 +8,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import project.reviewing.auth.exception.InvalidTokenException;
 import project.reviewing.auth.infrastructure.TokenProvider;
 import project.reviewing.common.exception.ErrorType;
-import project.reviewing.common.util.CookieBuilder;
+import project.reviewing.common.util.CookieType;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -45,7 +45,7 @@ public class AuthInterceptor implements HandlerInterceptor {
         }
 
         for (Cookie cookie : cookies) {
-            if (cookie.getName().equals(CookieBuilder.NAME_ACCESS_TOKEN)) {
+            if (cookie.getName().equals(CookieType.ACCESS_TOKEN)) {
                 return Optional.of(cookie.getValue());
             }
         }

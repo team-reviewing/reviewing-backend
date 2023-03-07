@@ -4,9 +4,6 @@ import javax.servlet.http.Cookie;
 
 public class CookieBuilder {
 
-    public static final String NAME_ACCESS_TOKEN = "access_token";
-    public static final String NAME_REFRESH_TOKEN = "refresh_token";
-
     private String name;
     private String value;
     private int maxAge = -1;

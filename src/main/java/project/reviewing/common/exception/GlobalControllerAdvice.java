@@ -10,6 +10,7 @@ import project.reviewing.auth.exception.InvalidTokenException;
 import project.reviewing.auth.exception.RefreshTokenException;
 import project.reviewing.common.response.ErrorResponse;
 import project.reviewing.common.util.CookieBuilder;
+import project.reviewing.common.util.CookieType;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolationException;
@@ -27,7 +28,7 @@ public class GlobalControllerAdvice {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(RefreshTokenException.class)
     public ErrorResponse handlerRefreshTokenException(final RefreshTokenException e, final HttpServletResponse response) {
-        response.addCookie(CookieBuilder.makeRemovedCookie(CookieBuilder.NAME_REFRESH_TOKEN, "removed"));
+        response.addCookie(CookieBuilder.makeRemovedCookie(CookieType.REFRESH_TOKEN, "removed"));
         response.addHeader("WWW-Authenticated", "Basic realm=\"/auth/login/github\"");
         return new ErrorResponse(e.getMessage());
     }

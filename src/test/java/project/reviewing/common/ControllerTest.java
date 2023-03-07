@@ -24,9 +24,6 @@ public class ControllerTest {
     @Autowired
     protected MockMvc mockMvc;
 
-    @Autowired
-    protected ObjectMapper objectMapper;
-
     @MockBean
     protected AuthService authService;
 

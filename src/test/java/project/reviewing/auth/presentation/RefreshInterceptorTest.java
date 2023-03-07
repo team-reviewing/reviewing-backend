@@ -6,6 +6,7 @@ import org.springframework.http.MediaType;
 import project.reviewing.auth.application.response.RefreshResponse;
 import project.reviewing.auth.domain.RefreshToken;
 import project.reviewing.common.ControllerTest;
+import project.reviewing.common.util.CookieType;
 import project.reviewing.member.domain.Role;
 
 import javax.servlet.http.Cookie;
@@ -17,7 +18,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
-import static project.reviewing.common.util.CookieBuilder.NAME_REFRESH_TOKEN;
 
 public class RefreshInterceptorTest extends ControllerTest {
 
@@ -37,7 +37,7 @@ public class RefreshInterceptorTest extends ControllerTest {
 
         // when then
         mockMvc.perform(post("/auth/refresh")
-                        .cookie(new Cookie(NAME_REFRESH_TOKEN, refreshToken.getTokenString()))
+                        .cookie(new Cookie(CookieType.REFRESH_TOKEN, refreshToken.getTokenString()))
                         .contentType(MediaType.APPLICATION_JSON)
                         .characterEncoding("UTF-8"))
                 .andExpect(status().isCreated())
@@ -65,7 +65,7 @@ public class RefreshInterceptorTest extends ControllerTest {
 
         // when then
         mockMvc.perform(post("/auth/refresh")
-                        .cookie(new Cookie(NAME_REFRESH_TOKEN, refreshToken.getTokenString()))
+                        .cookie(new Cookie(CookieType.REFRESH_TOKEN, refreshToken.getTokenString()))
                         .contentType(MediaType.APPLICATION_JSON)
                         .characterEncoding("UTF-8"))
                 .andExpect(status().isUnauthorized())
@@ -90,7 +90,7 @@ public class RefreshInterceptorTest extends ControllerTest {
 
         // when then
         mockMvc.perform(post("/auth/refresh")
-                        .cookie(new Cookie(NAME_REFRESH_TOKEN, refreshToken.getTokenString()))
+                        .cookie(new Cookie(CookieType.REFRESH_TOKEN, refreshToken.getTokenString()))
                         .contentType(MediaType.APPLICATION_JSON)
                         .characterEncoding("UTF-8"))
                 .andExpect(status().isUnauthorized())
