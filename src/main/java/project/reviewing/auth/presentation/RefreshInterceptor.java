@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
 import project.reviewing.auth.domain.RefreshTokenRepository;
 import project.reviewing.auth.domain.RefreshToken;
@@ -26,7 +27,13 @@ public class RefreshInterceptor implements HandlerInterceptor {
 
     @Transactional
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+    public boolean preHandle(
+            final HttpServletRequest request, final HttpServletResponse response, final Object handler
+    ) {
+        if (CorsUtils.isPreFlightRequest(request)) {
+            return true;
+        }
+
         final String tokenString = findRefreshTokenString(request.getCookies())
                 .orElseThrow(() -> new RefreshTokenException(ErrorType.INVALID_TOKEN));
 

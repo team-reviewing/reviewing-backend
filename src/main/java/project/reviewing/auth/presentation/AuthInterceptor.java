@@ -3,6 +3,7 @@ package project.reviewing.auth.presentation;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
 import project.reviewing.auth.exception.InvalidTokenException;
 import project.reviewing.auth.infrastructure.TokenProvider;
@@ -21,7 +22,13 @@ public class AuthInterceptor implements HandlerInterceptor {
     private final TokenProvider tokenProvider;
 
     @Override
-    public boolean preHandle(final HttpServletRequest request, final HttpServletResponse response, final Object handler) {
+    public boolean preHandle(
+            final HttpServletRequest request, final HttpServletResponse response, final Object handler
+    ) {
+        if (CorsUtils.isPreFlightRequest(request)) {
+            return true;
+        }
+
         final String accessToken = findAccessToken(request.getCookies())
                 .orElseThrow(() -> new InvalidTokenException(ErrorType.INVALID_TOKEN));
 
