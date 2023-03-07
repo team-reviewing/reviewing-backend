@@ -10,12 +10,14 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.bind.annotation.RestController;
 import project.reviewing.auth.application.AuthService;
+import project.reviewing.auth.domain.RefreshTokenRepository;
 import project.reviewing.auth.infrastructure.TokenProvider;
 import project.reviewing.auth.presentation.AuthInterceptor;
+import project.reviewing.auth.presentation.RefreshInterceptor;
 
 @WebMvcTest(includeFilters = @Filter(type = FilterType.ANNOTATION, classes = RestController.class))
 @Import({
-        TokenProvider.class, AuthInterceptor.class
+        AuthInterceptor.class, RefreshInterceptor.class, TokenProvider.class
 })
 public class ControllerTest {
 
@@ -25,9 +27,12 @@ public class ControllerTest {
     @Autowired
     protected ObjectMapper objectMapper;
 
-    @Autowired
-    private TokenProvider tokenProvider;
-
     @MockBean
     protected AuthService authService;
+
+    @Autowired
+    protected TokenProvider tokenProvider;
+
+    @MockBean
+    protected RefreshTokenRepository refreshTokenRepository;
 }

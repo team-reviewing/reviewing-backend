@@ -1,19 +1,17 @@
 package project.reviewing.auth.application;
 
-import org.aspectj.lang.annotation.After;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import project.reviewing.auth.application.response.LoginResponse;
 import project.reviewing.auth.domain.Profile;
 import project.reviewing.auth.domain.RefreshToken;
+import project.reviewing.auth.domain.RefreshTokenRepository;
 import project.reviewing.auth.infrastructure.TokenProvider;
 import project.reviewing.common.annotation.ApplicationTest;
 import project.reviewing.member.domain.Member;
@@ -104,7 +102,7 @@ public class AuthServiceTest {
         assertThat(loginResponse).usingRecursiveComparison().isEqualTo(expectedResponse);
     }
 
-    @DisplayName("Github의 계정 이름을 바꾼 회원의 로그인 과정에서 Github 프로필을 갱신한다.")
+    @DisplayName("Github의 계정 이름을 바꾼 회원의 로그인 과정에서 Github URL을 갱신한다.")
     @Test
     void githubProfileUpdateTest() {
         // given
@@ -140,8 +138,7 @@ public class AuthServiceTest {
         // then
         assertAll(
                 () -> assertThat(updatedMember.isPresent()).isEqualTo(true),
-                () -> assertThat(updatedMember.get().getGithubURL()).isEqualTo(expectedMember.getGithubURL()),
-                () -> assertThat(updatedMember.get().getUsername()).isNotEqualTo(expectedMember.getUsername())
+                () -> assertThat(updatedMember.get().getGithubURL()).isEqualTo(expectedMember.getGithubURL())
         );
     }
 

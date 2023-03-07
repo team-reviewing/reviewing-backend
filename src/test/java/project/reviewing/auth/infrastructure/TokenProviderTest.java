@@ -1,7 +1,5 @@
 package project.reviewing.auth.infrastructure;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import project.reviewing.auth.exception.InvalidTokenException;
@@ -13,8 +11,10 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 public class TokenProviderTest {
 
-    private static final String secretKey = "TBxaHGLL5S5fHtWMd70slGyAjLjE5wI16r36CiMYb4xfi07gN9UZQHai6loMQCf";
-    private final TokenProvider tokenProvider = new TokenProvider(secretKey, 0L, 0L);
+    private static final String SECRET_KEY = "TBxaHGLL5S5fHtWMd70slGyAjLjE5wI16r36CiMYb4xfi07gN9UZQHai6loMQCf";
+    private static final Long ACCESS_TOKEN_VALID_TIME = 10000L;
+    private static final Long REFRESH_TOKEN_VALID_TIME = 20000l;
+    private final TokenProvider tokenProvider = new TokenProvider(SECRET_KEY, ACCESS_TOKEN_VALID_TIME, REFRESH_TOKEN_VALID_TIME);
 
     @DisplayName("유저 id와 권한으로 생성한 정상적인 JWT를 검증한다.")
     @Test

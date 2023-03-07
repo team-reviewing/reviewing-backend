@@ -4,8 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.reviewing.auth.application.response.LoginResponse;
+import project.reviewing.auth.application.response.RefreshResponse;
 import project.reviewing.auth.domain.Profile;
 import project.reviewing.auth.domain.RefreshToken;
+import project.reviewing.auth.domain.RefreshTokenRepository;
 import project.reviewing.auth.infrastructure.TokenProvider;
 import project.reviewing.common.exception.ErrorType;
 import project.reviewing.member.domain.Member;
@@ -56,17 +58,11 @@ public class AuthService {
         return new LoginResponse(member.getId(), accessToken, refreshToken.getTokenString(), isCreated);
     }
 
-    public void refresh() {
-        /*
-            cookie에 token이 담겨있지 않다면 문제 발생.
-            refresh token db에서 조회.
-            데이터가 없다면 문제 발생.
-            데이터가 있다면 검증.
-            검증 과정은 그냥 토큰이 같은지만 검사하면 된다.
-            만료 여부는 어차피 cookie로 줄 때, 만료 시간을 refresh token의 만료 시간으로 줄거기 때문에
-            만료가 되었다면 cookie에 담기지 않아 이전에 문제 발생.
-            검증이 끝난다면 access token과 refresh token을 재발급하고 refresh token을 db에 저장하고
-            두 token을 client로 전달.
-         */
+    public RefreshResponse refreshTokens(final Long memberId, final Role role) {
+        final String accessToken = tokenProvider.createAccessToken(memberId, role);
+        final RefreshToken refreshToken = tokenProvider.createRefreshToken(memberId, role);
+
+        refreshTokenRepository.save(refreshToken);
+        return new RefreshResponse(accessToken, refreshToken.getTokenString());
     }
 }

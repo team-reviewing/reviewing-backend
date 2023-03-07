@@ -22,7 +22,7 @@ public class AuthInterceptor implements HandlerInterceptor {
     private final TokenProvider tokenProvider;
 
     @Override
-    public boolean preHandle(final HttpServletRequest request, final HttpServletResponse response, final Object handler) throws Exception {
+    public boolean preHandle(final HttpServletRequest request, final HttpServletResponse response, final Object handler) {
         final Claims claims = validateAuth(request);
         request.setAttribute("id", claims.get("id"));
         return true;
