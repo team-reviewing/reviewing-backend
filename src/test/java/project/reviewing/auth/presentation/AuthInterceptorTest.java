@@ -6,11 +6,13 @@ import org.springframework.http.MediaType;
 import project.reviewing.auth.application.response.LoginResponse;
 import project.reviewing.common.ControllerTest;
 import project.reviewing.common.util.CookieType;
+import project.reviewing.member.application.response.MemberResponse;
 import project.reviewing.member.domain.Role;
 
 import javax.servlet.http.Cookie;
 
 import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -22,7 +24,7 @@ public class AuthInterceptorTest extends ControllerTest {
     void accessTokenTest() throws Exception {
         // given
         final String authorizationCode = "code";
-        String accessToken = tokenProvider.createJwt(1L, Role.ROLE_USER, 10000L);
+        String accessToken = tokenProvider.createAccessTokenUsingTime(1L, Role.ROLE_USER, 10000L);
         final LoginResponse loginResponse = new LoginResponse(1L, accessToken, "Refresh Token", true);
 
         given(authService.githubLogin(authorizationCode))
@@ -39,26 +41,25 @@ public class AuthInterceptorTest extends ControllerTest {
                 .andDo(print());
     }
 
-    @DisplayName("Access Token 만료 상태에서 API 호출 시 거부한다.")
+    @DisplayName("Access Token 만료 상태에서 유저 정보 조회 API 호출 시 거부한다.")
     @Test
     void accessTokenExpirationTest() throws Exception {
         // given
-        final String authorizationCode = "code";
-        String accessToken = tokenProvider.createJwt(1L, Role.ROLE_USER, 0L);
-        final LoginResponse loginResponse = new LoginResponse(1L, accessToken, "Refresh Token", true);
+        final Long memgerId = 1L;
+        String accessToken = tokenProvider.createAccessTokenUsingTime(memgerId, Role.ROLE_USER, 0L);
+        final MemberResponse memberResponse = new MemberResponse("image_url");
 
-        given(authService.githubLogin(authorizationCode))
-                .willReturn(loginResponse);
+        given(memberService.findMemberProfile(memgerId))
+                .willReturn(memberResponse);
 
         // when then
-        mockMvc.perform(post("/auth/login/github")
-                        .content(authorizationCode)
+        mockMvc.perform(get("/members")
                         .contentType(MediaType.APPLICATION_JSON)
                         .cookie(new Cookie(CookieType.ACCESS_TOKEN, accessToken))
                         .characterEncoding("UTF-8"))
                 .andExpect(status().isUnauthorized())
                 .andExpect(header().exists("WWW-Authenticated"))
-                .andExpect(header().string("WWW-Authenticated", "/auth/refresh"))
+                .andExpect(header().string("WWW-Authenticated", "Basic realm=\"/auth/refresh\""))
                 .andDo(print());
     }
 }

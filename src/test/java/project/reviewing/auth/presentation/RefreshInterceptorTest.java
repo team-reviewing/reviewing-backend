@@ -55,7 +55,9 @@ public class RefreshInterceptorTest extends ControllerTest {
         // given
         final Long memberId = 1L;
         final Role role = Role.ROLE_USER;
-        final RefreshToken refreshToken = new RefreshToken(memberId, tokenProvider.createJwt(memberId, role, 0L), 0L);
+        final RefreshToken refreshToken = new RefreshToken(
+                memberId, tokenProvider.createRefreshTokenUsingTime(memberId, role, 0L), 0L
+        );
         final RefreshResponse newRefreshResponse = new RefreshResponse("New Access Token", "New Refresh Token");
 
         given(authService.refreshTokens(memberId, role))

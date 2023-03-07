@@ -1,7 +1,6 @@
 package project.reviewing.auth.presentation;
 
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,18 +38,11 @@ public class RefreshInterceptor implements HandlerInterceptor {
             throw new RefreshTokenException(ErrorType.INVALID_TOKEN);
         }
 
-        final Claims claims = parseRefreshToken(tokenString);
+        final Claims claims = tokenProvider.parseRefreshToken(tokenString);
+
         request.setAttribute("id", claims.get("id"));
         request.setAttribute("role", claims.get("role"));
         return true;
-    }
-
-    private Claims parseRefreshToken(final String tokenString) {
-        try {
-            return tokenProvider.parseJwt(tokenString);
-        } catch(JwtException e) {
-            throw new RefreshTokenException(ErrorType.INVALID_TOKEN);
-        }
     }
 
     private Optional<String> findRefreshTokenString(final Cookie[] cookies) {

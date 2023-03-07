@@ -5,6 +5,9 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import project.reviewing.auth.domain.RefreshToken;
+import project.reviewing.auth.exception.InvalidTokenException;
+import project.reviewing.auth.exception.RefreshTokenException;
+import project.reviewing.common.exception.ErrorType;
 import project.reviewing.member.domain.Role;
 
 import javax.crypto.SecretKey;
@@ -14,29 +17,55 @@ import java.util.Date;
 @Component
 public class TokenProvider {
 
-    private SecretKey secretKey;
+    private final SecretKey accessTokenSecretKey;
+    private final SecretKey refreshTokenSecretKey;
     private final long accessTokenValidTime;
     private final long refreshTokenValidTime;
 
     public TokenProvider(
-            @Value(value = "${jwt.secret-key}") final String secretKey,
+            @Value(value = "${jwt.access-token.secret-key}") final String accessTokenSecretKey,
+            @Value(value = "${jwt.refresh-token.secret-key}") final String refreshTokenSecretKey,
             @Value(value = "${jwt.access-token.valid-time}") final long accessTokenValidTime,
             @Value(value = "${jwt.refresh-token.valid-time}") final long refreshTokenValidTime
     ) {
-        this.secretKey = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
+        this.accessTokenSecretKey = Keys.hmacShaKeyFor(accessTokenSecretKey.getBytes(StandardCharsets.UTF_8));
+        this.refreshTokenSecretKey = Keys.hmacShaKeyFor(refreshTokenSecretKey.getBytes(StandardCharsets.UTF_8));
         this.accessTokenValidTime = accessTokenValidTime;
         this. refreshTokenValidTime = refreshTokenValidTime;
     }
 
     public String createAccessToken(final Long memberId, final Role role) {
-        return createJwt(memberId, role, accessTokenValidTime);
+        return createJwt(memberId, role, accessTokenValidTime, accessTokenSecretKey);
     }
-
     public RefreshToken createRefreshToken(final Long memberId, final Role role) {
-        return new RefreshToken(memberId, createJwt(memberId, role, refreshTokenValidTime), new Date().getTime());
+        return new RefreshToken(
+                memberId, createJwt(memberId, role, refreshTokenValidTime, refreshTokenSecretKey), new Date().getTime()
+        );
     }
 
-    public String createJwt(final Long memberId, final Role role, final long validTime) {
+    public Claims parseAccessToken(String accessToken) {
+        try {
+            return parseJwt(accessToken, accessTokenSecretKey);
+        } catch (JwtException e) {
+            throw new InvalidTokenException(ErrorType.INVALID_TOKEN);
+        }
+    }
+    public Claims parseRefreshToken(String refreshToken) {
+        try {
+            return parseJwt(refreshToken, refreshTokenSecretKey);
+        } catch (JwtException e) {
+            throw new RefreshTokenException(ErrorType.INVALID_TOKEN);
+        }
+    }
+
+    public String createAccessTokenUsingTime(final Long memberId, final Role role, final long validTime) {
+        return createJwt(memberId, role, validTime, accessTokenSecretKey);
+    }
+    public String createRefreshTokenUsingTime(final Long memberId, final Role role, final long validTime) {
+        return createJwt(memberId, role, validTime, refreshTokenSecretKey);
+    }
+
+    private String createJwt(final Long memberId, final Role role, final long validTime, final SecretKey secretKey) {
         final Claims claims = Jwts.claims();
         claims.put("id", memberId);
         claims.put("role", role);
@@ -51,7 +80,7 @@ public class TokenProvider {
                 .compact();
     }
 
-    public Claims parseJwt(String jwt) throws JwtException {
+    private Claims parseJwt(String jwt, SecretKey secretKey) throws JwtException {
         return Jwts.parserBuilder()
                 .setSigningKey(secretKey)
                 .build()

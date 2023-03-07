@@ -1,7 +1,6 @@
 package project.reviewing.auth.presentation;
 
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -23,20 +22,13 @@ public class AuthInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(final HttpServletRequest request, final HttpServletResponse response, final Object handler) {
-        final Claims claims = validateAuth(request);
-        request.setAttribute("id", claims.get("id"));
-        return true;
-    }
-
-    private Claims validateAuth(final HttpServletRequest request) {
         final String accessToken = findAccessToken(request.getCookies())
                 .orElseThrow(() -> new InvalidTokenException(ErrorType.INVALID_TOKEN));
 
-        try {
-            return tokenProvider.parseJwt(accessToken);
-        } catch(JwtException e) {
-            throw new InvalidTokenException(ErrorType.INVALID_TOKEN);
-        }
+        final Claims claims = tokenProvider.parseAccessToken(accessToken);
+
+        request.setAttribute("id", claims.get("id"));
+        return true;
     }
 
     private Optional<String> findAccessToken(final Cookie[] cookies) {
