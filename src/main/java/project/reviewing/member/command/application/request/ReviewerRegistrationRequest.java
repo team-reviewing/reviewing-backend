@@ -12,6 +12,7 @@ public class ReviewerRegistrationRequest {
     @NotBlank(message = "직무를 입력해 주세요.")
     private String job;
 
+    @NotBlank(message = "경력을 입력해 주세요.")
     private String career;
     private List<Long> techStack;
     private String introduction;

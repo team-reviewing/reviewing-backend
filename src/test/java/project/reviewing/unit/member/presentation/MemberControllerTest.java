@@ -93,6 +93,17 @@ public class MemberControllerTest {
 
             assertValidation(post("/members/me/reviewer"), request);
         }
+
+        @DisplayName("경력을 입력하지 않은 경우 400을 반환한다.")
+        @NullAndEmptySource
+        @ParameterizedTest
+        void registerReviewerWithOutCareer(final String career) throws Exception {
+            final ReviewerRegistrationRequest request = new ReviewerRegistrationRequest(
+                    "job", career, List.of(1L, 2L), "introduce"
+            );
+
+            assertValidation(post("/members/me/reviewer"), request);
+        }
     }
 
     private void assertValidation(final MockHttpServletRequestBuilder url, final Object request) throws Exception {
