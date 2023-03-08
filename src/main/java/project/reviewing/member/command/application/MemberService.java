@@ -1,12 +1,12 @@
-package project.reviewing.member.application;
+package project.reviewing.member.command.application;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import project.reviewing.member.application.request.UpdatingMemberRequest;
-import project.reviewing.member.application.response.MyInformationResponse;
-import project.reviewing.member.domain.Member;
-import project.reviewing.member.domain.MemberRepository;
+import project.reviewing.member.command.application.request.UpdatingMemberRequest;
+import project.reviewing.member.query.response.MyInformationResponse;
+import project.reviewing.member.command.domain.Member;
+import project.reviewing.member.command.domain.MemberRepository;
 import project.reviewing.member.exception.MemberNotFoundException;
 
 @RequiredArgsConstructor

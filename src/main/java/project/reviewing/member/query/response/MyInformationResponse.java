@@ -1,8 +1,8 @@
-package project.reviewing.member.application.response;
+package project.reviewing.member.query.response;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import project.reviewing.member.domain.Member;
+import project.reviewing.member.command.domain.Member;
 
 @Getter
 @NoArgsConstructor

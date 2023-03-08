@@ -1,4 +1,4 @@
-package project.reviewing.member.domain;
+package project.reviewing.member.command.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

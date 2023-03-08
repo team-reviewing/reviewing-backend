@@ -1,4 +1,4 @@
-package project.reviewing.integration.member;
+package project.reviewing.integration.member.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -9,12 +9,12 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import project.reviewing.member.application.response.MyInformationResponse;
+import project.reviewing.member.query.response.MyInformationResponse;
 import project.reviewing.common.exception.ErrorType;
-import project.reviewing.member.application.MemberService;
-import project.reviewing.member.application.request.UpdatingMemberRequest;
-import project.reviewing.member.domain.Member;
-import project.reviewing.member.domain.MemberRepository;
+import project.reviewing.member.command.application.MemberService;
+import project.reviewing.member.command.application.request.UpdatingMemberRequest;
+import project.reviewing.member.command.domain.Member;
+import project.reviewing.member.command.domain.MemberRepository;
 import project.reviewing.member.exception.MemberNotFoundException;
 
 @DisplayName("MemberService 는 ")

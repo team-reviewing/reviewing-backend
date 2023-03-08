@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import project.reviewing.common.exception.ErrorType;
-import project.reviewing.member.domain.Member;
+import project.reviewing.member.command.domain.Member;
 import project.reviewing.member.exception.InvalidMemberException;
 
 @DisplayName("Member 는")

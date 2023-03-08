@@ -1,4 +1,4 @@
-package project.reviewing.member.domain;
+package project.reviewing.member.command.domain;
 
 import java.util.Optional;
 import org.springframework.data.repository.Repository;

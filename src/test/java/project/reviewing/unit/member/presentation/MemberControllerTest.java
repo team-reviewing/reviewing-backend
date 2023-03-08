@@ -19,7 +19,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.RestController;
-import project.reviewing.member.application.request.UpdatingMemberRequest;
+import project.reviewing.member.command.application.request.UpdatingMemberRequest;
 
 @DisplayName("MemberController 는 ")
 @WebMvcTest(includeFilters = @Filter(type = FilterType.ANNOTATION, classes = RestController.class))

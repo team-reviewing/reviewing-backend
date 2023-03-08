@@ -1,9 +1,9 @@
-package project.reviewing.member.application.request;
+package project.reviewing.member.command.application.request;
 
 import javax.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import project.reviewing.member.domain.Member;
+import project.reviewing.member.command.domain.Member;
 
 @Getter
 @NoArgsConstructor
