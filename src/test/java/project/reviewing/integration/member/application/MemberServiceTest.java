@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import project.reviewing.common.exception.ErrorType;
 import project.reviewing.member.command.application.MemberService;
+import project.reviewing.member.command.application.request.ReviewerRegistrationRequest;
 import project.reviewing.member.command.application.request.UpdatingMemberRequest;
 import project.reviewing.member.command.domain.Member;
 import project.reviewing.member.command.domain.MemberRepository;
@@ -53,6 +55,25 @@ public class MemberServiceTest {
                     "newEmail@gmail.com");
 
             assertThatThrownBy(() -> sut.update(notExistMemberId, updatingMemberRequest))
+                    .isInstanceOf(MemberNotFoundException.class)
+                    .hasMessage(ErrorType.MEMBER_NOT_FOUND.getMessage());
+        }
+    }
+
+    @DisplayName("리뷰어 등록 시 ")
+    @Nested
+    class ReviewerRegistrationTest {
+
+        @DisplayName("회원이 존재하지 않는 경우 예외를 반환한다.")
+        @Test
+        void registerReviewerByNotExistMember() {
+            final MemberService sut = new MemberService(memberRepository);
+            final Long wrongMemberId = 1L;
+            final ReviewerRegistrationRequest reviewerRegistrationRequest = new ReviewerRegistrationRequest(
+                    "백엔드", "신입(1년 이하)", List.of(1L, 2L), "자기 소개입니다."
+            );
+
+            assertThatThrownBy(() -> sut.registerReviewer(wrongMemberId, reviewerRegistrationRequest))
                     .isInstanceOf(MemberNotFoundException.class)
                     .hasMessage(ErrorType.MEMBER_NOT_FOUND.getMessage());
         }

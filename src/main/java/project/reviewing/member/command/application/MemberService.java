@@ -3,6 +3,7 @@ package project.reviewing.member.command.application;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import project.reviewing.member.command.application.request.ReviewerRegistrationRequest;
 import project.reviewing.member.command.application.request.UpdatingMemberRequest;
 import project.reviewing.member.command.domain.Member;
 import project.reviewing.member.command.domain.MemberRepository;
@@ -20,6 +21,10 @@ public class MemberService {
         final Member updatedMember = updatingMemberRequest.toEntity();
 
         member.update(updatedMember);
+    }
+
+    public void registerReviewer(final Long memberId, final ReviewerRegistrationRequest reviewerRegistrationRequest) {
+        getMember(memberId);
     }
 
     private Member getMember(final Long memberId) {
