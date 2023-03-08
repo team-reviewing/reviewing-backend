@@ -115,6 +115,17 @@ public class MemberControllerTest {
 
             assertValidation(post("/members/me/reviewer"), request);
         }
+
+        @DisplayName("자기소개를 입력하지 않은 경우 400을 반환한다.")
+        @NullAndEmptySource
+        @ParameterizedTest
+        void registerReviewerWithOutIntroduction(final String introduction) throws Exception {
+            final ReviewerRegistrationRequest request = new ReviewerRegistrationRequest(
+                    "job", "career", List.of(1L), introduction
+            );
+
+            assertValidation(post("/members/me/reviewer"), request);
+        }
     }
 
     private void assertValidation(final MockHttpServletRequestBuilder url, final Object request) throws Exception {

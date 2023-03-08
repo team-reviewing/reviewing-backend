@@ -21,6 +21,7 @@ public class ReviewerRegistrationRequest {
     @Size(min = 1, message = "기술 스택을 입력해 주세요.")
     private List<Long> techStack;
 
+    @NotBlank(message = "자기 소개를 입력해 주세요.")
     private String introduction;
 
     public ReviewerRegistrationRequest(
