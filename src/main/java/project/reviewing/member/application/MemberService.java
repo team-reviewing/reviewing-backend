@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.reviewing.member.application.request.UpdatingMemberRequest;
+import project.reviewing.member.application.response.MyInformationResponse;
 import project.reviewing.member.domain.Member;
 import project.reviewing.member.domain.MemberRepository;
 import project.reviewing.member.exception.MemberNotFoundException;
@@ -22,8 +23,8 @@ public class MemberService {
         member.update(updatedMember);
     }
 
-    public void findMember(final Long memberId) {
-        final Member member = getMember(memberId);
+    public MyInformationResponse findMember(final Long memberId) {
+        return MyInformationResponse.of(getMember(memberId));
     }
 
     private Member getMember(final Long memberId) {

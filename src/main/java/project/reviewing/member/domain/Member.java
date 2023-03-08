@@ -31,6 +31,8 @@ public class Member {
 
     private String imageUrl;
 
+    private String profileUrl;
+
     private boolean isReviewer;
 
     public Member(final Long githubId, final String username, final String email, final String imageUrl) {

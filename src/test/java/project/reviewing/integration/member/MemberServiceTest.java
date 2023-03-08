@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import project.reviewing.member.application.response.MyInformationResponse;
 import project.reviewing.common.exception.ErrorType;
 import project.reviewing.member.application.MemberService;
 import project.reviewing.member.application.request.UpdatingMemberRequest;
@@ -32,11 +33,12 @@ public class MemberServiceTest {
         void updateMember() {
             final MemberService sut = new MemberService(memberRepository);
             final Member member = createMember(new Member(1L, "username", "email@gmail.com", "image.png"));
-            final UpdatingMemberRequest updatingMemberRequest = new UpdatingMemberRequest("newUsername", "newEmail@gmail.com");
+            final UpdatingMemberRequest updatingMemberRequest = new UpdatingMemberRequest("newUsername",
+                    "newEmail@gmail.com");
 
             sut.update(member.getId(), updatingMemberRequest);
 
-            final Member actual = findMember(member.getId());
+            final Member actual = getMember(member.getId());
             assertAll(
                     () -> assertThat(actual.getUsername()).isEqualTo("newUsername"),
                     () -> assertThat(actual.getEmail()).isEqualTo("newEmail@gmail.com")
@@ -48,7 +50,8 @@ public class MemberServiceTest {
         void updateNotExistMember() {
             final MemberService sut = new MemberService(memberRepository);
             final Long notExistMemberId = 1L;
-            final UpdatingMemberRequest updatingMemberRequest = new UpdatingMemberRequest("newUsername", "newEmail@gmail.com");
+            final UpdatingMemberRequest updatingMemberRequest = new UpdatingMemberRequest("newUsername",
+                    "newEmail@gmail.com");
 
             assertThatThrownBy(() -> sut.update(notExistMemberId, updatingMemberRequest))
                     .isInstanceOf(MemberNotFoundException.class)
@@ -59,6 +62,18 @@ public class MemberServiceTest {
     @DisplayName("내 정보 조회 시 ")
     @Nested
     class MemberFindTest {
+
+        @DisplayName("정상적인 경우 회원을 조회한다.")
+        @Test
+        void findMember() {
+            final MemberService sut = new MemberService(memberRepository);
+            final Member member = new Member(1L, "username", "email@gmail.com", "image.png");
+            final Long memberId = createMember(member).getId();
+
+            final MyInformationResponse actual = sut.findMember(memberId);
+
+            assertThat(actual).usingRecursiveComparison().isEqualTo(toResponse(member));
+        }
 
         @DisplayName("회원이 존재하지 않는 경우 예외를 반환한다.")
         @Test
@@ -76,8 +91,12 @@ public class MemberServiceTest {
         return memberRepository.save(member);
     }
 
-    private Member findMember(final Long memberId) {
+    private Member getMember(final Long memberId) {
         return memberRepository.findById(memberId)
                 .orElseThrow(MemberNotFoundException::new);
+    }
+
+    private MyInformationResponse toResponse(final Member member) {
+        return MyInformationResponse.of(member);
     }
 }

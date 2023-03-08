@@ -4,6 +4,7 @@ create table member (
     username        VARCHAR(255)    NOT NULL    UNIQUE ,
     email           VARCHAR(255)    UNIQUE,
     image_url       VARCHAR(255),
+    profile_url     VARCHAR(255),
     is_reviewer     BOOLEAN         DEFAULT 0,
     PRIMARY KEY (id)
 )
