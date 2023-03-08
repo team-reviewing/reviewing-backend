@@ -11,6 +11,7 @@ import project.reviewing.auth.domain.RefreshToken;
 import project.reviewing.auth.exception.RefreshTokenException;
 import project.reviewing.auth.infrastructure.TokenProvider;
 import project.reviewing.common.exception.ErrorType;
+import project.reviewing.member.domain.Role;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -34,22 +35,27 @@ public class RefreshInterceptor implements HandlerInterceptor {
 
         final String tokenString = extractRefreshTokenString(request)
                 .orElseThrow(() -> new RefreshTokenException(ErrorType.INVALID_TOKEN));
-        final RefreshToken refreshToken = refreshTokenRepository.findByTokenString(tokenString)
-                .orElseThrow(() -> new RefreshTokenException(ErrorType.INVALID_TOKEN));
 
-        if (!refreshToken.getTokenString().equals(tokenString)) {
-            refreshTokenRepository.delete(refreshToken);
+        final Claims claims = tokenProvider.parseRefreshToken(tokenString);
+        final Long id = (long) (int) claims.get("id");
+        final Role role = Enum.valueOf(Role.class, (String) claims.get("role"));
+
+        if (isInvalidInDB(id, tokenString)) {
+            refreshTokenRepository.deleteById(id);
             throw new RefreshTokenException(ErrorType.INVALID_TOKEN);
         }
 
-        final Claims claims = tokenProvider.parseRefreshToken(tokenString);
-
-        request.setAttribute("id", claims.get("id"));
-        request.setAttribute("role", claims.get("role"));
+        request.setAttribute("id", id);
+        request.setAttribute("role", role);
         return true;
     }
 
     private Optional<String> extractRefreshTokenString(final HttpServletRequest request) {
         return Optional.of(request.getParameter("refresh_token"));
+    }
+
+    private boolean isInvalidInDB(final Long id, final String tokenString) {
+        final Optional<RefreshToken> refreshToken = refreshTokenRepository.findById(id);
+        return refreshToken.isEmpty() || !refreshToken.get().getTokenString().equals(tokenString);
     }
 }

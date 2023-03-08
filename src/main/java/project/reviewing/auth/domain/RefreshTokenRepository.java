@@ -4,7 +4,6 @@ import java.util.Optional;
 
 public interface RefreshTokenRepository {
     RefreshToken save(final RefreshToken refreshToken);
-    Optional<RefreshToken> findByTokenString(final String tokenString);
-    void delete(final RefreshToken refreshToken);
-    void deleteById(final Long memberId);
+    Optional<RefreshToken> findById(final Long id);
+    void deleteById(final Long id);
 }

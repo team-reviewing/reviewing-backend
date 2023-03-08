@@ -2,13 +2,9 @@ package project.reviewing.member.presentation;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.MediaType;
 import project.reviewing.common.ControllerTest;
-import project.reviewing.common.util.CookieType;
 import project.reviewing.member.application.response.MemberResponse;
 import project.reviewing.member.domain.Role;
-
-import javax.servlet.http.Cookie;
 
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -36,9 +32,7 @@ public class MemberControllerTest extends ControllerTest {
 
         // when then
         mockMvc.perform(get("/members")
-                        .cookie(new Cookie(CookieType.ACCESS_TOKEN, accessToken))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .characterEncoding("UTF-8"))
+                        .header("Authorization", "Bearer " + accessToken))
                 .andExpect(status().isOk())
                 .andExpect(content().json(expectedResult))
                 .andDo(print());

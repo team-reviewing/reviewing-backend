@@ -7,10 +7,7 @@ import project.reviewing.auth.application.response.LoginResponse;
 import project.reviewing.auth.application.response.RefreshResponse;
 import project.reviewing.auth.domain.RefreshToken;
 import project.reviewing.common.ControllerTest;
-import project.reviewing.common.util.CookieType;
 import project.reviewing.member.domain.Role;
-
-import javax.servlet.http.Cookie;
 
 import java.util.Optional;
 
@@ -77,14 +74,11 @@ public class AuthControllerTest extends ControllerTest {
 
         given(authService.refreshTokens(memberId, role))
                 .willReturn(newRefreshResponse);
-        given(refreshTokenRepository.findByTokenString(refreshToken.getTokenString()))
+        given(refreshTokenRepository.findById(refreshToken.getId()))
                 .willReturn(Optional.of(refreshToken));
 
         // when then
-        mockMvc.perform(post("/auth/refresh")
-                        .cookie(new Cookie(CookieType.REFRESH_TOKEN, refreshToken.getTokenString()))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .characterEncoding("UTF-8"))
+        mockMvc.perform(post("/auth/refresh?refresh_token=" + refreshToken.getTokenString()))
                 .andExpect(status().isCreated())
                 .andExpect(cookie().value("access_token", "New Access Token"))
                 .andExpect(cookie().httpOnly("access_token", true))
@@ -101,9 +95,7 @@ public class AuthControllerTest extends ControllerTest {
         final String accessToken = tokenProvider.createAccessToken(memberId, Role.ROLE_USER);
 
         mockMvc.perform(delete("/auth/logout")
-                        .cookie(new Cookie(CookieType.ACCESS_TOKEN, accessToken))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .characterEncoding("UTF-8"))
+                        .header("Authorization", "Bearer " + accessToken))
                 .andExpect(status().isNoContent())
                 .andDo(print());
     }

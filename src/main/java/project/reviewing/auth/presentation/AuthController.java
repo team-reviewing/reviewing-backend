@@ -41,7 +41,7 @@ public class AuthController {
     @PostMapping(value = "/refresh")
     ResponseEntity<?> refreshTokens(final HttpServletRequest request, final HttpServletResponse response) {
         RefreshResponse refreshResponse = authService.refreshTokens(
-                (long) (int) request.getAttribute("id"), Enum.valueOf(Role.class, (String) request.getAttribute("role"))
+                (Long) request.getAttribute("id"), (Role) request.getAttribute("role")
         );
 
         addTokenPairCookie(response, refreshResponse.getAccessToken(), refreshResponse.getRefreshToken());

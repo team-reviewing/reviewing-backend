@@ -27,7 +27,7 @@ public class RefreshInterceptorTest extends ControllerTest {
 
         given(authService.refreshTokens(memberId, role))
                 .willReturn(newRefreshResponse);
-        given(refreshTokenRepository.findByTokenString(refreshToken.getTokenString()))
+        given(refreshTokenRepository.findById(refreshToken.getId()))
                 .willReturn(Optional.of(refreshToken));
 
         // when then
@@ -54,7 +54,7 @@ public class RefreshInterceptorTest extends ControllerTest {
 
         given(authService.refreshTokens(memberId, role))
                 .willReturn(newRefreshResponse);
-        given(refreshTokenRepository.findByTokenString(refreshToken.getTokenString()))
+        given(refreshTokenRepository.findById(refreshToken.getId()))
                 .willReturn(Optional.of(refreshToken));
 
         // when then
@@ -74,7 +74,7 @@ public class RefreshInterceptorTest extends ControllerTest {
 
         given(authService.refreshTokens(memberId, role))
                 .willReturn(newRefreshResponse);
-        given(refreshTokenRepository.findByTokenString(refreshToken.getTokenString()))
+        given(refreshTokenRepository.findById(refreshToken.getId()))
                 .willReturn(Optional.empty());
 
         // when then

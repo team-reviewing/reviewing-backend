@@ -17,7 +17,7 @@ public class RefreshToken {
 
     @Id
     @Column(name = "member_id")
-    private Long memberId;
+    private Long id;
 
     @Column(name = "token_string", nullable = false, unique = true)
     private String tokenString;
@@ -26,7 +26,7 @@ public class RefreshToken {
     private LocalDateTime issuedAt;
 
     public RefreshToken(final Long memberId, final String tokenString, final Long issuedAt) {
-        this.memberId = memberId;
+        this.id = memberId;
         this.tokenString = tokenString;
         this.issuedAt = LocalDateTime.ofInstant(Instant.ofEpochMilli(issuedAt), TimeZone.getDefault().toZoneId());
     }
