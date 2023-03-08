@@ -71,8 +71,6 @@ public class RefreshInterceptorTest extends ControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .characterEncoding("UTF-8"))
                 .andExpect(status().isUnauthorized())
-                .andExpect(header().exists("WWW-Authenticated"))
-                .andExpect(header().string("WWW-Authenticated", "Basic realm=\"/auth/login/github\""))
                 .andDo(print());
     }
 
@@ -96,8 +94,6 @@ public class RefreshInterceptorTest extends ControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .characterEncoding("UTF-8"))
                 .andExpect(status().isUnauthorized())
-                .andExpect(header().exists("WWW-Authenticated"))
-                .andExpect(header().string("WWW-Authenticated", "Basic realm=\"/auth/login/github\""))
                 .andDo(print());
     }
 }

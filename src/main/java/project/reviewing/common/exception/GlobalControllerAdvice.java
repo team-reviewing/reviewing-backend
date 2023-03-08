@@ -21,7 +21,6 @@ public class GlobalControllerAdvice {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(InvalidTokenException.class)
     public ErrorResponse handlerInvalidTokenException(final InvalidTokenException e, final HttpServletResponse response) {
-        response.addHeader("WWW-Authenticated", "Basic realm=\"/auth/refresh\"");
         return new ErrorResponse(e.getMessage());
     }
 
@@ -29,7 +28,6 @@ public class GlobalControllerAdvice {
     @ExceptionHandler(RefreshTokenException.class)
     public ErrorResponse handlerRefreshTokenException(final RefreshTokenException e, final HttpServletResponse response) {
         response.addCookie(CookieBuilder.makeRemovedCookie(CookieType.REFRESH_TOKEN, "removed"));
-        response.addHeader("WWW-Authenticated", "Basic realm=\"/auth/login/github\"");
         return new ErrorResponse(e.getMessage());
     }
 

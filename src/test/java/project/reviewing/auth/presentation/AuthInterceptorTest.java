@@ -58,8 +58,6 @@ public class AuthInterceptorTest extends ControllerTest {
                         .cookie(new Cookie(CookieType.ACCESS_TOKEN, accessToken))
                         .characterEncoding("UTF-8"))
                 .andExpect(status().isUnauthorized())
-                .andExpect(header().exists("WWW-Authenticated"))
-                .andExpect(header().string("WWW-Authenticated", "Basic realm=\"/auth/refresh\""))
                 .andDo(print());
     }
 }
