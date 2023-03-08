@@ -2,7 +2,7 @@ package project.reviewing.member.query.response;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import project.reviewing.member.command.domain.Member;
+import project.reviewing.member.query.dao.MyInformation;
 
 @Getter
 @NoArgsConstructor
@@ -14,11 +14,11 @@ public class MyInformationResponse {
     private String profileUrl;
     private boolean isReviewer;
 
-    public static MyInformationResponse of(final Member member) {
+    public static MyInformationResponse of(final MyInformation myInformation) {
         return new MyInformationResponse(
-                member.getUsername(), member.getEmail(),
-                member.getImageUrl(), member.getProfileUrl(),
-                member.isReviewer()
+                myInformation.getUsername(), myInformation.getEmail(),
+                myInformation.getImageUrl(), myInformation.getProfileUrl(),
+                myInformation.isReviewer()
         );
     }
 

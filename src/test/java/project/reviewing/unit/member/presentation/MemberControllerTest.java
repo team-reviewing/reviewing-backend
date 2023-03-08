@@ -13,13 +13,16 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.RestController;
+import project.reviewing.member.command.application.MemberService;
 import project.reviewing.member.command.application.request.UpdatingMemberRequest;
+import project.reviewing.member.query.application.MemberQueryService;
 
 @DisplayName("MemberController 는 ")
 @WebMvcTest(includeFilters = @Filter(type = FilterType.ANNOTATION, classes = RestController.class))
@@ -30,6 +33,12 @@ public class MemberControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @MockBean
+    private MemberService memberService;
+
+    @MockBean
+    private MemberQueryService memberQueryService;
 
     @DisplayName("내 정보 수정 시")
     @Nested

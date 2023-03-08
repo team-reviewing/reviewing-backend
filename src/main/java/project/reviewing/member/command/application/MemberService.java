@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.reviewing.member.command.application.request.UpdatingMemberRequest;
-import project.reviewing.member.query.response.MyInformationResponse;
 import project.reviewing.member.command.domain.Member;
 import project.reviewing.member.command.domain.MemberRepository;
 import project.reviewing.member.exception.MemberNotFoundException;
@@ -21,10 +20,6 @@ public class MemberService {
         final Member updatedMember = updatingMemberRequest.toEntity();
 
         member.update(updatedMember);
-    }
-
-    public MyInformationResponse findMember(final Long memberId) {
-        return MyInformationResponse.of(getMember(memberId));
     }
 
     private Member getMember(final Long memberId) {
