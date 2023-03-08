@@ -104,6 +104,17 @@ public class MemberControllerTest {
 
             assertValidation(post("/members/me/reviewer"), request);
         }
+
+        @DisplayName("기술스택을 입력하지 않은 경우 400을 반환한다.")
+        @NullAndEmptySource
+        @ParameterizedTest
+        void registerReviewerWithOutTechStack(final List<Long> techStack) throws Exception {
+            final ReviewerRegistrationRequest request = new ReviewerRegistrationRequest(
+                    "job", "career", techStack, "introduce"
+            );
+
+            assertValidation(post("/members/me/reviewer"), request);
+        }
     }
 
     private void assertValidation(final MockHttpServletRequestBuilder url, final Object request) throws Exception {
