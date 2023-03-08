@@ -11,9 +11,7 @@ import project.reviewing.auth.domain.RefreshToken;
 import project.reviewing.auth.exception.RefreshTokenException;
 import project.reviewing.auth.infrastructure.TokenProvider;
 import project.reviewing.common.exception.ErrorType;
-import project.reviewing.common.util.CookieType;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
@@ -34,9 +32,8 @@ public class RefreshInterceptor implements HandlerInterceptor {
             return true;
         }
 
-        final String tokenString = findRefreshTokenString(request.getCookies())
+        final String tokenString = extractRefreshTokenString(request)
                 .orElseThrow(() -> new RefreshTokenException(ErrorType.INVALID_TOKEN));
-
         final RefreshToken refreshToken = refreshTokenRepository.findByTokenString(tokenString)
                 .orElseThrow(() -> new RefreshTokenException(ErrorType.INVALID_TOKEN));
 
@@ -52,16 +49,7 @@ public class RefreshInterceptor implements HandlerInterceptor {
         return true;
     }
 
-    private Optional<String> findRefreshTokenString(final Cookie[] cookies) {
-        if (cookies.length == 0) {
-            return Optional.empty();
-        }
-
-        for (Cookie cookie : cookies) {
-            if (cookie.getName().equals(CookieType.REFRESH_TOKEN)) {
-                return Optional.of(cookie.getValue());
-            }
-        }
-        return Optional.empty();
+    private Optional<String> extractRefreshTokenString(final HttpServletRequest request) {
+        return Optional.of(request.getParameter("refresh_token"));
     }
 }

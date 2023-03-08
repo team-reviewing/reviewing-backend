@@ -2,14 +2,10 @@ package project.reviewing.auth.presentation;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.MediaType;
 import project.reviewing.auth.application.response.RefreshResponse;
 import project.reviewing.auth.domain.RefreshToken;
 import project.reviewing.common.ControllerTest;
-import project.reviewing.common.util.CookieType;
 import project.reviewing.member.domain.Role;
-
-import javax.servlet.http.Cookie;
 
 import java.util.Optional;
 
@@ -17,7 +13,6 @@ import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 
 public class RefreshInterceptorTest extends ControllerTest {
 
@@ -36,10 +31,7 @@ public class RefreshInterceptorTest extends ControllerTest {
                 .willReturn(Optional.of(refreshToken));
 
         // when then
-        mockMvc.perform(post("/auth/refresh")
-                        .cookie(new Cookie(CookieType.REFRESH_TOKEN, refreshToken.getTokenString()))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .characterEncoding("UTF-8"))
+        mockMvc.perform(post("/auth/refresh?refresh_token=" + refreshToken.getTokenString()))
                 .andExpect(status().isCreated())
                 .andExpect(cookie().value("access_token", "New Access Token"))
                 .andExpect(cookie().httpOnly("access_token", true))
@@ -66,10 +58,7 @@ public class RefreshInterceptorTest extends ControllerTest {
                 .willReturn(Optional.of(refreshToken));
 
         // when then
-        mockMvc.perform(post("/auth/refresh")
-                        .cookie(new Cookie(CookieType.REFRESH_TOKEN, refreshToken.getTokenString()))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .characterEncoding("UTF-8"))
+        mockMvc.perform(post("/auth/refresh?refresh_token=" + refreshToken.getTokenString()))
                 .andExpect(status().isUnauthorized())
                 .andDo(print());
     }
@@ -89,10 +78,7 @@ public class RefreshInterceptorTest extends ControllerTest {
                 .willReturn(Optional.empty());
 
         // when then
-        mockMvc.perform(post("/auth/refresh")
-                        .cookie(new Cookie(CookieType.REFRESH_TOKEN, refreshToken.getTokenString()))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .characterEncoding("UTF-8"))
+        mockMvc.perform(post("/auth/refresh?refresh_token=" + refreshToken.getTokenString()))
                 .andExpect(status().isUnauthorized())
                 .andDo(print());
     }
