@@ -33,7 +33,7 @@ public class MemberDaoTest {
         @DisplayName("회원이 존재하면 조회 결과를 반환한다.")
         @Test
         void findMember() {
-            final Member member = createMember(new Member(1L, "username", "email@gmail.com", "image.png"));
+            final Member member = createMember(new Member(1L, "username", "email@gmail.com", "image.png", "github.com/profile"));
 
             final MyInformation actual = myInformationDao.findById(member.getId()).get();
 

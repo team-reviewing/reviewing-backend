@@ -43,6 +43,6 @@ public class MemberController {
             final Long memberId,
             @Valid @RequestBody final ReviewerRegistrationRequest reviewerRegistrationRequest
     ) {
-
+        memberService.registerReviewer(memberId, reviewerRegistrationRequest);
     }
 }

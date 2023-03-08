@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
+import javax.persistence.EntityManager;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -16,6 +17,7 @@ import project.reviewing.member.command.application.request.ReviewerRegistration
 import project.reviewing.member.command.application.request.UpdatingMemberRequest;
 import project.reviewing.member.command.domain.Member;
 import project.reviewing.member.command.domain.MemberRepository;
+import project.reviewing.member.command.domain.Reviewer;
 import project.reviewing.member.exception.MemberNotFoundException;
 
 @DisplayName("MemberService 는 ")
@@ -25,6 +27,9 @@ public class MemberServiceTest {
     @Autowired
     private MemberRepository memberRepository;
 
+    @Autowired
+    private EntityManager entityManager;
+
     @DisplayName("내 정보 수정 시")
     @Nested
     class MemberUpdateTest {
@@ -33,7 +38,7 @@ public class MemberServiceTest {
         @Test
         void updateMember() {
             final MemberService sut = new MemberService(memberRepository);
-            final Member member = createMember(new Member(1L, "username", "email@gmail.com", "image.png"));
+            final Member member = createMember(new Member(1L, "username", "email@gmail.com", "image.png", "github.com/profile"));
             final UpdatingMemberRequest updatingMemberRequest = new UpdatingMemberRequest("newUsername",
                     "newEmail@gmail.com");
 
@@ -63,6 +68,28 @@ public class MemberServiceTest {
     @DisplayName("리뷰어 등록 시 ")
     @Nested
     class ReviewerRegistrationTest {
+
+        @DisplayName("정상적인 경우 리뷰어를 등록한다.")
+        @Test
+        void registerReviewer() {
+            final MemberService sut = new MemberService(memberRepository);
+            final Member member = createMember(new Member(1L, "username", "email@gmail.com", "image.png", "github.com/profile"));
+            final ReviewerRegistrationRequest reviewerRegistrationRequest = new ReviewerRegistrationRequest(
+                    "백엔드", "신입", List.of(1L, 2L), "자기 소개입니다."
+            );
+
+            sut.registerReviewer(member.getId(), reviewerRegistrationRequest);
+            entityManager.flush();
+
+            final Reviewer actual = getMember(member.getId()).getReviewer();
+            assertAll(
+                    () -> assertThat(actual.getId()).isNotNull(),
+                    () -> assertThat(actual).usingRecursiveComparison()
+                            .ignoringFields("id", "member")
+                            .isEqualTo(reviewerRegistrationRequest.toEntity()),
+                    () -> assertThat(actual.getMember().getId()).isEqualTo(member.getId())
+            );
+        }
 
         @DisplayName("회원이 존재하지 않는 경우 예외를 반환한다.")
         @Test

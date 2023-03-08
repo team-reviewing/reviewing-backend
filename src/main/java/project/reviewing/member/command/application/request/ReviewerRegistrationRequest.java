@@ -1,11 +1,15 @@
 package project.reviewing.member.command.application.request;
 
+import java.util.HashSet;
 import java.util.List;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import project.reviewing.member.command.domain.Career;
+import project.reviewing.member.command.domain.Job;
+import project.reviewing.member.command.domain.Reviewer;
 
 @Getter
 @NoArgsConstructor
@@ -31,5 +35,9 @@ public class ReviewerRegistrationRequest {
         this.career = career;
         this.techStack = techStack;
         this.introduction = introduction;
+    }
+
+    public Reviewer toEntity() {
+        return new Reviewer(Job.findValue(job), Career.findValue(career), new HashSet<Long>(techStack), introduction);
     }
 }

@@ -38,7 +38,7 @@ public class MemberQueryServiceTest {
         @Test
         void findMember() {
             final MemberQueryService sut = new MemberQueryService(myInformationDao);
-            final Member member = new Member(1L, "username", "email@gmail.com", "image.png");
+            final Member member = new Member(1L, "username", "email@gmail.com", "image.png", "github.com/profile");
             final Long memberId = createMember(member).getId();
 
             final MyInformationResponse actual = sut.findMember(memberId);

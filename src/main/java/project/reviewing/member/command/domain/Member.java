@@ -1,10 +1,13 @@
 package project.reviewing.member.command.domain;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -35,17 +38,31 @@ public class Member {
 
     private boolean isReviewer;
 
-    public Member(final Long githubId, final String username, final String email, final String imageUrl) {
+    @OneToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY, mappedBy = "member")
+    private Reviewer reviewer;
+
+    public Member(final Long githubId, final String username, final String email, final String imageUrl, final String profileUrl) {
         this.githubId = githubId;
         this.username = username;
         this.email = email;
         this.imageUrl = imageUrl;
+        this.profileUrl = profileUrl;
         this.isReviewer = false;
     }
 
     public void update(final Member member) {
         updateUsername(member.getUsername());
         updateEmail(member.getEmail());
+    }
+
+    public void register(final Reviewer reviewer) {
+        if (this.reviewer != null) {
+            throw new InvalidMemberException(ErrorType.ALREADY_REGISTERED);
+        }
+        this.reviewer = reviewer;
+        if (reviewer.getMember() != this) {
+            reviewer.addMember(this);
+        }
     }
 
     private void updateUsername(final String username) {

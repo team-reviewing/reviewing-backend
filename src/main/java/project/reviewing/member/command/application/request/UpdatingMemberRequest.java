@@ -21,6 +21,6 @@ public class UpdatingMemberRequest {
     }
 
     public Member toEntity() {
-        return new Member(null, username, email, null);
+        return new Member(null, username, email, null, null);
     }
 }

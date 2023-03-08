@@ -24,7 +24,9 @@ public class MemberService {
     }
 
     public void registerReviewer(final Long memberId, final ReviewerRegistrationRequest reviewerRegistrationRequest) {
-        getMember(memberId);
+        final Member member = getMember(memberId);
+
+        member.register(reviewerRegistrationRequest.toEntity());
     }
 
     private Member getMember(final Long memberId) {
