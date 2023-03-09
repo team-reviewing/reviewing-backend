@@ -1,7 +1,9 @@
 package project.reviewing.member.command.domain;
 
+import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.CollectionTable;
+import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -31,9 +33,9 @@ public class Reviewer {
     private Career career;
 
     @ElementCollection
-    @CollectionTable(name = "reviewer_tag",
-            joinColumns = @JoinColumn(name = "tag_id"))
-    private Set<Long> techStack;
+    @CollectionTable(name = "reviewer_tag", joinColumns = @JoinColumn(name = "reviewer_id"))
+    @Column(name = "tag_id", nullable = false)
+    private Set<Long> techStack = new HashSet<>();
 
     private String introduction;
 
