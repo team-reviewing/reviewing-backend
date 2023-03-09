@@ -8,7 +8,6 @@ import project.reviewing.auth.domain.RefreshToken;
 import project.reviewing.auth.exception.InvalidTokenException;
 import project.reviewing.auth.exception.RefreshTokenException;
 import project.reviewing.common.exception.ErrorType;
-import project.reviewing.member.domain.Role;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
@@ -34,12 +33,12 @@ public class TokenProvider {
         this. refreshTokenValidTime = refreshTokenValidTime;
     }
 
-    public String createAccessToken(final Long memberId, final Role role) {
-        return createJwt(memberId, role, accessTokenValidTime, accessTokenSecretKey);
+    public String createAccessToken(final Long memberId) {
+        return createJwt(memberId, accessTokenValidTime, accessTokenSecretKey);
     }
-    public RefreshToken createRefreshToken(final Long memberId, final Role role) {
+    public RefreshToken createRefreshToken(final Long memberId) {
         return new RefreshToken(
-                memberId, createJwt(memberId, role, refreshTokenValidTime, refreshTokenSecretKey), new Date().getTime()
+                memberId, createJwt(memberId, refreshTokenValidTime, refreshTokenSecretKey), new Date().getTime()
         );
     }
 
@@ -58,17 +57,16 @@ public class TokenProvider {
         }
     }
 
-    public String createAccessTokenUsingTime(final Long memberId, final Role role, final long validTime) {
-        return createJwt(memberId, role, validTime, accessTokenSecretKey);
+    public String createAccessTokenUsingTime(final Long memberId, final long validTime) {
+        return createJwt(memberId, validTime, accessTokenSecretKey);
     }
-    public String createRefreshTokenUsingTime(final Long memberId, final Role role, final long validTime) {
-        return createJwt(memberId, role, validTime, refreshTokenSecretKey);
+    public String createRefreshTokenUsingTime(final Long memberId, final long validTime) {
+        return createJwt(memberId, validTime, refreshTokenSecretKey);
     }
 
-    private String createJwt(final Long memberId, final Role role, final long validTime, final SecretKey secretKey) {
+    private String createJwt(final Long memberId, final long validTime, final SecretKey secretKey) {
         final Claims claims = Jwts.claims();
         claims.put("id", memberId);
-        claims.put("role", role);
 
         final Date now = new Date();
 

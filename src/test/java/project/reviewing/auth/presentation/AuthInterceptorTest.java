@@ -4,7 +4,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import project.reviewing.common.ControllerTest;
 import project.reviewing.member.application.response.MemberResponse;
-import project.reviewing.member.domain.Role;
 
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -18,11 +17,10 @@ public class AuthInterceptorTest extends ControllerTest {
     void accessTokenTest() throws Exception {
         // given
         final Long memberId = 1L;
-        String accessToken = tokenProvider.createAccessTokenUsingTime(memberId, Role.ROLE_USER, 10000L);
+        String accessToken = tokenProvider.createAccessTokenUsingTime(memberId, 10000L);
         final MemberResponse memberResponse = new MemberResponse("image_url");
 
-        given(memberService.findMemberProfile(memberId))
-                .willReturn(memberResponse);
+        given(memberService.findMemberProfile(memberId)).willReturn(memberResponse);
 
         // when then
         mockMvc.perform(get("/members")
@@ -36,11 +34,10 @@ public class AuthInterceptorTest extends ControllerTest {
     void accessTokenExpirationTest() throws Exception {
         // given
         final Long memberId = 1L;
-        String accessToken = tokenProvider.createAccessTokenUsingTime(memberId, Role.ROLE_USER, 0L);
+        String accessToken = tokenProvider.createAccessTokenUsingTime(memberId, 0L);
         final MemberResponse memberResponse = new MemberResponse("image_url");
 
-        given(memberService.findMemberProfile(memberId))
-                .willReturn(memberResponse);
+        given(memberService.findMemberProfile(memberId)).willReturn(memberResponse);
 
         // when then
         mockMvc.perform(get("/members")

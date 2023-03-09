@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import project.reviewing.auth.application.response.RefreshResponse;
 import project.reviewing.auth.domain.RefreshToken;
 import project.reviewing.common.ControllerTest;
-import project.reviewing.member.domain.Role;
 
 import java.util.Optional;
 
@@ -21,14 +20,11 @@ public class RefreshInterceptorTest extends ControllerTest {
     void refreshTest() throws Exception {
         // given
         final Long memberId = 1L;
-        final Role role = Role.ROLE_USER;
-        final RefreshToken refreshToken = tokenProvider.createRefreshToken(memberId, role);
+        final RefreshToken refreshToken = tokenProvider.createRefreshToken(memberId);
         final RefreshResponse newRefreshResponse = new RefreshResponse("New Access Token", "New Refresh Token");
 
-        given(authService.refreshTokens(memberId, role))
-                .willReturn(newRefreshResponse);
-        given(refreshTokenRepository.findById(refreshToken.getId()))
-                .willReturn(Optional.of(refreshToken));
+        given(authService.refreshTokens(memberId)).willReturn(newRefreshResponse);
+        given(refreshTokenRepository.findById(refreshToken.getId())).willReturn(Optional.of(refreshToken));
 
         // when then
         mockMvc.perform(post("/auth/refresh?refresh_token=" + refreshToken.getTokenString()))
@@ -46,16 +42,13 @@ public class RefreshInterceptorTest extends ControllerTest {
     void refreshTokenExpirationTest() throws Exception {
         // given
         final Long memberId = 1L;
-        final Role role = Role.ROLE_USER;
         final RefreshToken refreshToken = new RefreshToken(
-                memberId, tokenProvider.createRefreshTokenUsingTime(memberId, role, 0L), 0L
+                memberId, tokenProvider.createRefreshTokenUsingTime(memberId, 0L), 0L
         );
         final RefreshResponse newRefreshResponse = new RefreshResponse("New Access Token", "New Refresh Token");
 
-        given(authService.refreshTokens(memberId, role))
-                .willReturn(newRefreshResponse);
-        given(refreshTokenRepository.findById(refreshToken.getId()))
-                .willReturn(Optional.of(refreshToken));
+        given(authService.refreshTokens(memberId)).willReturn(newRefreshResponse);
+        given(refreshTokenRepository.findById(refreshToken.getId())).willReturn(Optional.of(refreshToken));
 
         // when then
         mockMvc.perform(post("/auth/refresh?refresh_token=" + refreshToken.getTokenString()))
@@ -68,14 +61,11 @@ public class RefreshInterceptorTest extends ControllerTest {
     void refreshTokenNotInDBTest() throws Exception {
         // given
         final Long memberId = 1L;
-        final Role role = Role.ROLE_USER;
-        final RefreshToken refreshToken = tokenProvider.createRefreshToken(memberId, role);
+        final RefreshToken refreshToken = tokenProvider.createRefreshToken(memberId);
         final RefreshResponse newRefreshResponse = new RefreshResponse("New Access Token", "New Refresh Token");
 
-        given(authService.refreshTokens(memberId, role))
-                .willReturn(newRefreshResponse);
-        given(refreshTokenRepository.findById(refreshToken.getId()))
-                .willReturn(Optional.empty());
+        given(authService.refreshTokens(memberId)).willReturn(newRefreshResponse);
+        given(refreshTokenRepository.findById(refreshToken.getId())).willReturn(Optional.empty());
 
         // when then
         mockMvc.perform(post("/auth/refresh?refresh_token=" + refreshToken.getTokenString()))

@@ -11,7 +11,6 @@ import project.reviewing.auth.domain.RefreshToken;
 import project.reviewing.auth.exception.RefreshTokenException;
 import project.reviewing.auth.infrastructure.TokenProvider;
 import project.reviewing.common.exception.ErrorType;
-import project.reviewing.member.domain.Role;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -38,7 +37,6 @@ public class RefreshInterceptor implements HandlerInterceptor {
 
         final Claims claims = tokenProvider.parseRefreshToken(tokenString);
         final Long id = (long) (int) claims.get("id");
-        final Role role = Enum.valueOf(Role.class, (String) claims.get("role"));
 
         if (isInvalidInDB(id, tokenString)) {
             refreshTokenRepository.deleteById(id);
@@ -46,7 +44,6 @@ public class RefreshInterceptor implements HandlerInterceptor {
         }
 
         request.setAttribute("id", id);
-        request.setAttribute("role", role);
         return true;
     }
 

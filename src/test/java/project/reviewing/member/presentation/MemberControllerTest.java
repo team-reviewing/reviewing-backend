@@ -4,7 +4,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import project.reviewing.common.ControllerTest;
 import project.reviewing.member.application.response.MemberResponse;
-import project.reviewing.member.domain.Role;
 
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -20,15 +19,13 @@ public class MemberControllerTest extends ControllerTest {
         // given
         final Long memberId = 1L;
         final String imageURL = "image_url";
-        final String accessToken = tokenProvider.createAccessToken(memberId, Role.ROLE_USER);
+        final String accessToken = tokenProvider.createAccessToken(memberId);
         final MemberResponse memberResponse = new MemberResponse(imageURL);
-
         final String expectedResult = "{" +
                 "\"image_url\": " + imageURL +
                 "}";
 
-        given(memberService.findMemberProfile(memberId))
-                .willReturn(memberResponse);
+        given(memberService.findMemberProfile(memberId)).willReturn(memberResponse);
 
         // when then
         mockMvc.perform(get("/members")

@@ -41,7 +41,6 @@ public class AuthorizationExtractorTest {
     @Test
     void extractTokenFailedForNotTokenTest() {
         final MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
-
         httpServletRequest.addHeader("Authorization", "Bearer ");
 
         Optional<String> result = AuthorizationExtractor.extract(httpServletRequest);

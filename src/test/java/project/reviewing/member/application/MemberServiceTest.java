@@ -8,7 +8,6 @@ import project.reviewing.common.annotation.ApplicationTest;
 import project.reviewing.member.application.response.MemberResponse;
 import project.reviewing.member.domain.Member;
 import project.reviewing.member.domain.MemberRepository;
-import project.reviewing.member.domain.Role;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -33,7 +32,7 @@ public class MemberServiceTest {
         final Long memberId = 1L;
         final String imageURL = "image_url";
 
-        createMember(memberId, 123L, "username", "email", imageURL, "githubURL", Role.ROLE_USER);
+        createMember(memberId, 123L, "username", "email", imageURL, "githubURL");
 
         // when
         final MemberResponse memberResponse = memberService.findMemberProfile(memberId);
@@ -46,8 +45,8 @@ public class MemberServiceTest {
     }
 
     private Member createMember(
-            final Long memberId, final Long githubId, final String username, final String email,
-            final String imageURL, final String githubURL, final Role role
+            final Long memberId, final Long githubId, final String username,
+            final String email, final String imageURL, final String githubURL
     ) {
         return memberRepository.save(Member.builder()
                 .id(memberId)
@@ -56,7 +55,6 @@ public class MemberServiceTest {
                 .email(email)
                 .imageURL(imageURL)
                 .githubURL(githubURL)
-                .role(role)
                 .build());
     }
 }

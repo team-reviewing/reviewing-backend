@@ -35,10 +35,6 @@ public class Member {
 
     private String introduction;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private Role role;
-
     public void updateGithubURL(final String githubURL) {
         this.githubURL = githubURL;
     }

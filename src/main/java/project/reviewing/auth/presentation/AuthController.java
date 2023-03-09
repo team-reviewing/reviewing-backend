@@ -11,7 +11,6 @@ import project.reviewing.auth.application.response.RefreshResponse;
 import project.reviewing.auth.infrastructure.TokenProvider;
 import project.reviewing.common.util.CookieBuilder;
 import project.reviewing.common.util.CookieType;
-import project.reviewing.member.domain.Role;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -40,9 +39,7 @@ public class AuthController {
 
     @PostMapping(value = "/refresh")
     ResponseEntity<?> refreshTokens(final HttpServletRequest request, final HttpServletResponse response) {
-        RefreshResponse refreshResponse = authService.refreshTokens(
-                (Long) request.getAttribute("id"), (Role) request.getAttribute("role")
-        );
+        RefreshResponse refreshResponse = authService.refreshTokens((Long) request.getAttribute("id"));
 
         addTokenPairCookie(response, refreshResponse.getAccessToken(), refreshResponse.getRefreshToken());
         return ResponseEntity.status(HttpStatus.CREATED).build();

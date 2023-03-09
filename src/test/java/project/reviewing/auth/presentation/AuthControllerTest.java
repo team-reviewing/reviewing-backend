@@ -7,7 +7,6 @@ import project.reviewing.auth.application.response.LoginResponse;
 import project.reviewing.auth.application.response.RefreshResponse;
 import project.reviewing.auth.domain.RefreshToken;
 import project.reviewing.common.ControllerTest;
-import project.reviewing.member.domain.Role;
 
 import java.util.Optional;
 
@@ -27,8 +26,7 @@ public class AuthControllerTest extends ControllerTest {
         final String authorizationCode = " ";
         final LoginResponse loginResponse = new LoginResponse(1L, "Access Token", "Refresh Token", true);
 
-        given(authService.githubLogin(authorizationCode))
-                .willReturn(loginResponse);
+        given(authService.githubLogin(authorizationCode)).willReturn(loginResponse);
 
         // when then
         mockMvc.perform(post("/auth/login/github")
@@ -46,8 +44,7 @@ public class AuthControllerTest extends ControllerTest {
         final String authorizationCode = "code";
         final LoginResponse loginResponse = new LoginResponse(1L, "Access Token", "Refresh Token", true);
 
-        given(authService.githubLogin(authorizationCode))
-                .willReturn(loginResponse);
+        given(authService.githubLogin(authorizationCode)).willReturn(loginResponse);
 
         // when then
         mockMvc.perform(post("/auth/login/github")
@@ -68,14 +65,11 @@ public class AuthControllerTest extends ControllerTest {
     void refreshTest() throws Exception {
         // given
         final Long memberId = 1L;
-        final Role role = Role.ROLE_USER;
-        final RefreshToken refreshToken = tokenProvider.createRefreshToken(memberId, role);
+        final RefreshToken refreshToken = tokenProvider.createRefreshToken(memberId);
         final RefreshResponse newRefreshResponse = new RefreshResponse("New Access Token", "New Refresh Token");
 
-        given(authService.refreshTokens(memberId, role))
-                .willReturn(newRefreshResponse);
-        given(refreshTokenRepository.findById(refreshToken.getId()))
-                .willReturn(Optional.of(refreshToken));
+        given(authService.refreshTokens(memberId)).willReturn(newRefreshResponse);
+        given(refreshTokenRepository.findById(refreshToken.getId())).willReturn(Optional.of(refreshToken));
 
         // when then
         mockMvc.perform(post("/auth/refresh?refresh_token=" + refreshToken.getTokenString()))
@@ -92,7 +86,7 @@ public class AuthControllerTest extends ControllerTest {
     @Test
     void logoutTest() throws Exception {
         final Long memberId = 1L;
-        final String accessToken = tokenProvider.createAccessToken(memberId, Role.ROLE_USER);
+        final String accessToken = tokenProvider.createAccessToken(memberId);
 
         mockMvc.perform(delete("/auth/logout")
                         .header("Authorization", "Bearer " + accessToken))

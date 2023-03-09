@@ -6,8 +6,7 @@ CREATE TABLE IF NOT EXISTS member
     email           VARCHAR(100)    NOT NULL UNIQUE,
     image_url       VARCHAR(255),
     github_url      VARCHAR(255)    NOT NULL UNIQUE,
-    introduction    VARCHAR(255),
-    role            VARCHAR(255)    NOT NULL
+    introduction    VARCHAR(255)
 );
 
 CREATE TABLE IF NOT EXISTS refresh_token

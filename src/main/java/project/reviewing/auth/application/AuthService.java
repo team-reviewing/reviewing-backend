@@ -12,7 +12,6 @@ import project.reviewing.auth.infrastructure.TokenProvider;
 import project.reviewing.common.exception.ErrorType;
 import project.reviewing.member.domain.Member;
 import project.reviewing.member.domain.MemberRepository;
-import project.reviewing.member.domain.Role;
 import project.reviewing.member.exception.MemberException;
 
 
@@ -40,7 +39,6 @@ public class AuthService {
                     .imageURL(profile.getImageURL())
                     .githubURL(profile.getGithubURL())
                     .introduction("")
-                    .role(Role.ROLE_USER)
                     .build());
             isCreated = true;
         } else {
@@ -51,16 +49,16 @@ public class AuthService {
             throw new MemberException(ErrorType.NOT_FOUND_MEMBER);
         }
 
-        final String accessToken = tokenProvider.createAccessToken(member.getId(), member.getRole());
-        final RefreshToken refreshToken = tokenProvider.createRefreshToken(member.getId(), member.getRole());
+        final String accessToken = tokenProvider.createAccessToken(member.getId());
+        final RefreshToken refreshToken = tokenProvider.createRefreshToken(member.getId());
 
         refreshTokenRepository.save(refreshToken);
         return new LoginResponse(member.getId(), accessToken, refreshToken.getTokenString(), isCreated);
     }
 
-    public RefreshResponse refreshTokens(final Long memberId, final Role role) {
-        final String accessToken = tokenProvider.createAccessToken(memberId, role);
-        final RefreshToken refreshToken = tokenProvider.createRefreshToken(memberId, role);
+    public RefreshResponse refreshTokens(final Long memberId) {
+        final String accessToken = tokenProvider.createAccessToken(memberId);
+        final RefreshToken refreshToken = tokenProvider.createRefreshToken(memberId);
 
         refreshTokenRepository.save(refreshToken);
         return new RefreshResponse(accessToken, refreshToken.getTokenString());
