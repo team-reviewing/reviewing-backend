@@ -14,6 +14,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import project.reviewing.common.exception.ErrorType;
 import project.reviewing.member.command.application.MemberService;
 import project.reviewing.member.command.application.request.ReviewerRegistrationRequest;
+import project.reviewing.member.command.application.request.ReviewerUpdateRequest;
 import project.reviewing.member.command.application.request.UpdatingMemberRequest;
 import project.reviewing.member.command.domain.Member;
 import project.reviewing.member.command.domain.MemberRepository;
@@ -106,6 +107,53 @@ public class MemberServiceTest {
         }
     }
 
+    @DisplayName("리뷰어 수정 시 ")
+    @Nested
+    class ReviewerUpdateTest {
+
+        @DisplayName("정상적인 경우 리뷰어를 수정한다.")
+        @Test
+        void updateReviewer() {
+            final MemberService sut = new MemberService(memberRepository);
+            final Member member = createMember(new Member(1L, "username", "email@gmail.com", "image.png", "github.com/profile"));
+            final ReviewerRegistrationRequest reviewerRegistrationRequest = new ReviewerRegistrationRequest(
+                    "백엔드", "신입", List.of(1L, 2L), "자기 소개입니다."
+            );
+            registerReviewer(sut, member.getId(), reviewerRegistrationRequest);
+            final ReviewerUpdateRequest reviewerUpdateRequest = new ReviewerUpdateRequest(
+                    "프론트엔드", "주니어", List.of(1L, 2L, 3L), "자기 소개입니다."
+            );
+
+            sut.updateReviewer(member.getId(), reviewerUpdateRequest);
+            entityManager.flush();
+
+            final Reviewer actual = getMember(member.getId()).getReviewer();
+            assertThat(actual).usingRecursiveComparison()
+                    .ignoringFields("id", "member")
+                    .isEqualTo(reviewerUpdateRequest.toEntity());
+        }
+
+        @DisplayName("회원이 존재하지 않는 경우 예외를 반환한다.")
+        @Test
+        void updateReviewerByNotExistMember() {
+            final MemberService sut = new MemberService(memberRepository);
+            final Member member = createMember(new Member(1L, "username", "email@gmail.com", "image.png", "github.com/profile"));
+            final ReviewerRegistrationRequest reviewerRegistrationRequest = new ReviewerRegistrationRequest(
+                    "백엔드", "신입", List.of(1L, 2L), "자기 소개입니다."
+            );
+            registerReviewer(sut, member.getId(), reviewerRegistrationRequest);
+            final Long wrongMemberId = 2L;
+            final ReviewerUpdateRequest reviewerUpdateRequest = new ReviewerUpdateRequest(
+                    "프론트엔드", "주니어", List.of(1L, 2L, 3L), "자기 소개입니다."
+            );
+
+
+            assertThatThrownBy(() -> sut.updateReviewer(wrongMemberId, reviewerUpdateRequest))
+                    .isInstanceOf(MemberNotFoundException.class)
+                    .hasMessage(ErrorType.MEMBER_NOT_FOUND.getMessage());
+        }
+    }
+
     private Member createMember(final Member member) {
         return memberRepository.save(member);
     }
@@ -113,5 +161,10 @@ public class MemberServiceTest {
     private Member getMember(final Long memberId) {
         return memberRepository.findById(memberId)
                 .orElseThrow(MemberNotFoundException::new);
+    }
+
+    private void registerReviewer(final MemberService sut, final Long id, final ReviewerRegistrationRequest request) {
+        sut.registerReviewer(id, request);
+        entityManager.flush();
     }
 }

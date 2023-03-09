@@ -53,6 +53,6 @@ public class MemberController {
             final Long memberId,
             @Valid @RequestBody final ReviewerUpdateRequest reviewerUpdateRequest
     ) {
-
+        memberService.updateReviewer(memberId, reviewerUpdateRequest);
     }
 }

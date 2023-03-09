@@ -65,6 +65,10 @@ public class Member {
         }
     }
 
+    public void updateReviewer(final Reviewer reviewer) {
+        this.reviewer.update(reviewer);
+    }
+
     private void updateUsername(final String username) {
         if (this.username.equals(username)) {
             throw new InvalidMemberException(ErrorType.SAME_USERNAME_AS_BEFORE);

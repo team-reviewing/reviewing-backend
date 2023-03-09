@@ -51,4 +51,11 @@ public class Reviewer {
     public void addMember(final Member member) {
         this.member = member;
     }
+
+    public void update(final Reviewer reviewer) {
+        this.job = reviewer.getJob();
+        this.career = reviewer.getCareer();
+        this.techStack = reviewer.getTechStack();
+        this.introduction = reviewer.getIntroduction();
+    }
 }
