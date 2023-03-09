@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.reviewing.member.command.application.request.ReviewerRegistrationRequest;
 import project.reviewing.member.command.application.request.ReviewerUpdateRequest;
-import project.reviewing.member.command.application.request.UpdatingMemberRequest;
+import project.reviewing.member.command.application.request.MyInformationUpdateRequest;
 import project.reviewing.member.command.domain.Member;
 import project.reviewing.member.command.domain.MemberRepository;
 import project.reviewing.member.exception.MemberNotFoundException;
@@ -17,9 +17,9 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
 
-    public void update(final Long memberId, final UpdatingMemberRequest updatingMemberRequest) {
+    public void update(final Long memberId, final MyInformationUpdateRequest myInformationUpdateRequest) {
         final Member member = getMember(memberId);
-        final Member updatedMember = updatingMemberRequest.toEntity();
+        final Member updatedMember = myInformationUpdateRequest.toEntity();
 
         member.update(updatedMember);
     }

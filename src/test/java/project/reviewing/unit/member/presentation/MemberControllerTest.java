@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 import project.reviewing.member.command.application.MemberService;
 import project.reviewing.member.command.application.request.ReviewerRegistrationRequest;
 import project.reviewing.member.command.application.request.ReviewerUpdateRequest;
-import project.reviewing.member.command.application.request.UpdatingMemberRequest;
+import project.reviewing.member.command.application.request.MyInformationUpdateRequest;
 import project.reviewing.member.query.application.MemberQueryService;
 
 @DisplayName("MemberController 는 ")
@@ -52,7 +52,7 @@ public class MemberControllerTest {
         @DisplayName("정상적으로 내 정보를 수정하는 경우 204를 반환한다.")
         @Test
         void updateMyInformation() throws Exception {
-            final UpdatingMemberRequest request = new UpdatingMemberRequest("username", "email@gmail.com");
+            final MyInformationUpdateRequest request = new MyInformationUpdateRequest("username", "email@gmail.com");
 
             mockMvc.perform(patch("/members/me")
                             .contentType(MediaType.APPLICATION_JSON)
@@ -65,7 +65,7 @@ public class MemberControllerTest {
         @NullAndEmptySource
         @ParameterizedTest
         void updateMemberWithInvalidUsername(final String username) throws Exception {
-            final UpdatingMemberRequest request = new UpdatingMemberRequest(username, "email@gmail.com");
+            final MyInformationUpdateRequest request = new MyInformationUpdateRequest(username, "email@gmail.com");
 
             assertValidation(patch("/members/me"), request);
         }
@@ -74,7 +74,7 @@ public class MemberControllerTest {
         @NullAndEmptySource
         @ParameterizedTest
         void updateMemberWithInvalidEmail(final String email) throws Exception {
-            final UpdatingMemberRequest request = new UpdatingMemberRequest("username", email);
+            final MyInformationUpdateRequest request = new MyInformationUpdateRequest("username", email);
 
             assertValidation(patch("/members/me"), request);
         }

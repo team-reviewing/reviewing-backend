@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import project.reviewing.member.command.application.MemberService;
 import project.reviewing.member.command.application.request.ReviewerRegistrationRequest;
 import project.reviewing.member.command.application.request.ReviewerUpdateRequest;
-import project.reviewing.member.command.application.request.UpdatingMemberRequest;
+import project.reviewing.member.command.application.request.MyInformationUpdateRequest;
 import project.reviewing.member.query.application.MemberQueryService;
 import project.reviewing.member.query.response.MyInformationResponse;
 
@@ -34,9 +34,9 @@ public class MemberController {
     @PatchMapping("/me")
     public void updateMember(
             final Long memberId,
-            @Valid @RequestBody final UpdatingMemberRequest updatingMemberRequest
+            @Valid @RequestBody final MyInformationUpdateRequest myInformationUpdateRequest
     ) {
-        memberService.update(memberId, updatingMemberRequest);
+        memberService.update(memberId, myInformationUpdateRequest);
     }
 
     @PostMapping("/me/reviewer")

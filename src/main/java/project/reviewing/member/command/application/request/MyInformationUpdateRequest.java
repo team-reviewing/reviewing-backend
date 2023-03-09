@@ -7,7 +7,7 @@ import project.reviewing.member.command.domain.Member;
 
 @Getter
 @NoArgsConstructor
-public class UpdatingMemberRequest {
+public class MyInformationUpdateRequest {
 
     @NotBlank(message = "username을 입력해 주세요.")
     private String username;
@@ -15,7 +15,7 @@ public class UpdatingMemberRequest {
     @NotBlank(message = "email을 입력해 주세요.")
     private String email;
 
-    public UpdatingMemberRequest(final String username, final String email) {
+    public MyInformationUpdateRequest(final String username, final String email) {
         this.username = username;
         this.email = email;
     }

@@ -15,7 +15,7 @@ import project.reviewing.common.exception.ErrorType;
 import project.reviewing.member.command.application.MemberService;
 import project.reviewing.member.command.application.request.ReviewerRegistrationRequest;
 import project.reviewing.member.command.application.request.ReviewerUpdateRequest;
-import project.reviewing.member.command.application.request.UpdatingMemberRequest;
+import project.reviewing.member.command.application.request.MyInformationUpdateRequest;
 import project.reviewing.member.command.domain.Member;
 import project.reviewing.member.command.domain.MemberRepository;
 import project.reviewing.member.command.domain.Reviewer;
@@ -40,10 +40,10 @@ public class MemberServiceTest {
         void updateMember() {
             final MemberService sut = new MemberService(memberRepository);
             final Member member = createMember(new Member(1L, "username", "email@gmail.com", "image.png", "github.com/profile"));
-            final UpdatingMemberRequest updatingMemberRequest = new UpdatingMemberRequest("newUsername",
+            final MyInformationUpdateRequest myInformationUpdateRequest = new MyInformationUpdateRequest("newUsername",
                     "newEmail@gmail.com");
 
-            sut.update(member.getId(), updatingMemberRequest);
+            sut.update(member.getId(), myInformationUpdateRequest);
 
             final Member actual = getMember(member.getId());
             assertAll(
@@ -57,10 +57,10 @@ public class MemberServiceTest {
         void updateNotExistMember() {
             final MemberService sut = new MemberService(memberRepository);
             final Long notExistMemberId = 1L;
-            final UpdatingMemberRequest updatingMemberRequest = new UpdatingMemberRequest("newUsername",
+            final MyInformationUpdateRequest myInformationUpdateRequest = new MyInformationUpdateRequest("newUsername",
                     "newEmail@gmail.com");
 
-            assertThatThrownBy(() -> sut.update(notExistMemberId, updatingMemberRequest))
+            assertThatThrownBy(() -> sut.update(notExistMemberId, myInformationUpdateRequest))
                     .isInstanceOf(MemberNotFoundException.class)
                     .hasMessage(ErrorType.MEMBER_NOT_FOUND.getMessage());
         }
