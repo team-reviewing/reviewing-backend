@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import project.reviewing.member.command.application.MemberService;
 import project.reviewing.member.command.application.request.ReviewerRegistrationRequest;
+import project.reviewing.member.command.application.request.ReviewerUpdateRequest;
 import project.reviewing.member.command.application.request.UpdatingMemberRequest;
 import project.reviewing.member.query.application.MemberQueryService;
 import project.reviewing.member.query.response.MyInformationResponse;
@@ -44,5 +45,14 @@ public class MemberController {
             @Valid @RequestBody final ReviewerRegistrationRequest reviewerRegistrationRequest
     ) {
         memberService.registerReviewer(memberId, reviewerRegistrationRequest);
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PatchMapping("/me/reviewer")
+    public void updateReviewer(
+            final Long memberId,
+            @Valid @RequestBody final ReviewerUpdateRequest reviewerUpdateRequest
+    ) {
+
     }
 }

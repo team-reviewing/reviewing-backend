@@ -25,6 +25,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.RestController;
 import project.reviewing.member.command.application.MemberService;
 import project.reviewing.member.command.application.request.ReviewerRegistrationRequest;
+import project.reviewing.member.command.application.request.ReviewerUpdateRequest;
 import project.reviewing.member.command.application.request.UpdatingMemberRequest;
 import project.reviewing.member.query.application.MemberQueryService;
 
@@ -125,6 +126,55 @@ public class MemberControllerTest {
             );
 
             assertValidation(post("/members/me/reviewer"), request);
+        }
+    }
+
+    @DisplayName("리뷰어 수정 시")
+    @Nested
+    class ReviewerUpdateTest {
+
+        @DisplayName("직무를 입력하지 않은 경우 400을 반환한다.")
+        @NullAndEmptySource
+        @ParameterizedTest
+        void updateReviewerWithOutJob(final String job) throws Exception {
+            final ReviewerUpdateRequest request = new ReviewerUpdateRequest(
+                    job, "career", List.of(1L, 2L), "introduce"
+            );
+
+            assertValidation(patch("/members/me/reviewer"), request);
+        }
+
+        @DisplayName("경력을 입력하지 않은 경우 400을 반환한다.")
+        @NullAndEmptySource
+        @ParameterizedTest
+        void updateReviewerWithOutCareer(final String career) throws Exception {
+            final ReviewerUpdateRequest request = new ReviewerUpdateRequest(
+                    "job", career, List.of(1L, 2L), "introduce"
+            );
+
+            assertValidation(patch("/members/me/reviewer"), request);
+        }
+
+        @DisplayName("기술스택을 입력하지 않은 경우 400을 반환한다.")
+        @NullAndEmptySource
+        @ParameterizedTest
+        void updateReviewerWithOutTechStack(final List<Long> techStack) throws Exception {
+            final ReviewerUpdateRequest request = new ReviewerUpdateRequest(
+                    "job", "career", techStack, "introduce"
+            );
+
+            assertValidation(patch("/members/me/reviewer"), request);
+        }
+
+        @DisplayName("자기소개를 입력하지 않은 경우 400을 반환한다.")
+        @NullAndEmptySource
+        @ParameterizedTest
+        void updateReviewerWithOutIntroduction(final String introduction) throws Exception {
+            final ReviewerUpdateRequest request = new ReviewerUpdateRequest(
+                    "job", "career", List.of(1L), introduction
+            );
+
+            assertValidation(patch("/members/me/reviewer"), request);
         }
     }
 
