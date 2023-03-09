@@ -8,6 +8,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
+import project.reviewing.member.query.dao.data.MyInformation;
 
 @RequiredArgsConstructor
 @Repository
@@ -29,14 +30,12 @@ public class MyInformationDao {
     }
 
     private RowMapper<MyInformation> rowMapper() {
-        return (rs, rowNum) -> {
-            return new MyInformation(
-                    rs.getString("username"),
-                    rs.getString("email"),
-                    rs.getString("image_url"),
-                    rs.getString("profile_url"),
-                    rs.getBoolean("is_reviewer")
-            );
-        };
+        return (rs, rowNum) -> new MyInformation(
+                rs.getString("username"),
+                rs.getString("email"),
+                rs.getString("image_url"),
+                rs.getString("profile_url"),
+                rs.getBoolean("is_reviewer")
+        );
     }
 }

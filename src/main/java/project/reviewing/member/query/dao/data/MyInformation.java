@@ -1,4 +1,4 @@
-package project.reviewing.member.query.dao;
+package project.reviewing.member.query.dao.data;
 
 import lombok.AccessLevel;
 import lombok.Getter;

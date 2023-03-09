@@ -13,12 +13,12 @@ import org.springframework.context.annotation.FilterType;
 import org.springframework.stereotype.Repository;
 import project.reviewing.member.command.domain.Member;
 import project.reviewing.member.command.domain.MemberRepository;
-import project.reviewing.member.query.dao.MyInformation;
+import project.reviewing.member.query.dao.data.MyInformation;
 import project.reviewing.member.query.dao.MyInformationDao;
 
 @DisplayName("MemberDao 는")
 @DataJpaTest(includeFilters = @Filter(type = FilterType.ANNOTATION, classes = Repository.class))
-public class MemberDaoTest {
+public class MyInformationDaoTest {
 
     @Autowired
     private MyInformationDao myInformationDao;

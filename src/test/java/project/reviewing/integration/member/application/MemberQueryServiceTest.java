@@ -16,7 +16,7 @@ import project.reviewing.member.command.domain.Member;
 import project.reviewing.member.command.domain.MemberRepository;
 import project.reviewing.member.exception.MemberNotFoundException;
 import project.reviewing.member.query.application.MemberQueryService;
-import project.reviewing.member.query.dao.MyInformation;
+import project.reviewing.member.query.dao.data.MyInformation;
 import project.reviewing.member.query.dao.MyInformationDao;
 import project.reviewing.member.query.response.MyInformationResponse;
 

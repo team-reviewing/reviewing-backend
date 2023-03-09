@@ -2,7 +2,7 @@ package project.reviewing.member.query.response;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import project.reviewing.member.query.dao.MyInformation;
+import project.reviewing.member.query.dao.data.MyInformation;
 
 @Getter
 @NoArgsConstructor
