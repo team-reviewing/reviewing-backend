@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.List;
 import java.util.Set;
 import javax.persistence.EntityManager;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,18 +43,12 @@ public class TagDaoTest {
     @Autowired
     private EntityManager entityManager;
 
-    @BeforeEach
-    void setUp() {
-        final Category category = categoryRepository.save(new Category("백엔드"));
-        tagRepository.save(new Tag("Spring", category));
-        tagRepository.save(new Tag("Java", category));
-
-        entityManager.flush();
-    }
-
     @DisplayName("해당 리뷰어의 기술 스택을 조회한다.")
     @Test
     void findTag() {
+        final Category category = createCategory(new Category("백엔드"));
+        createTag(new Tag("Spring", category));
+        createTag(new Tag("Java", category));
         final Member member = new Member(1L, "username", "email@gmail.com", "image", "profile");
         final Reviewer reviewer = new Reviewer(Job.BACKEND, Career.JUNIOR, Set.of(1L, 2L), "안녕하세요");
         final Member savedMember = createMemberAndRegisterReviewer(member, reviewer);
@@ -73,5 +66,17 @@ public class TagDaoTest {
         final Member result = memberRepository.save(member);
         entityManager.flush();
         return result;
+    }
+
+    private Category createCategory(final Category category) {
+        final Category savedCategory = categoryRepository.save(category);
+        entityManager.flush();
+        return savedCategory;
+    }
+
+    private Tag createTag(final Tag tag) {
+        final Tag savedTag = tagRepository.save(tag);
+        entityManager.flush();
+        return savedTag;
     }
 }

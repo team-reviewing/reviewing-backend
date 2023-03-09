@@ -11,10 +11,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import project.reviewing.member.command.application.MemberService;
+import project.reviewing.member.command.application.request.MyInformationUpdateRequest;
 import project.reviewing.member.command.application.request.ReviewerRegistrationRequest;
 import project.reviewing.member.command.application.request.ReviewerUpdateRequest;
-import project.reviewing.member.command.application.request.MyInformationUpdateRequest;
 import project.reviewing.member.query.application.MemberQueryService;
+import project.reviewing.member.query.application.response.ReviewerInformationResponse;
 import project.reviewing.member.query.response.MyInformationResponse;
 
 @RequestMapping("/members")
@@ -45,6 +46,11 @@ public class MemberController {
             @Valid @RequestBody final ReviewerRegistrationRequest reviewerRegistrationRequest
     ) {
         memberService.registerReviewer(memberId, reviewerRegistrationRequest);
+    }
+
+    @GetMapping("/me/reviewer")
+    public ReviewerInformationResponse findReviewerInformation(final Long memberId) {
+        return memberQueryService.findReviewerWithChoiceList(memberId);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)

@@ -23,6 +23,13 @@ public class TagDao {
         return jdbcTemplate.query(sql, params, rowMapper());
     }
 
+    public List<TagData> findAll() {
+        final String sql = "SELECT t.id, t.name "
+                + "FROM tag t";
+
+        return jdbcTemplate.query(sql, rowMapper());
+    }
+
     private RowMapper<TagData> rowMapper() {
         return (rs, rowNum) -> new TagData(
                 rs.getLong("id"),

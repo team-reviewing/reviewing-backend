@@ -1,4 +1,4 @@
-create table member (
+create table IF NOT EXISTS member (
     id              BIGINT          NOT NULL    AUTO_INCREMENT,
     github_id       VARCHAR(255)    NOT NULL    UNIQUE,
     username        VARCHAR(255)    NOT NULL    UNIQUE,
@@ -7,9 +7,9 @@ create table member (
     profile_url     VARCHAR(255),
     is_reviewer     BOOLEAN         DEFAULT 0,
     PRIMARY KEY (id),
-)
+) ENGINE = InnoDB
 
-create table reviewer (
+create table IF NOT EXISTS reviewer (
     id              BIGINT          NOT NULL    AUTO_INCREMENT,
     member_id       BIGINT          NOT NULL,
     job             VARCHAR(255),
@@ -17,26 +17,27 @@ create table reviewer (
     introduction    VARCHAR(255),
     PRIMARY KEY (id),
     FOREIGN KEY (member_id) REFERENCES member (id)
-)
+) ENGINE = InnoDB
 
-create table category (
+create table IF NOT EXISTS category (
     id              BIGINT          NOT NULL    AUTO_INCREMENT,
     name            VARCHAR(255)    NOT NULL,
     PRIMARY KEY (id)
-)
+) ENGINE = InnoDB
 
-create table tag (
+create table IF NOT EXISTS tag (
     id              BIGINT          NOT NULL    AUTO_INCREMENT,
     category_id     BIGINT          NOT NULL,
     name            VARCHAR(255)    NOT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (category_id) REFERENCES category (id)
-)
+) ENGINE = InnoDB
 
-create table reviewer_tag (
+create table IF NOT EXISTS reviewer_tag (
+    id              BIGINT          NOT NULL    AUTO_INCREMENT,
     reviewer_id     BIGINT          NOT NULL,
     tag_id          BIGINT          NOT NULL,
-    PRIMARY KEY (reviewer_id, tag_id),
+    PRIMARY KEY (id),
     FOREIGN KEY (reviewer_id) REFERENCES reviewer (id),
     FOREIGN KEY (tag_id) REFERENCES tag (id)
-)
+) ENGINE = InnoDB

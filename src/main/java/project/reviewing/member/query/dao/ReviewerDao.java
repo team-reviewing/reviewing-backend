@@ -18,6 +18,17 @@ public class ReviewerDao {
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
+    public boolean existByMemberId(final Long memberId) {
+        final String sql = "SELECT EXISTS ( "
+                + "SELECT 1 "
+                + "FROM reviewer "
+                + "WHERE member_id = :memberId "
+                + ")";
+        final SqlParameterSource params = new MapSqlParameterSource("memberId", memberId);
+
+        return Boolean.TRUE.equals(jdbcTemplate.queryForObject(sql, params, Boolean.class));
+    }
+
     public Optional<ReviewerData> findByMemberId(final Long memberId) {
         try {
             final String sql = "SELECT job, career, introduction "
