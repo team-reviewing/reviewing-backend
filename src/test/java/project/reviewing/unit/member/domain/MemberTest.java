@@ -53,6 +53,17 @@ public class MemberTest {
                 .hasMessage(ErrorType.SAME_EMAIL_AS_BEFORE.getMessage());
     }
 
+    @DisplayName("리뷰어를 등록하면 리뷰어 상태가 활성화된다.")
+    @Test
+    void onReviewer() {
+        final Member sut = new Member(1L, "username", "email@gmail.com", "image.png", "github.com/profile");
+        final Reviewer reviewer = new Reviewer(Job.BACKEND, Career.JUNIOR, Set.of(1L, 2L), "안녕하세요");
+
+        sut.register(reviewer);
+
+        assertThat(sut.isReviewer()).isTrue();
+    }
+
     @DisplayName("이미 리뷰어 등록이 된 상태에서 리뷰어 등록을 할 수 없다.")
     @Test
     void registeredReviewer() {

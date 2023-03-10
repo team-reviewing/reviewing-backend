@@ -16,7 +16,7 @@ import project.reviewing.member.command.application.request.ReviewerRegistration
 import project.reviewing.member.command.application.request.ReviewerUpdateRequest;
 import project.reviewing.member.query.application.MemberQueryService;
 import project.reviewing.member.query.application.response.ReviewerInformationResponse;
-import project.reviewing.member.query.response.MyInformationResponse;
+import project.reviewing.member.query.application.response.MyInformationResponse;
 
 @RequestMapping("/members")
 @RequiredArgsConstructor

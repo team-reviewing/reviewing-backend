@@ -17,7 +17,7 @@ import project.reviewing.member.query.dao.MyInformationDao;
 import project.reviewing.member.query.dao.ReviewerDao;
 import project.reviewing.member.query.dao.data.MyInformation;
 import project.reviewing.member.query.dao.data.ReviewerData;
-import project.reviewing.member.query.response.MyInformationResponse;
+import project.reviewing.member.query.application.response.MyInformationResponse;
 import project.reviewing.tag.query.dao.TagDao;
 import project.reviewing.tag.query.dao.TagData;
 

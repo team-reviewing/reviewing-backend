@@ -82,13 +82,14 @@ public class MemberServiceTest {
             sut.registerReviewer(member.getId(), reviewerRegistrationRequest);
             entityManager.flush();
 
-            final Reviewer actual = getMember(member.getId()).getReviewer();
+            final Member actual = getMember(member.getId());
             assertAll(
-                    () -> assertThat(actual.getId()).isNotNull(),
-                    () -> assertThat(actual).usingRecursiveComparison()
+                    () -> assertThat(actual.isReviewer()).isTrue(),
+                    () -> assertThat(actual.getReviewer().getId()).isNotNull(),
+                    () -> assertThat(actual.getReviewer()).usingRecursiveComparison()
                             .ignoringFields("id", "member")
                             .isEqualTo(reviewerRegistrationRequest.toEntity()),
-                    () -> assertThat(actual.getMember().getId()).isEqualTo(member.getId())
+                    () -> assertThat(actual.getReviewer().getMember().getId()).isEqualTo(member.getId())
             );
         }
 

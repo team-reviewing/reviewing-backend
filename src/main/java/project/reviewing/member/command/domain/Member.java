@@ -60,6 +60,7 @@ public class Member {
             throw new InvalidMemberException(ErrorType.ALREADY_REGISTERED);
         }
         this.reviewer = reviewer;
+        this.isReviewer = true;
         if (reviewer.getMember() != this) {
             reviewer.addMember(this);
         }

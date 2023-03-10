@@ -1,4 +1,4 @@
-package project.reviewing.member.query.response;
+package project.reviewing.member.query.application.response;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
