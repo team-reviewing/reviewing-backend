@@ -85,4 +85,16 @@ public class MemberTest {
                 .isInstanceOf(InvalidMemberException.class)
                 .hasMessage(ErrorType.DO_NOT_REGISTERED.getMessage());
     }
+
+    @DisplayName("정상적인 경우 리뷰어 상태를 변경할 수 있다.")
+    @Test
+    void changeStatus() {
+        final Member sut = new Member(1L, "username", "email@gmail.com", "image.png", "github.com/profile");
+        final Reviewer reviewer = new Reviewer(Job.BACKEND, Career.JUNIOR, Set.of(1L, 2L), "안녕하세요");
+        sut.register(reviewer);
+
+        sut.changeReviewerStatus();
+
+        assertThat(sut.isReviewer()).isFalse();
+    }
 }

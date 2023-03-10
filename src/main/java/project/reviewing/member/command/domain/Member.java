@@ -74,6 +74,7 @@ public class Member {
         if (this.reviewer == null) {
             throw new InvalidMemberException(ErrorType.DO_NOT_REGISTERED);
         }
+        this.isReviewer = !isReviewer;
     }
 
     private void updateUsername(final String username) {
