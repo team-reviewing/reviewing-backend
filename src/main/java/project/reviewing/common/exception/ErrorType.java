@@ -14,6 +14,7 @@ public enum ErrorType {
     SAME_USERNAME_AS_BEFORE("기존과 동일한 사용자 이름입니다. 다시 입력해 주세요."),
     SAME_EMAIL_AS_BEFORE("기존과 동일한 이메일입니다. 다시 입력해 주세요."),
     ALREADY_REGISTERED("이미 리뷰어 등록이 되었습니다."),
+    DO_NOT_REGISTERED("리뷰어 등록을 하지 않았습니다. 먼저 리뷰어 등록을 해주세요."),
     ;
 
     private final String message;

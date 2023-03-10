@@ -75,4 +75,14 @@ public class MemberTest {
                 .isInstanceOf(InvalidMemberException.class)
                 .hasMessage(ErrorType.ALREADY_REGISTERED.getMessage());
     }
+
+    @DisplayName("리뷰어 등록을 하기 전에 활성화 상태로 변경할 수 없다.")
+    @Test
+    void notChangeStatus() {
+        final Member sut = new Member(1L, "username", "email@gmail.com", "image.png", "github.com/profile");
+
+        assertThatThrownBy(sut::changeReviewerStatus)
+                .isInstanceOf(InvalidMemberException.class)
+                .hasMessage(ErrorType.DO_NOT_REGISTERED.getMessage());
+    }
 }

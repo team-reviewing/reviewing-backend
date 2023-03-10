@@ -70,6 +70,12 @@ public class Member {
         this.reviewer.update(reviewer);
     }
 
+    public void changeReviewerStatus() {
+        if (this.reviewer == null) {
+            throw new InvalidMemberException(ErrorType.DO_NOT_REGISTERED);
+        }
+    }
+
     private void updateUsername(final String username) {
         if (this.username.equals(username)) {
             throw new InvalidMemberException(ErrorType.SAME_USERNAME_AS_BEFORE);
