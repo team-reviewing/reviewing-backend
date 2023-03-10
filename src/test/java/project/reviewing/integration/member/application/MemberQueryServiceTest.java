@@ -7,12 +7,12 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
-import javax.persistence.EntityManager;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.stereotype.Repository;
@@ -24,11 +24,11 @@ import project.reviewing.member.command.domain.MemberRepository;
 import project.reviewing.member.command.domain.Reviewer;
 import project.reviewing.member.exception.MemberNotFoundException;
 import project.reviewing.member.query.application.MemberQueryService;
+import project.reviewing.member.query.application.response.MyInformationResponse;
 import project.reviewing.member.query.application.response.ReviewerInformationResponse;
 import project.reviewing.member.query.dao.MyInformationDao;
 import project.reviewing.member.query.dao.ReviewerDao;
 import project.reviewing.member.query.dao.data.MyInformation;
-import project.reviewing.member.query.application.response.MyInformationResponse;
 import project.reviewing.tag.query.dao.TagDao;
 
 @DisplayName("MemberQueryService 는")
@@ -48,7 +48,7 @@ public class MemberQueryServiceTest {
     private MemberRepository memberRepository;
 
     @Autowired
-    private EntityManager entityManager;
+    private TestEntityManager entityManager;
 
     @DisplayName("내 정보 조회 시 ")
     @Nested
@@ -70,7 +70,7 @@ public class MemberQueryServiceTest {
         @Test
         void findNotExistMember() {
             final MemberQueryService sut = new MemberQueryService(myInformationDao, reviewerDao, tagDao, memberRepository);
-            final Long notExistMemberId = 1L;
+            final Long notExistMemberId = -1L;
 
             assertThatThrownBy(() -> sut.findMember(notExistMemberId))
                     .isInstanceOf(MemberNotFoundException.class)
@@ -107,7 +107,7 @@ public class MemberQueryServiceTest {
         @Test
         void findNotExistMember() {
             final MemberQueryService sut = new MemberQueryService(myInformationDao, reviewerDao, tagDao, memberRepository);
-            final Long notExistMemberId = 1L;
+            final Long notExistMemberId = -1L;
 
             assertThatThrownBy(() -> sut.findReviewerWithChoiceList(notExistMemberId))
                     .isInstanceOf(MemberNotFoundException.class)
@@ -129,13 +129,15 @@ public class MemberQueryServiceTest {
     }
 
     private Member createMember(final Member member) {
-        return memberRepository.save(member);
+        final Member savedMember = memberRepository.save(member);
+        entityManager.clear();
+        return savedMember;
     }
 
     private Member createMemberAndRegisterReviewer(final Member member, final Reviewer reviewer) {
         member.register(reviewer);
         final Member result = memberRepository.save(member);
-        entityManager.flush();
+        entityManager.clear();
         return result;
     }
 

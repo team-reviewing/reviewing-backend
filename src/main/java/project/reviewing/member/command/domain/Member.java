@@ -3,7 +3,6 @@ package project.reviewing.member.command.domain;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -38,7 +37,7 @@ public class Member {
 
     private boolean isReviewer;
 
-    @OneToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY, mappedBy = "member")
+    @OneToOne(cascade = CascadeType.PERSIST, mappedBy = "member")
     private Reviewer reviewer;
 
     public Member(final Long githubId, final String username, final String email, final String imageUrl, final String profileUrl) {

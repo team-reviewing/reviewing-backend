@@ -36,6 +36,12 @@ public class MemberService {
         member.updateReviewer(reviewerUpdateRequest.toEntity());
     }
 
+    public void changeReviewerStatus(final Long memberId) {
+        final Member member = getMember(memberId);
+
+        member.changeReviewerStatus();
+    }
+
     private Member getMember(final Long memberId) {
         return memberRepository.findById(memberId)
                 .orElseThrow(MemberNotFoundException::new);

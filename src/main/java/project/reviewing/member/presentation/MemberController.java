@@ -61,4 +61,10 @@ public class MemberController {
     ) {
         memberService.updateReviewer(memberId, reviewerUpdateRequest);
     }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PatchMapping("/me/reviewer-status")
+    public void changeReviewerStatus(final Long memberId) {
+        memberService.changeReviewerStatus(memberId);
+    }
 }
