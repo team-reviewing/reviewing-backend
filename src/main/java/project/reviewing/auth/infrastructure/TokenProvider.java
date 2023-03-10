@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import project.reviewing.auth.domain.RefreshToken;
 import project.reviewing.auth.exception.InvalidTokenException;
-import project.reviewing.auth.exception.RefreshTokenException;
 import project.reviewing.common.exception.ErrorType;
 
 import javax.crypto.SecretKey;
@@ -53,14 +52,14 @@ public class TokenProvider {
         try {
             return parseJwt(refreshToken, refreshTokenSecretKey);
         } catch (JwtException e) {
-            throw new RefreshTokenException(ErrorType.INVALID_TOKEN);
+            throw new InvalidTokenException(ErrorType.INVALID_TOKEN);
         }
     }
 
     public String createAccessTokenUsingTime(final Long memberId, final long validTime) {
         return createJwt(memberId, validTime, accessTokenSecretKey);
     }
-    public String createRefreshTokenUsingTime(final Long memberId, final long validTime) {
+    public String createRefreshTokenStringUsingTime(final Long memberId, final long validTime) {
         return createJwt(memberId, validTime, refreshTokenSecretKey);
     }
 

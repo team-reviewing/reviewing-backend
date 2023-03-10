@@ -5,7 +5,7 @@ import project.reviewing.common.exception.UnauthorizedException;
 
 public class InvalidTokenException extends UnauthorizedException {
 
-    public InvalidTokenException(ErrorType errorType) {
+    public InvalidTokenException(final ErrorType errorType) {
         super(errorType);
     }
 }

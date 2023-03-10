@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
-import project.reviewing.auth.application.response.LoginResponse;
+import project.reviewing.auth.application.response.GithubLoginResponse;
 import project.reviewing.auth.domain.Profile;
 import project.reviewing.auth.domain.RefreshToken;
 import project.reviewing.auth.domain.RefreshTokenRepository;
@@ -55,17 +55,17 @@ public class AuthServiceTest {
         final String accessToken = "accessToken";
         final RefreshToken refreshToken = new RefreshToken(memberId, "refreshToken", 600L);
 
-        final LoginResponse expectedResponse = new LoginResponse(memberId, accessToken, refreshToken.getTokenString(), true);
+        final GithubLoginResponse expectedResponse = new GithubLoginResponse(memberId, accessToken, refreshToken.getTokenString(), true);
 
         given(oauthClient.getProfileByAuthorizationCode(authorizationCode)).willReturn(profile);
         given(tokenProvider.createAccessToken(memberId)).willReturn(accessToken);
         given(tokenProvider.createRefreshToken(memberId)).willReturn(refreshToken);
 
         // when
-        final LoginResponse loginResponse = authService.githubLogin(authorizationCode);
+        final GithubLoginResponse githubLoginResponse = authService.githubLogin(authorizationCode);
 
         // then
-        assertThat(loginResponse).usingRecursiveComparison().isEqualTo(expectedResponse);
+        assertThat(githubLoginResponse).usingRecursiveComparison().isEqualTo(expectedResponse);
     }
 
     @DisplayName("Github Authorization Code를 받아 로그인 한다.")
@@ -79,17 +79,17 @@ public class AuthServiceTest {
         final String accessToken = "accessToken";
         final RefreshToken refreshToken = new RefreshToken(member.getId(), "refreshToken", 600L);
 
-        final LoginResponse expectedResponse = new LoginResponse(member.getId(), accessToken, refreshToken.getTokenString(), false);
+        final GithubLoginResponse expectedResponse = new GithubLoginResponse(member.getId(), accessToken, refreshToken.getTokenString(), false);
 
         given(oauthClient.getProfileByAuthorizationCode(authorizationCode)).willReturn(profile);
         given(tokenProvider.createAccessToken(member.getId())).willReturn(accessToken);
         given(tokenProvider.createRefreshToken(member.getId())).willReturn(refreshToken);
 
         // when
-        final LoginResponse loginResponse = authService.githubLogin(authorizationCode);
+        final GithubLoginResponse githubLoginResponse = authService.githubLogin(authorizationCode);
 
         // then
-        assertThat(loginResponse).usingRecursiveComparison().isEqualTo(expectedResponse);
+        assertThat(githubLoginResponse).usingRecursiveComparison().isEqualTo(expectedResponse);
     }
 
     @DisplayName("Github의 계정 이름을 바꾼 회원의 로그인 과정에서 Github URL을 갱신한다.")

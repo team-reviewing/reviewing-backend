@@ -7,10 +7,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import project.reviewing.auth.exception.InvalidTokenException;
-import project.reviewing.auth.exception.RefreshTokenException;
 import project.reviewing.common.response.ErrorResponse;
-import project.reviewing.common.util.CookieBuilder;
-import project.reviewing.common.util.CookieType;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolationException;
@@ -21,13 +18,6 @@ public class GlobalControllerAdvice {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(InvalidTokenException.class)
     public ErrorResponse handlerInvalidTokenException(final InvalidTokenException e, final HttpServletResponse response) {
-        return new ErrorResponse(e.getMessage());
-    }
-
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    @ExceptionHandler(RefreshTokenException.class)
-    public ErrorResponse handlerRefreshTokenException(final RefreshTokenException e, final HttpServletResponse response) {
-        response.addCookie(CookieBuilder.makeRemovedCookie(CookieType.REFRESH_TOKEN, "removed"));
         return new ErrorResponse(e.getMessage());
     }
 

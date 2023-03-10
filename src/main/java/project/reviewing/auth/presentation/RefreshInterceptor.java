@@ -8,10 +8,12 @@ import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
 import project.reviewing.auth.domain.RefreshTokenRepository;
 import project.reviewing.auth.domain.RefreshToken;
-import project.reviewing.auth.exception.RefreshTokenException;
+import project.reviewing.auth.exception.InvalidTokenException;
 import project.reviewing.auth.infrastructure.TokenProvider;
 import project.reviewing.common.exception.ErrorType;
+import project.reviewing.common.util.CookieType;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
@@ -33,14 +35,14 @@ public class RefreshInterceptor implements HandlerInterceptor {
         }
 
         final String tokenString = extractRefreshTokenString(request)
-                .orElseThrow(() -> new RefreshTokenException(ErrorType.INVALID_TOKEN));
+                .orElseThrow(() -> new InvalidTokenException(ErrorType.INVALID_TOKEN));
 
         final Claims claims = tokenProvider.parseRefreshToken(tokenString);
         final Long id = (long) (int) claims.get("id");
 
         if (isInvalidInDB(id, tokenString)) {
             refreshTokenRepository.deleteById(id);
-            throw new RefreshTokenException(ErrorType.INVALID_TOKEN);
+            throw new InvalidTokenException(ErrorType.INVALID_TOKEN);
         }
 
         request.setAttribute("id", id);
@@ -48,7 +50,17 @@ public class RefreshInterceptor implements HandlerInterceptor {
     }
 
     private Optional<String> extractRefreshTokenString(final HttpServletRequest request) {
-        return Optional.of(request.getParameter("refresh_token"));
+        final Cookie[] cookies = request.getCookies();
+        if (cookies == null) {
+            return Optional.empty();
+        }
+
+        for (Cookie cookie : cookies) {
+            if (cookie.getName().equals(CookieType.REFRESH_TOKEN)) {
+                return Optional.of(cookie.getValue());
+            }
+        }
+        return Optional.empty();
     }
 
     private boolean isInvalidInDB(final Long id, final String tokenString) {

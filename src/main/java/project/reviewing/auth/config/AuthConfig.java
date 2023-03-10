@@ -20,7 +20,6 @@ public class AuthConfig implements WebMvcConfigurer {
                 .addPathPatterns("/**")
                 .excludePathPatterns("/auth/login/*", "/auth/refresh");
         registry.addInterceptor(refreshInterceptor)
-                .addPathPatterns("/auth/refresh")
-                .excludePathPatterns();
+                .addPathPatterns("/auth/refresh");
     }
 }
