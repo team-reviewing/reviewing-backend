@@ -32,9 +32,6 @@ public class ControllerTest {
     protected AuthService authService;
 
     @Autowired
-    protected AuthContext authContext;
-
-    @Autowired
     protected TokenProvider tokenProvider;
 
     @MockBean
