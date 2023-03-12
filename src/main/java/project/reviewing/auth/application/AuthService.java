@@ -3,7 +3,7 @@ package project.reviewing.auth.application;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import project.reviewing.auth.application.response.LoginGithubResponse;
+import project.reviewing.auth.application.response.GithubLoginResponse;
 import project.reviewing.auth.application.response.RefreshResponse;
 import project.reviewing.auth.infrastructure.response.Profile;
 import project.reviewing.auth.domain.RefreshToken;
@@ -23,7 +23,7 @@ public class AuthService {
     private final OauthClient oauthClient;
     private final TokenProvider tokenProvider;
 
-    public LoginGithubResponse loginGithub(final String authorizationCode) {
+    public GithubLoginResponse loginGithub(final String authorizationCode) {
         final Profile profile = oauthClient.getProfileByAuthorizationCode(authorizationCode);
         Member member = memberRepository.findByGithubId(profile.getId());
 
@@ -41,7 +41,7 @@ public class AuthService {
         final RefreshToken refreshToken = tokenProvider.createRefreshToken(member.getId());
 
         refreshTokenRepository.save(refreshToken);
-        return new LoginGithubResponse(member.getId(), accessToken, refreshToken.getToken());
+        return new GithubLoginResponse(member.getId(), accessToken, refreshToken.getToken());
     }
 
     public RefreshResponse refreshTokens(final Long memberId) {

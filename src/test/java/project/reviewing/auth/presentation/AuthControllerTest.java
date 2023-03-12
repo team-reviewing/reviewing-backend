@@ -3,7 +3,7 @@ package project.reviewing.auth.presentation;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
-import project.reviewing.auth.application.response.LoginGithubResponse;
+import project.reviewing.auth.application.response.GithubLoginResponse;
 import project.reviewing.auth.application.response.RefreshResponse;
 import project.reviewing.auth.domain.RefreshToken;
 import project.reviewing.common.ControllerTest;
@@ -24,9 +24,9 @@ public class AuthControllerTest extends ControllerTest {
     @Test
     void validationTest() throws Exception {
         final String authorizationCode = " ";
-        final LoginGithubResponse loginGithubResponse = new LoginGithubResponse(1L, "Access Token", "Refresh Token");
+        final GithubLoginResponse githubLoginResponse = new GithubLoginResponse(1L, "Access Token", "Refresh Token");
 
-        given(authService.loginGithub(authorizationCode)).willReturn(loginGithubResponse);
+        given(authService.loginGithub(authorizationCode)).willReturn(githubLoginResponse);
 
         mockMvc.perform(post("/auth/login/github")
                         .content(authorizationCode)
@@ -40,9 +40,9 @@ public class AuthControllerTest extends ControllerTest {
     @Test
     void loginTest() throws Exception {
         final String authorizationCode = "code";
-        final LoginGithubResponse loginGithubResponse = new LoginGithubResponse(1L, "Access Token", "Refresh Token");
+        final GithubLoginResponse githubLoginResponse = new GithubLoginResponse(1L, "Access Token", "Refresh Token");
 
-        given(authService.loginGithub(authorizationCode)).willReturn(loginGithubResponse);
+        given(authService.loginGithub(authorizationCode)).willReturn(githubLoginResponse);
 
         mockMvc.perform(post("/auth/login/github")
                         .content(authorizationCode)
@@ -64,7 +64,6 @@ public class AuthControllerTest extends ControllerTest {
 
         given(authService.refreshTokens(memberId)).willReturn(newRefreshResponse);
         given(refreshTokenRepository.findById(refreshToken.getId())).willReturn(Optional.of(refreshToken));
-        given(authContext.getId()).willReturn(memberId);
 
         mockMvc.perform(post("/auth/refresh")
                         .cookie(new Cookie(CookieType.REFRESH_TOKEN.getValue(), refreshToken.getToken())))
@@ -114,8 +113,6 @@ public class AuthControllerTest extends ControllerTest {
     void logoutTest() throws Exception {
         final Long memberId = 1L;
         final String accessToken = tokenProvider.createAccessToken(memberId);
-
-        given(authContext.getId()).willReturn(memberId);
 
         mockMvc.perform(delete("/auth/logout")
                         .header("Authorization", "Bearer " + accessToken))

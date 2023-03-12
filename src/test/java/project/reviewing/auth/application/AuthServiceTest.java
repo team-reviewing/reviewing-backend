@@ -1,12 +1,11 @@
 package project.reviewing.auth.application;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
-import project.reviewing.auth.application.response.LoginGithubResponse;
+import project.reviewing.auth.application.response.GithubLoginResponse;
 import project.reviewing.auth.infrastructure.response.Profile;
 import project.reviewing.auth.domain.RefreshToken;
 import project.reviewing.auth.domain.RefreshTokenRepository;
@@ -14,8 +13,6 @@ import project.reviewing.auth.infrastructure.TokenProvider;
 import project.reviewing.common.annotation.ApplicationTest;
 import project.reviewing.member.domain.Member;
 import project.reviewing.member.domain.MemberRepository;
-
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -54,7 +51,7 @@ public class AuthServiceTest {
         final String accessToken = "accessToken";
         final RefreshToken refreshToken = new RefreshToken(member.getId(), "refreshToken", 600L);
 
-        final LoginGithubResponse expectedResponse = new LoginGithubResponse(
+        final GithubLoginResponse expectedResponse = new GithubLoginResponse(
                 member.getId(), accessToken, refreshToken.getToken()
         );
 
@@ -63,10 +60,10 @@ public class AuthServiceTest {
         given(tokenProvider.createRefreshToken(member.getId())).willReturn(refreshToken);
 
         // when
-        final LoginGithubResponse loginGithubResponse = authService.loginGithub(authorizationCode);
+        final GithubLoginResponse githubLoginResponse = authService.loginGithub(authorizationCode);
 
         // then
-        assertThat(loginGithubResponse).usingRecursiveComparison().isEqualTo(expectedResponse);
+        assertThat(githubLoginResponse).usingRecursiveComparison().isEqualTo(expectedResponse);
     }
 
     @DisplayName("Github의 계정 이름을 바꾼 회원의 로그인 과정에서 Github URL을 갱신한다.")

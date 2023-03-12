@@ -24,6 +24,6 @@ public class AuthArgumentResolver implements HandlerMethodArgumentResolver {
             MethodParameter parameter, ModelAndViewContainer mavContainer,
             NativeWebRequest webRequest, WebDataBinderFactory binderFactory
     )  {
-        return authContext;
+        return authContext.getId();
     }
 }

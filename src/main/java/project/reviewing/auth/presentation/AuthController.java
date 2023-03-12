@@ -5,13 +5,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import project.reviewing.auth.application.AuthService;
-import project.reviewing.auth.application.response.LoginGithubResponse;
+import project.reviewing.auth.application.response.GithubLoginResponse;
 import project.reviewing.auth.application.response.RefreshResponse;
 import project.reviewing.auth.infrastructure.TokenProvider;
 import project.reviewing.auth.presentation.response.AccessTokenResponse;
 import project.reviewing.common.util.CookieProvider;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 
@@ -29,22 +28,22 @@ public class AuthController {
     public AccessTokenResponse oauthloginGithub(
             @RequestBody @NotBlank final String authorizationCode, final HttpServletResponse response
     ) {
-        LoginGithubResponse loginGithubResponse = authService.loginGithub(authorizationCode);
+        GithubLoginResponse githubLoginResponse = authService.loginGithub(authorizationCode);
 
         response.addCookie(
                 CookieProvider.createRefreshTokenCookie(
-                        loginGithubResponse.getRefreshToken(), tokenProvider.getRefreshTokenValidTime()
+                        githubLoginResponse.getRefreshToken(), tokenProvider.getRefreshTokenValidTime()
                 )
         );
-        return new AccessTokenResponse(loginGithubResponse.getAccessToken());
+        return new AccessTokenResponse(githubLoginResponse.getAccessToken());
     }
 
     @ResponseStatus(HttpStatus.OK)
     @PostMapping(value = "/refresh")
     public AccessTokenResponse refreshTokens(
-            @AuthenticatedMember  final AuthContext authContext, final HttpServletResponse response
+            @AuthenticatedMember  final Long memberId, final HttpServletResponse response
     ) {
-        RefreshResponse refreshResponse = authService.refreshTokens(authContext.getId());
+        RefreshResponse refreshResponse = authService.refreshTokens(memberId);
 
         response.addCookie(
                 CookieProvider.createRefreshTokenCookie(
@@ -56,7 +55,7 @@ public class AuthController {
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping(value = "/logout")
-    public void logout(@AuthenticatedMember  final AuthContext authContext) {
-        authService.removeRefreshToken(authContext.getId());
+    public void logout(@AuthenticatedMember  final Long memberId) {
+        authService.removeRefreshToken(memberId);
     }
 }
