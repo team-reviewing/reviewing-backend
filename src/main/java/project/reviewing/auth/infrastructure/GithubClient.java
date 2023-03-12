@@ -44,7 +44,7 @@ public class GithubClient implements OauthClient {
 
         return new Profile(
                 githubProfileResponse.getId(), githubProfileResponse.getLogin(), githubProfileResponse.getEmail(),
-                githubProfileResponse.getAvatarURL(), githubProfileResponse.getHtmlURL()
+                githubProfileResponse.getAvatarUrl(), githubProfileResponse.getHtmlUrl()
         );
     }
 

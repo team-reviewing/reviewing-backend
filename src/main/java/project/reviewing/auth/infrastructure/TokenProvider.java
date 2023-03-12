@@ -35,20 +35,22 @@ public class TokenProvider {
     public String createAccessToken(final Long memberId) {
         return createJwt(memberId, accessTokenValidTime, accessTokenSecretKey);
     }
+
     public RefreshToken createRefreshToken(final Long memberId) {
         return new RefreshToken(
                 memberId, createJwt(memberId, refreshTokenValidTime, refreshTokenSecretKey), new Date().getTime()
         );
     }
 
-    public Claims parseAccessToken(String accessToken) {
+    public Claims parseAccessToken(final String accessToken) {
         try {
             return parseJwt(accessToken, accessTokenSecretKey);
         } catch (JwtException e) {
             throw new InvalidTokenException(ErrorType.INVALID_TOKEN);
         }
     }
-    public Claims parseRefreshToken(String refreshToken) {
+
+    public Claims parseRefreshToken(final String refreshToken) {
         try {
             return parseJwt(refreshToken, refreshTokenSecretKey);
         } catch (JwtException e) {
@@ -56,14 +58,15 @@ public class TokenProvider {
         }
     }
 
-    public String createAccessTokenUsingTime(final Long memberId, final long validTime) {
+    public String createAccessTokenUsingTime(final long memberId, final long validTime) {
         return createJwt(memberId, validTime, accessTokenSecretKey);
     }
-    public String createRefreshTokenStringUsingTime(final Long memberId, final long validTime) {
+
+    public String createRefreshTokenStringUsingTime(final long memberId, final long validTime) {
         return createJwt(memberId, validTime, refreshTokenSecretKey);
     }
 
-    private String createJwt(final Long memberId, final long validTime, final SecretKey secretKey) {
+    private String createJwt(final long memberId, final long validTime, final SecretKey secretKey) {
         final Claims claims = Jwts.claims();
         claims.put("id", memberId);
 
@@ -85,9 +88,6 @@ public class TokenProvider {
                 .getBody();
     }
 
-    public long getAccessTokenValidTime() {
-        return accessTokenValidTime;
-    }
     public long getRefreshTokenValidTime() {
         return refreshTokenValidTime;
     }

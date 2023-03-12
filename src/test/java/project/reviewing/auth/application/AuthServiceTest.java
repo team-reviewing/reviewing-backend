@@ -5,8 +5,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.annotation.DirtiesContext;
-import project.reviewing.auth.application.response.GithubLoginResponse;
+import project.reviewing.auth.application.response.LoginGithubResponse;
 import project.reviewing.auth.infrastructure.response.Profile;
 import project.reviewing.auth.domain.RefreshToken;
 import project.reviewing.auth.domain.RefreshTokenRepository;
@@ -44,52 +45,33 @@ public class AuthServiceTest {
         authService = new AuthService(memberRepository, refreshTokenRepository, oauthClient, tokenProvider);
     }
 
-    @DisplayName("Github Authorization Code를 받아 회원 가입한다.")
-    @Test
-    void githubJoinMemberTest() {
-        // given
-        final String authorizationCode = "code";
-        final Long memberId = 1L;
-        final Profile profile = new Profile(memberId, "Tom", "Tom@gmail.com", "imageURL", "https://github.com/Tom");
-
-        final String accessToken = "accessToken";
-        final RefreshToken refreshToken = new RefreshToken(memberId, "refreshToken", 600L);
-
-        final GithubLoginResponse expectedResponse = new GithubLoginResponse(memberId, accessToken, refreshToken.getTokenString(), true);
-
-        given(oauthClient.getProfileByAuthorizationCode(authorizationCode)).willReturn(profile);
-        given(tokenProvider.createAccessToken(memberId)).willReturn(accessToken);
-        given(tokenProvider.createRefreshToken(memberId)).willReturn(refreshToken);
-
-        // when
-        final GithubLoginResponse githubLoginResponse = authService.githubLogin(authorizationCode);
-
-        // then
-        assertThat(githubLoginResponse).usingRecursiveComparison().isEqualTo(expectedResponse);
-    }
-
     @DisplayName("Github Authorization Code를 받아 로그인 한다.")
     @Test
     void githubLoginTest() {
         // given
         final String authorizationCode = "code";
-        final Member member = createMember(1L, 1L, "Tom", "Tom@gmail.com", "https://github.com/image");
-        final Profile profile = new Profile(member.getId(), member.getUsername(), member.getEmail(), "imageURL", member.getGithubURL());
-
+        final Member member = createMember(
+                1L, "Tom", "Tom@gmail.com", "https://github.com/image", "https://github.com/Tom", "소개글"
+        );
+        final Profile profile = new Profile(
+                member.getGithubId(), member.getUsername(), member.getEmail(), "imageUrl", member.getGithubUrl()
+        );
         final String accessToken = "accessToken";
         final RefreshToken refreshToken = new RefreshToken(member.getId(), "refreshToken", 600L);
 
-        final GithubLoginResponse expectedResponse = new GithubLoginResponse(member.getId(), accessToken, refreshToken.getTokenString(), false);
+        final LoginGithubResponse expectedResponse = new LoginGithubResponse(
+                member.getId(), accessToken, refreshToken.getToken()
+        );
 
         given(oauthClient.getProfileByAuthorizationCode(authorizationCode)).willReturn(profile);
         given(tokenProvider.createAccessToken(member.getId())).willReturn(accessToken);
         given(tokenProvider.createRefreshToken(member.getId())).willReturn(refreshToken);
 
         // when
-        final GithubLoginResponse githubLoginResponse = authService.githubLogin(authorizationCode);
+        final LoginGithubResponse loginGithubResponse = authService.loginGithub(authorizationCode);
 
         // then
-        assertThat(githubLoginResponse).usingRecursiveComparison().isEqualTo(expectedResponse);
+        assertThat(loginGithubResponse).usingRecursiveComparison().isEqualTo(expectedResponse);
     }
 
     @DisplayName("Github의 계정 이름을 바꾼 회원의 로그인 과정에서 Github URL을 갱신한다.")
@@ -97,18 +79,18 @@ public class AuthServiceTest {
     void githubProfileUpdateTest() {
         // given
         final String authorizationCode = "code";
-        final Member member = createMember(1L, 1L, "Tom", "Tom@gmail.com", "https://github.com/Tom/image");
+        final Member member = createMember(
+                1L, "Tom", "Tom@gmail.com", "https://github.com/Tom/image", "https://github.com/Tom", "소개글"
+        );
 
-        final Member expectedMember = Member.builder()
-                .id(member.getId())
-                .githubId(member.getGithubId())
-                .username("Bob")
-                .email("Bob@gmail.com")
-                .githubURL("https://github.com/Bob/image")
-                .build();
+        final Member expectedMember = new Member(
+                member.getGithubId(), "Bob", "Bob@gmail.com",
+                "https://github.com/Bob/image", "https://github.com/Bob", "소개글"
+        );
+
         final Profile profile = new Profile(
-                expectedMember.getId(), expectedMember.getUsername(),
-                expectedMember.getEmail(), "imageURL", expectedMember.getGithubURL()
+                expectedMember.getGithubId(), expectedMember.getUsername(),
+                expectedMember.getEmail(), "imageUrl", expectedMember.getGithubUrl()
         );
 
         final String accessToken = "accessToken";
@@ -119,25 +101,20 @@ public class AuthServiceTest {
         given(tokenProvider.createRefreshToken(member.getId())).willReturn(refreshToken);
 
         // when
-        authService.githubLogin(authorizationCode);
+        authService.loginGithub(authorizationCode);
         final Optional<Member> updatedMember = memberRepository.findById(member.getId());
 
         // then
         assertAll(
                 () -> assertThat(updatedMember.isPresent()).isEqualTo(true),
-                () -> assertThat(updatedMember.get().getGithubURL()).isEqualTo(expectedMember.getGithubURL())
+                () -> assertThat(updatedMember.get().getGithubUrl()).isEqualTo(expectedMember.getGithubUrl())
         );
     }
 
     private Member createMember(
-            final Long memberId, final Long githubId, final String username, final String email, final String githubURL
+            final Long githubId, final String username, final String email,
+            final String imageUrl, final String githubUrl, final String introduction
     ) {
-        return memberRepository.save(Member.builder()
-                .id(memberId)
-                .githubId(githubId)
-                .username(username)
-                .email(email)
-                .githubURL(githubURL)
-                .build());
+        return memberRepository.save(new Member(githubId, username, email, imageUrl, githubUrl, introduction));
     }
 }

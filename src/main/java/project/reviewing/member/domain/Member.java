@@ -1,16 +1,11 @@
 package project.reviewing.member.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Getter
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class Member {
 
@@ -18,7 +13,7 @@ public class Member {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "github_id", nullable = false, unique = true)
+    @Column(nullable = false, unique = true)
     private Long githubId;
 
     @Column(nullable = false, unique = true)
@@ -27,15 +22,26 @@ public class Member {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(name = "image_url")
-    private String imageURL;
+    private String imageUrl;
 
-    @Column(name = "github_url", nullable = false, unique = true)
-    private String githubURL;
+    @Column(nullable = false, unique = true)
+    private String githubUrl;
 
     private String introduction;
 
-    public void updateGithubURL(final String githubURL) {
-        this.githubURL = githubURL;
+    public Member(
+            final Long githubId, final String username, final String email,
+            final String imageUrl, final String githubUrl, final String introduction
+    ) {
+        this.githubId = githubId;
+        this.username = username;
+        this.email = email;
+        this.imageUrl = imageUrl;
+        this.githubUrl = githubUrl;
+        this.introduction = introduction;
+    }
+
+    public void updateGithubURL(final String githubUrl) {
+        this.githubUrl = githubUrl;
     }
 }

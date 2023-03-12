@@ -3,7 +3,7 @@ package project.reviewing.auth.presentation;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
-import project.reviewing.auth.application.response.GithubLoginResponse;
+import project.reviewing.auth.application.response.LoginGithubResponse;
 import project.reviewing.auth.application.response.RefreshResponse;
 import project.reviewing.auth.domain.RefreshToken;
 import project.reviewing.auth.presentation.response.AccessTokenResponse;
@@ -26,9 +26,9 @@ public class AuthControllerTest extends ControllerTest {
     void validationTest() throws Exception {
         // given
         final String authorizationCode = " ";
-        final GithubLoginResponse githubLoginResponse = new GithubLoginResponse(1L, "Access Token", "Refresh Token", true);
+        final LoginGithubResponse loginGithubResponse = new LoginGithubResponse(1L, "Access Token", "Refresh Token");
 
-        given(authService.githubLogin(authorizationCode)).willReturn(githubLoginResponse);
+        given(authService.loginGithub(authorizationCode)).willReturn(loginGithubResponse);
 
         // when then
         mockMvc.perform(post("/auth/login/github")
@@ -44,17 +44,17 @@ public class AuthControllerTest extends ControllerTest {
     void loginTest() throws Exception {
         // given
         final String authorizationCode = "code";
-        final GithubLoginResponse githubLoginResponse = new GithubLoginResponse(1L, "Access Token", "Refresh Token", true);
+        final LoginGithubResponse loginGithubResponse = new LoginGithubResponse(1L, "Access Token", "Refresh Token");
         final AccessTokenResponse expectedAccessTokenResponse = new AccessTokenResponse("Access Token");
 
-        given(authService.githubLogin(authorizationCode)).willReturn(githubLoginResponse);
+        given(authService.loginGithub(authorizationCode)).willReturn(loginGithubResponse);
 
         // when then
         mockMvc.perform(post("/auth/login/github")
                         .content(authorizationCode)
                         .contentType(MediaType.APPLICATION_JSON)
                         .characterEncoding("UTF-8"))
-                .andExpect(status().isCreated())
+                .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(expectedAccessTokenResponse)))
                 .andExpect(cookie().value("refresh_token", "Refresh Token"))
                 .andExpect(cookie().httpOnly("refresh_token", true))
@@ -76,8 +76,8 @@ public class AuthControllerTest extends ControllerTest {
 
         // when then
         mockMvc.perform(post("/auth/refresh")
-                        .cookie(new Cookie(CookieType.REFRESH_TOKEN.getValue(), refreshToken.getTokenString())))
-                .andExpect(status().isCreated())
+                        .cookie(new Cookie(CookieType.REFRESH_TOKEN.getValue(), refreshToken.getToken())))
+                .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(expectedAccessTokenResponse)))
                 .andExpect(cookie().value("refresh_token", "New Refresh Token"))
                 .andExpect(cookie().httpOnly("refresh_token", true))
@@ -100,7 +100,7 @@ public class AuthControllerTest extends ControllerTest {
 
         // when then
         mockMvc.perform(post("/auth/refresh")
-                        .cookie(new Cookie(CookieType.REFRESH_TOKEN.getValue(), refreshToken.getTokenString())))
+                        .cookie(new Cookie(CookieType.REFRESH_TOKEN.getValue(), refreshToken.getToken())))
                 .andExpect(status().isUnauthorized())
                 .andDo(print());
     }
@@ -118,7 +118,7 @@ public class AuthControllerTest extends ControllerTest {
 
         // when then
         mockMvc.perform(post("/auth/refresh")
-                        .cookie(new Cookie(CookieType.REFRESH_TOKEN.getValue(), refreshToken.getTokenString())))
+                        .cookie(new Cookie(CookieType.REFRESH_TOKEN.getValue(), refreshToken.getToken())))
                 .andExpect(status().isUnauthorized())
                 .andDo(print());
     }

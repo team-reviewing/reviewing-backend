@@ -15,15 +15,15 @@ public class AuthorizationExtractorTest {
     @Test
     void extractTokenTest() {
         final MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
-        final String tokenString = "ALDIFE";
+        final String token = "ALDIFE";
 
-        httpServletRequest.addHeader("Authorization", "Bearer " + tokenString);
+        httpServletRequest.addHeader("Authorization", "Bearer " + token);
 
         Optional<String> result = AuthorizationExtractor.extract(httpServletRequest);
 
         assertAll(
                 () -> assertThat(result).isNotEmpty(),
-                () -> assertThat(result.get()).isEqualTo(tokenString)
+                () -> assertThat(result.get()).isEqualTo(token)
         );
     }
 

@@ -1,12 +1,11 @@
 package project.reviewing.auth.presentation;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import project.reviewing.auth.application.AuthService;
-import project.reviewing.auth.application.response.GithubLoginResponse;
+import project.reviewing.auth.application.response.LoginGithubResponse;
 import project.reviewing.auth.application.response.RefreshResponse;
 import project.reviewing.auth.infrastructure.TokenProvider;
 import project.reviewing.auth.presentation.response.AccessTokenResponse;
@@ -15,7 +14,6 @@ import project.reviewing.common.util.CookieProvider;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
-import java.net.URI;
 
 @Validated
 @RequiredArgsConstructor
@@ -27,24 +25,25 @@ public class AuthController {
     private final TokenProvider tokenProvider;
 
     @PostMapping(value = "/login/github")
-    ResponseEntity<AccessTokenResponse> oauthGithubLogin(@RequestBody @NotBlank final String authorizationCode,
-                                                         final HttpServletResponse response) {
-        GithubLoginResponse githubLoginResponse = authService.githubLogin(authorizationCode);
+    ResponseEntity<AccessTokenResponse> oauthloginGithub(
+            @RequestBody @NotBlank final String authorizationCode, final HttpServletResponse response
+    ) {
+        LoginGithubResponse loginGithubResponse = authService.loginGithub(authorizationCode);
 
-        final AccessTokenResponse accessTokenResponse = new AccessTokenResponse(githubLoginResponse.getAccessToken());
+        final AccessTokenResponse accessTokenResponse = new AccessTokenResponse(loginGithubResponse.getAccessToken());
 
         response.addCookie(
                 CookieProvider.createRefreshTokenCookie(
-                        githubLoginResponse.getRefreshToken(), tokenProvider.getRefreshTokenValidTime()
+                        loginGithubResponse.getRefreshToken(), tokenProvider.getRefreshTokenValidTime()
                 )
         );
-        return githubLoginResponse.isCreated() ?
-                ResponseEntity.created(URI.create("/members/" + githubLoginResponse.getMemberId())).body(accessTokenResponse)
-                : ResponseEntity.ok(accessTokenResponse);
+        return ResponseEntity.ok(accessTokenResponse);
     }
 
     @PostMapping(value = "/refresh")
-    ResponseEntity<AccessTokenResponse> refreshTokens(final HttpServletRequest request, final HttpServletResponse response) {
+    ResponseEntity<AccessTokenResponse> refreshTokens(
+            final HttpServletRequest request, final HttpServletResponse response
+    ) {
         RefreshResponse refreshResponse = authService.refreshTokens((Long) request.getAttribute("id"));
 
         final AccessTokenResponse accessTokenResponse = new AccessTokenResponse(refreshResponse.getAccessToken());
@@ -54,7 +53,7 @@ public class AuthController {
                         refreshResponse.getRefreshToken(), tokenProvider.getRefreshTokenValidTime()
                 )
         );
-        return ResponseEntity.status(HttpStatus.CREATED).body(accessTokenResponse);
+        return ResponseEntity.ok(accessTokenResponse);
     }
 
     @DeleteMapping(value = "/logout")

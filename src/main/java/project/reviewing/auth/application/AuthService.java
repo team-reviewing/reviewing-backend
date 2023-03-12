@@ -3,16 +3,14 @@ package project.reviewing.auth.application;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import project.reviewing.auth.application.response.GithubLoginResponse;
+import project.reviewing.auth.application.response.LoginGithubResponse;
 import project.reviewing.auth.application.response.RefreshResponse;
 import project.reviewing.auth.infrastructure.response.Profile;
 import project.reviewing.auth.domain.RefreshToken;
 import project.reviewing.auth.domain.RefreshTokenRepository;
 import project.reviewing.auth.infrastructure.TokenProvider;
-import project.reviewing.common.exception.ErrorType;
 import project.reviewing.member.domain.Member;
 import project.reviewing.member.domain.MemberRepository;
-import project.reviewing.member.exception.MemberException;
 
 
 @Transactional
@@ -25,35 +23,25 @@ public class AuthService {
     private final OauthClient oauthClient;
     private final TokenProvider tokenProvider;
 
-    public GithubLoginResponse githubLogin(final String authorizationCode) {
-        boolean isCreated = false;
-
+    public LoginGithubResponse loginGithub(final String authorizationCode) {
         final Profile profile = oauthClient.getProfileByAuthorizationCode(authorizationCode);
         Member member = memberRepository.findByGithubId(profile.getId());
 
         if (member == null) {
-            member = memberRepository.save(Member.builder()
-                    .githubId(profile.getId())
-                    .username(profile.getUsername())
-                    .email(profile.getEmail())
-                    .imageURL(profile.getImageURL())
-                    .githubURL(profile.getGithubURL())
-                    .introduction("")
-                    .build());
-            isCreated = true;
+            member = memberRepository.save(
+                    new Member(
+                            profile.getId(), profile.getUsername(), profile.getEmail(),
+                            profile.getImageUrl(), profile.getGithubUrl(), ""
+                    ));
         } else {
-            member.updateGithubURL(profile.getGithubURL());
-        }
-
-        if (member == null) {
-            throw new MemberException(ErrorType.NOT_FOUND_MEMBER);
+            member.updateGithubURL(profile.getGithubUrl());
         }
 
         final String accessToken = tokenProvider.createAccessToken(member.getId());
         final RefreshToken refreshToken = tokenProvider.createRefreshToken(member.getId());
 
         refreshTokenRepository.save(refreshToken);
-        return new GithubLoginResponse(member.getId(), accessToken, refreshToken.getTokenString(), isCreated);
+        return new LoginGithubResponse(member.getId(), accessToken, refreshToken.getToken());
     }
 
     public RefreshResponse refreshTokens(final Long memberId) {
@@ -61,7 +49,7 @@ public class AuthService {
         final RefreshToken refreshToken = tokenProvider.createRefreshToken(memberId);
 
         refreshTokenRepository.save(refreshToken);
-        return new RefreshResponse(accessToken, refreshToken.getTokenString());
+        return new RefreshResponse(accessToken, refreshToken.getToken());
     }
 
     public void removeRefreshToken(final Long memberId) {

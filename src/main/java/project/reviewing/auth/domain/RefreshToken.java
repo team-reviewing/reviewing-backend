@@ -1,5 +1,6 @@
 package project.reviewing.auth.domain;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -11,7 +12,7 @@ import java.time.LocalDateTime;
 import java.util.TimeZone;
 
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class RefreshToken {
 
@@ -19,15 +20,15 @@ public class RefreshToken {
     @Column(name = "member_id")
     private Long id;
 
-    @Column(name = "token_string", nullable = false, unique = true)
-    private String tokenString;
+    @Column(nullable = false, unique = true)
+    private String token;
 
-    @Column(name = "issued_at", nullable = false)
+    @Column(nullable = false)
     private LocalDateTime issuedAt;
 
-    public RefreshToken(final Long memberId, final String tokenString, final Long issuedAt) {
+    public RefreshToken(final Long memberId, final String token, final Long issuedAt) {
         this.id = memberId;
-        this.tokenString = tokenString;
+        this.token = token;
         this.issuedAt = LocalDateTime.ofInstant(Instant.ofEpochMilli(issuedAt), TimeZone.getDefault().toZoneId());
     }
 }

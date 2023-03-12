@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS member
 CREATE TABLE IF NOT EXISTS refresh_token
 (
     member_id       BIGINT          PRIMARY KEY,
-    token_string    VARCHAR(255)    NOT NULL UNIQUE,
+    token    VARCHAR(255)    NOT NULL UNIQUE,
     issued_at       DATETIME        NOT NULL,
     FOREIGN KEY (member_id) REFERENCES member (id)
 );

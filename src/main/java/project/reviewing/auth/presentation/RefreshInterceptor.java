@@ -34,13 +34,13 @@ public class RefreshInterceptor implements HandlerInterceptor {
             return true;
         }
 
-        final String tokenString = extractRefreshTokenString(request)
+        final String token = extractRefreshTokenString(request)
                 .orElseThrow(() -> new InvalidTokenException(ErrorType.INVALID_TOKEN));
 
-        final Claims claims = tokenProvider.parseRefreshToken(tokenString);
+        final Claims claims = tokenProvider.parseRefreshToken(token);
         final Long id = (long) (int) claims.get("id");
 
-        if (isInvalidInDB(id, tokenString)) {
+        if (isInvalidInDB(id, token)) {
             refreshTokenRepository.deleteById(id);
             throw new InvalidTokenException(ErrorType.INVALID_TOKEN);
         }
@@ -63,8 +63,8 @@ public class RefreshInterceptor implements HandlerInterceptor {
         return Optional.empty();
     }
 
-    private boolean isInvalidInDB(final Long id, final String tokenString) {
+    private boolean isInvalidInDB(final Long id, final String token) {
         final Optional<RefreshToken> refreshToken = refreshTokenRepository.findById(id);
-        return refreshToken.isEmpty() || !refreshToken.get().getTokenString().equals(tokenString);
+        return refreshToken.isEmpty() || !refreshToken.get().getToken().equals(token);
     }
 }

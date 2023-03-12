@@ -20,9 +20,9 @@ public class AuthorizationExtractor {
         return extractTokenString(headerValue.split(" "));
     }
 
-    private static Optional<String> extractTokenString(final String[] valueStrings) {
-        if (valueStrings.length == 2 && valueStrings[IDX_TYPE].equals(TYPE_BEARER)) {
-            return Optional.of(valueStrings[IDX_VALUE]);
+    private static Optional<String> extractTokenString(final String[] values) {
+        if (values.length == 2 && values[IDX_TYPE].equals(TYPE_BEARER)) {
+            return Optional.of(values[IDX_VALUE]);
         }
         return Optional.empty();
     }

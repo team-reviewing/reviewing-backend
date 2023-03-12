@@ -13,10 +13,10 @@ public class GithubProfileResponse {
     private String login;
 
     @JsonProperty(value = "avatar_url")
-    private String avatarURL;
+    private String avatarUrl;
 
     @JsonProperty(value = "html_url")
-    private String htmlURL;
+    private String htmlUrl;
 
     private String email;
 }
