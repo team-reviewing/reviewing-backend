@@ -1,7 +1,7 @@
 package project.reviewing.auth.presentation;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import project.reviewing.auth.application.AuthService;
@@ -24,41 +24,39 @@ public class AuthController {
     private final AuthService authService;
     private final TokenProvider tokenProvider;
 
+    @ResponseStatus(HttpStatus.OK)
     @PostMapping(value = "/login/github")
-    ResponseEntity<AccessTokenResponse> oauthloginGithub(
+    public AccessTokenResponse oauthloginGithub(
             @RequestBody @NotBlank final String authorizationCode, final HttpServletResponse response
     ) {
         LoginGithubResponse loginGithubResponse = authService.loginGithub(authorizationCode);
-
-        final AccessTokenResponse accessTokenResponse = new AccessTokenResponse(loginGithubResponse.getAccessToken());
 
         response.addCookie(
                 CookieProvider.createRefreshTokenCookie(
                         loginGithubResponse.getRefreshToken(), tokenProvider.getRefreshTokenValidTime()
                 )
         );
-        return ResponseEntity.ok(accessTokenResponse);
+        return new AccessTokenResponse(loginGithubResponse.getAccessToken());
     }
 
+    @ResponseStatus(HttpStatus.OK)
     @PostMapping(value = "/refresh")
-    ResponseEntity<AccessTokenResponse> refreshTokens(
+    public AccessTokenResponse refreshTokens(
             final HttpServletRequest request, final HttpServletResponse response
     ) {
         RefreshResponse refreshResponse = authService.refreshTokens((Long) request.getAttribute("id"));
-
-        final AccessTokenResponse accessTokenResponse = new AccessTokenResponse(refreshResponse.getAccessToken());
 
         response.addCookie(
                 CookieProvider.createRefreshTokenCookie(
                         refreshResponse.getRefreshToken(), tokenProvider.getRefreshTokenValidTime()
                 )
         );
-        return ResponseEntity.ok(accessTokenResponse);
+        return new AccessTokenResponse(refreshResponse.getAccessToken());
     }
 
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping(value = "/logout")
-    ResponseEntity<?> logout(final HttpServletRequest request) {
+    public void logout(final HttpServletRequest request) {
         authService.removeRefreshToken((long) (int) request.getAttribute("id"));
-        return ResponseEntity.noContent().build();
     }
 }

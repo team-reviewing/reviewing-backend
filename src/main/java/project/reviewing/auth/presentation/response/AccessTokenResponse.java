@@ -1,5 +1,8 @@
 package project.reviewing.auth.presentation.response;
 
+import lombok.Getter;
+
+@Getter
 public class AccessTokenResponse {
 
     private final String accessToken;
