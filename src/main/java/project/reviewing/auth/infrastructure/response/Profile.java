@@ -1,4 +1,4 @@
-package project.reviewing.auth.domain;
+package project.reviewing.auth.infrastructure.response;
 
 import lombok.Getter;
 

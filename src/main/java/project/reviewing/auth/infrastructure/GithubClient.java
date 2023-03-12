@@ -5,7 +5,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import project.reviewing.auth.application.OauthClient;
-import project.reviewing.auth.domain.Profile;
+import project.reviewing.auth.infrastructure.response.Profile;
 import project.reviewing.auth.exception.GithubClientException;
 import project.reviewing.auth.infrastructure.request.GithubAuthRequest;
 import project.reviewing.auth.infrastructure.response.GithubAuthResponse;
