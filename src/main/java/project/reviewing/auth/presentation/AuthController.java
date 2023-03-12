@@ -10,9 +10,8 @@ import project.reviewing.auth.application.response.GithubLoginResponse;
 import project.reviewing.auth.application.response.RefreshResponse;
 import project.reviewing.auth.infrastructure.TokenProvider;
 import project.reviewing.auth.presentation.response.AccessTokenResponse;
-import project.reviewing.common.util.CookieType;
+import project.reviewing.common.util.CookieProvider;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
@@ -34,7 +33,11 @@ public class AuthController {
 
         final AccessTokenResponse accessTokenResponse = new AccessTokenResponse(githubLoginResponse.getAccessToken());
 
-        response.addCookie(createRefreshTokenCookie(githubLoginResponse.getRefreshToken()));
+        response.addCookie(
+                CookieProvider.createRefreshTokenCookie(
+                        githubLoginResponse.getRefreshToken(), tokenProvider.getRefreshTokenValidTime()
+                )
+        );
         return githubLoginResponse.isCreated() ?
                 ResponseEntity.created(URI.create("/members/" + githubLoginResponse.getMemberId())).body(accessTokenResponse)
                 : ResponseEntity.ok(accessTokenResponse);
@@ -46,7 +49,11 @@ public class AuthController {
 
         final AccessTokenResponse accessTokenResponse = new AccessTokenResponse(refreshResponse.getAccessToken());
 
-        response.addCookie(createRefreshTokenCookie(refreshResponse.getRefreshToken()));
+        response.addCookie(
+                CookieProvider.createRefreshTokenCookie(
+                        refreshResponse.getRefreshToken(), tokenProvider.getRefreshTokenValidTime()
+                )
+        );
         return ResponseEntity.status(HttpStatus.CREATED).body(accessTokenResponse);
     }
 
@@ -54,13 +61,5 @@ public class AuthController {
     ResponseEntity<?> logout(final HttpServletRequest request) {
         authService.removeRefreshToken((long) (int) request.getAttribute("id"));
         return ResponseEntity.noContent().build();
-    }
-
-    private Cookie createRefreshTokenCookie(final String refreshToken) {
-        Cookie cookie = new Cookie(CookieType.REFRESH_TOKEN, refreshToken);
-        cookie.setMaxAge((int) tokenProvider.getRefreshTokenValidTime());
-        cookie.setPath("/auth/refresh");
-        cookie.setHttpOnly(true);
-        return cookie;
     }
 }

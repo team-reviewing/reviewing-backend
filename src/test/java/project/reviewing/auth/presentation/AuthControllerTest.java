@@ -76,7 +76,7 @@ public class AuthControllerTest extends ControllerTest {
 
         // when then
         mockMvc.perform(post("/auth/refresh")
-                        .cookie(new Cookie(CookieType.REFRESH_TOKEN, refreshToken.getTokenString())))
+                        .cookie(new Cookie(CookieType.REFRESH_TOKEN.getValue(), refreshToken.getTokenString())))
                 .andExpect(status().isCreated())
                 .andExpect(content().json(objectMapper.writeValueAsString(expectedAccessTokenResponse)))
                 .andExpect(cookie().value("refresh_token", "New Refresh Token"))
@@ -100,7 +100,7 @@ public class AuthControllerTest extends ControllerTest {
 
         // when then
         mockMvc.perform(post("/auth/refresh")
-                        .cookie(new Cookie(CookieType.REFRESH_TOKEN, refreshToken.getTokenString())))
+                        .cookie(new Cookie(CookieType.REFRESH_TOKEN.getValue(), refreshToken.getTokenString())))
                 .andExpect(status().isUnauthorized())
                 .andDo(print());
     }
@@ -118,7 +118,7 @@ public class AuthControllerTest extends ControllerTest {
 
         // when then
         mockMvc.perform(post("/auth/refresh")
-                        .cookie(new Cookie(CookieType.REFRESH_TOKEN, refreshToken.getTokenString())))
+                        .cookie(new Cookie(CookieType.REFRESH_TOKEN.getValue(), refreshToken.getTokenString())))
                 .andExpect(status().isUnauthorized())
                 .andDo(print());
     }

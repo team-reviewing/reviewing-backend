@@ -56,7 +56,7 @@ public class RefreshInterceptor implements HandlerInterceptor {
         }
 
         for (Cookie cookie : cookies) {
-            if (cookie.getName().equals(CookieType.REFRESH_TOKEN)) {
+            if (cookie.getName().equals(CookieType.REFRESH_TOKEN.getValue())) {
                 return Optional.of(cookie.getValue());
             }
         }

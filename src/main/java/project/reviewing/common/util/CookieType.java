@@ -1,6 +1,14 @@
 package project.reviewing.common.util;
 
-public class CookieType {
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
-    public static final String REFRESH_TOKEN = "refresh_token";
+@Getter
+@RequiredArgsConstructor
+public enum CookieType {
+
+    REFRESH_TOKEN("refresh_token"),
+    ;
+
+    private final String value;
 }
