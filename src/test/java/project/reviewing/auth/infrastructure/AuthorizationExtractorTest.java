@@ -21,10 +21,7 @@ public class AuthorizationExtractorTest {
 
         Optional<String> result = AuthorizationExtractor.extract(httpServletRequest);
 
-        assertAll(
-                () -> assertThat(result).isNotEmpty(),
-                () -> assertThat(result.get()).isEqualTo(token)
-        );
+        assertThat(result.get()).isEqualTo(token);
     }
 
     @DisplayName("Request에 Authorization header가 포함되지 않아 Token 추출을 실패한다.")

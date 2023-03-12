@@ -39,15 +39,11 @@ public class AuthServiceTest {
 
     private AuthService authService;
 
-    @BeforeEach
-    void setUp() {
-        authService = new AuthService(memberRepository, refreshTokenRepository, oauthClient, tokenProvider);
-    }
-
     @DisplayName("Github Authorization Code를 받아 로그인 한다.")
     @Test
     void githubLoginTest() {
         // given
+        authService = new AuthService(memberRepository, refreshTokenRepository, oauthClient, tokenProvider);
         final String authorizationCode = "code";
         final Member member = createMember(
                 1L, "Tom", "Tom@gmail.com", "https://github.com/image", "https://github.com/Tom", "소개글"
@@ -77,21 +73,19 @@ public class AuthServiceTest {
     @Test
     void githubProfileUpdateTest() {
         // given
+        authService = new AuthService(memberRepository, refreshTokenRepository, oauthClient, tokenProvider);
         final String authorizationCode = "code";
         final Member member = createMember(
                 1L, "Tom", "Tom@gmail.com", "https://github.com/Tom/image", "https://github.com/Tom", "소개글"
         );
-
         final Member expectedMember = new Member(
                 member.getGithubId(), "Bob", "Bob@gmail.com",
                 "https://github.com/Bob/image", "https://github.com/Bob", "소개글"
         );
-
         final Profile profile = new Profile(
                 expectedMember.getGithubId(), expectedMember.getUsername(),
                 expectedMember.getEmail(), "imageUrl", expectedMember.getGithubUrl()
         );
-
         final String accessToken = "accessToken";
         final RefreshToken refreshToken = new RefreshToken(member.getId(), "refreshToken", 600L);
 
@@ -101,12 +95,11 @@ public class AuthServiceTest {
 
         // when
         authService.loginGithub(authorizationCode);
-        final Optional<Member> updatedMember = memberRepository.findById(member.getId());
+        final Member updatedMember = memberRepository.findById(member.getId()).get();
 
         // then
         assertAll(
-                () -> assertThat(updatedMember.isPresent()).isEqualTo(true),
-                () -> assertThat(updatedMember.get().getGithubUrl()).isEqualTo(expectedMember.getGithubUrl())
+                () -> assertThat(updatedMember.getGithubUrl()).isEqualTo(expectedMember.getGithubUrl())
         );
     }
 
