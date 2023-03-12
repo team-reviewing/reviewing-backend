@@ -30,7 +30,7 @@ public class Member {
     @Column(name = "image_url")
     private String imageURL;
 
-    //@Column(name = "github_url", nullable = false, unique = true)
+    @Column(name = "github_url", nullable = false, unique = true)
     private String githubURL;
 
     private String introduction;

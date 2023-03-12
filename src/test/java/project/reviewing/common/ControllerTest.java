@@ -14,7 +14,6 @@ import project.reviewing.auth.domain.RefreshTokenRepository;
 import project.reviewing.auth.infrastructure.TokenProvider;
 import project.reviewing.auth.presentation.AuthInterceptor;
 import project.reviewing.auth.presentation.RefreshInterceptor;
-import project.reviewing.member.application.MemberService;
 
 @WebMvcTest(includeFilters = @Filter(type = FilterType.ANNOTATION, classes = RestController.class))
 @Import({
@@ -30,9 +29,6 @@ public class ControllerTest {
 
     @MockBean
     protected AuthService authService;
-
-    @MockBean
-    protected MemberService memberService;
 
     @Autowired
     protected TokenProvider tokenProvider;

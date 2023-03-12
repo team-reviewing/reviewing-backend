@@ -85,6 +85,44 @@ public class AuthControllerTest extends ControllerTest {
                 .andDo(print());
     }
 
+    @DisplayName("만료된 Refresh Token으로 Access Token을 재발급 받으면 401 반환한다.")
+    @Test
+    void refreshTokenExpirationTest() throws Exception {
+        // given
+        final Long memberId = 1L;
+        final RefreshToken refreshToken = new RefreshToken(
+                memberId, tokenProvider.createRefreshTokenStringUsingTime(memberId, 0L), 0L
+        );
+        final RefreshResponse newRefreshResponse = new RefreshResponse("New Access Token", "New Refresh Token");
+
+        given(authService.refreshTokens(memberId)).willReturn(newRefreshResponse);
+        given(refreshTokenRepository.findById(refreshToken.getId())).willReturn(Optional.of(refreshToken));
+
+        // when then
+        mockMvc.perform(post("/auth/refresh")
+                        .cookie(new Cookie(CookieType.REFRESH_TOKEN, refreshToken.getTokenString())))
+                .andExpect(status().isUnauthorized())
+                .andDo(print());
+    }
+
+    @DisplayName("DB에 없는(유효하지 않은) Refresh Token으로 Access Token을 재발급 받으면 401 반환한다.")
+    @Test
+    void refreshTokenNotInDBTest() throws Exception {
+        // given
+        final Long memberId = 1L;
+        final RefreshToken refreshToken = tokenProvider.createRefreshToken(memberId);
+        final RefreshResponse newRefreshResponse = new RefreshResponse("New Access Token", "New Refresh Token");
+
+        given(authService.refreshTokens(memberId)).willReturn(newRefreshResponse);
+        given(refreshTokenRepository.findById(refreshToken.getId())).willReturn(Optional.empty());
+
+        // when then
+        mockMvc.perform(post("/auth/refresh")
+                        .cookie(new Cookie(CookieType.REFRESH_TOKEN, refreshToken.getTokenString())))
+                .andExpect(status().isUnauthorized())
+                .andDo(print());
+    }
+
     @DisplayName("유효한 Access Token으로 logout 한다.")
     @Test
     void logoutTest() throws Exception {
@@ -94,6 +132,20 @@ public class AuthControllerTest extends ControllerTest {
         mockMvc.perform(delete("/auth/logout")
                         .header("Authorization", "Bearer " + accessToken))
                 .andExpect(status().isNoContent())
+                .andDo(print());
+    }
+
+    @DisplayName("만료된 Access Token으로 logout 하면 401 반환한다.")
+    @Test
+    void accessTokenExpirationTest() throws Exception {
+        // given
+        final Long memberId = 1L;
+        String accessToken = tokenProvider.createAccessTokenUsingTime(memberId, 0L);
+
+        // when then
+        mockMvc.perform(delete("/auth/logout")
+                        .header("Authorization", "Bearer " + accessToken))
+                .andExpect(status().isUnauthorized())
                 .andDo(print());
     }
 }
