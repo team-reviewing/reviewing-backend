@@ -73,6 +73,7 @@ public class AuthControllerTest extends ControllerTest {
 
         given(authService.refreshTokens(memberId)).willReturn(newRefreshResponse);
         given(refreshTokenRepository.findById(refreshToken.getId())).willReturn(Optional.of(refreshToken));
+        given(authContext.getId()).willReturn(memberId);
 
         // when then
         mockMvc.perform(post("/auth/refresh")
@@ -128,6 +129,8 @@ public class AuthControllerTest extends ControllerTest {
     void logoutTest() throws Exception {
         final Long memberId = 1L;
         final String accessToken = tokenProvider.createAccessToken(memberId);
+
+        given(authContext.getId()).willReturn(memberId);
 
         mockMvc.perform(delete("/auth/logout")
                         .header("Authorization", "Bearer " + accessToken))

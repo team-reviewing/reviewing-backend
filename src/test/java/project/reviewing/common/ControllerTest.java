@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import project.reviewing.auth.application.AuthService;
 import project.reviewing.auth.domain.RefreshTokenRepository;
 import project.reviewing.auth.infrastructure.TokenProvider;
+import project.reviewing.auth.presentation.AuthContext;
 import project.reviewing.auth.presentation.AuthInterceptor;
 import project.reviewing.auth.presentation.RefreshInterceptor;
 
@@ -29,6 +30,9 @@ public class ControllerTest {
 
     @MockBean
     protected AuthService authService;
+
+    @MockBean
+    protected AuthContext authContext;
 
     @Autowired
     protected TokenProvider tokenProvider;

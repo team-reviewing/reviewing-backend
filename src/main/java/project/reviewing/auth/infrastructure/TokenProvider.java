@@ -42,7 +42,7 @@ public class TokenProvider {
         );
     }
 
-    public Claims parseAccessToken(final String accessToken) {
+    public Long parseAccessToken(final String accessToken) {
         try {
             return parseJwt(accessToken, accessTokenSecretKey);
         } catch (JwtException e) {
@@ -50,7 +50,7 @@ public class TokenProvider {
         }
     }
 
-    public Claims parseRefreshToken(final String refreshToken) {
+    public Long parseRefreshToken(final String refreshToken) {
         try {
             return parseJwt(refreshToken, refreshTokenSecretKey);
         } catch (JwtException e) {
@@ -80,12 +80,16 @@ public class TokenProvider {
                 .compact();
     }
 
-    private Claims parseJwt(String jwt, SecretKey secretKey) throws JwtException {
-        return Jwts.parserBuilder()
-                .setSigningKey(secretKey)
-                .build()
-                .parseClaimsJws(jwt)
-                .getBody();
+    private Long parseJwt(final String jwt, final SecretKey secretKey) throws JwtException {
+        return Long.valueOf(
+                Jwts.parserBuilder()
+                        .setSigningKey(secretKey)
+                        .build()
+                        .parseClaimsJws(jwt)
+                        .getBody()
+                        .get("id")
+                        .toString()
+        );
     }
 
     public long getRefreshTokenValidTime() {

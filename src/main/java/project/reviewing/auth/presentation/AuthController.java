@@ -42,9 +42,9 @@ public class AuthController {
     @ResponseStatus(HttpStatus.OK)
     @PostMapping(value = "/refresh")
     public AccessTokenResponse refreshTokens(
-            final HttpServletRequest request, final HttpServletResponse response
+            @AuthenticatedMember  final AuthContext authContext, final HttpServletResponse response
     ) {
-        RefreshResponse refreshResponse = authService.refreshTokens((Long) request.getAttribute("id"));
+        RefreshResponse refreshResponse = authService.refreshTokens(authContext.getId());
 
         response.addCookie(
                 CookieProvider.createRefreshTokenCookie(
@@ -56,7 +56,7 @@ public class AuthController {
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping(value = "/logout")
-    public void logout(final HttpServletRequest request) {
-        authService.removeRefreshToken((long) (int) request.getAttribute("id"));
+    public void logout(@AuthenticatedMember  final AuthContext authContext) {
+        authService.removeRefreshToken(authContext.getId());
     }
 }

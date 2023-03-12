@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 public class AuthInterceptor implements HandlerInterceptor {
 
     private final TokenProvider tokenProvider;
+    private final AuthContext authContext;
 
     @Override
     public boolean preHandle(
@@ -30,9 +31,7 @@ public class AuthInterceptor implements HandlerInterceptor {
         final String accessToken = AuthorizationExtractor.extract(request)
                 .orElseThrow(() -> new InvalidTokenException(ErrorType.INVALID_TOKEN));
 
-        final Claims claims = tokenProvider.parseAccessToken(accessToken);
-
-        request.setAttribute("id", claims.get("id"));
+        authContext.setId(tokenProvider.parseAccessToken(accessToken));
         return true;
     }
 }
