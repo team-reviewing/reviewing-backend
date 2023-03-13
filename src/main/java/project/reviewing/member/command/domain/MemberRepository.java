@@ -7,4 +7,5 @@ public interface MemberRepository extends Repository<Member, Long> {
 
     Member save(Member entity);
     Optional<Member> findById(Long id);
+    Optional<Member> findByGithubId(Long githubId);
 }

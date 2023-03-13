@@ -4,7 +4,7 @@ create table IF NOT EXISTS member (
     username        VARCHAR(255)    NOT NULL    UNIQUE,
     email           VARCHAR(255)    UNIQUE,
     image_url       VARCHAR(255),
-    profile_url     VARCHAR(255),
+    profile_url     VARCHAR(255)    NOT NULL    UNIQUE,
     is_reviewer     BOOLEAN         DEFAULT 0,
     PRIMARY KEY (id),
 ) ENGINE = InnoDB
@@ -18,6 +18,13 @@ create table IF NOT EXISTS reviewer (
     PRIMARY KEY (id),
     FOREIGN KEY (member_id) REFERENCES member (id)
 ) ENGINE = InnoDB
+
+CREATE TABLE IF NOT EXISTS refresh_token (
+    member_id       BIGINT          PRIMARY KEY,
+    token           VARCHAR(255)    NOT NULL    UNIQUE,
+    issued_at       DATETIME        NOT NULL,
+    FOREIGN KEY (member_id) REFERENCES member (id)
+)
 
 create table IF NOT EXISTS category (
     id              BIGINT          NOT NULL    AUTO_INCREMENT,

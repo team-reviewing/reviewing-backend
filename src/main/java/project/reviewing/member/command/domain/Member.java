@@ -33,6 +33,7 @@ public class Member {
 
     private String imageUrl;
 
+    @Column(nullable = false, unique = true)
     private String profileUrl;
 
     private boolean isReviewer;
@@ -47,6 +48,10 @@ public class Member {
         this.imageUrl = imageUrl;
         this.profileUrl = profileUrl;
         this.isReviewer = false;
+    }
+
+    public void updateLoginInformation(final Member member) {
+        this.profileUrl = member.getProfileUrl();
     }
 
     public void update(final Member member) {

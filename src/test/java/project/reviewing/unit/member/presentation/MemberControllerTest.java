@@ -1,49 +1,31 @@
 package project.reviewing.unit.member.presentation;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.BDDMockito.willDoNothing;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.ComponentScan.Filter;
-import org.springframework.context.annotation.FilterType;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.RestController;
-import project.reviewing.member.command.application.MemberService;
+import project.reviewing.member.command.application.request.MyInformationUpdateRequest;
 import project.reviewing.member.command.application.request.ReviewerRegistrationRequest;
 import project.reviewing.member.command.application.request.ReviewerUpdateRequest;
-import project.reviewing.member.command.application.request.MyInformationUpdateRequest;
-import project.reviewing.member.query.application.MemberQueryService;
+import project.reviewing.unit.ControllerTest;
 
 @DisplayName("MemberController 는 ")
-@WebMvcTest(includeFilters = @Filter(type = FilterType.ANNOTATION, classes = RestController.class))
-public class MemberControllerTest {
-
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    @MockBean
-    private MemberService memberService;
-
-    @MockBean
-    private MemberQueryService memberQueryService;
+public class MemberControllerTest extends ControllerTest {
 
     @DisplayName("내 정보 수정 시")
     @Nested
@@ -52,9 +34,13 @@ public class MemberControllerTest {
         @DisplayName("정상적으로 내 정보를 수정하는 경우 204를 반환한다.")
         @Test
         void updateMyInformation() throws Exception {
+            final String token = "Bearer " + tokenProvider.createAccessToken(1L);
             final MyInformationUpdateRequest request = new MyInformationUpdateRequest("username", "email@gmail.com");
 
+            willDoNothing().given(memberService).update(anyLong(), any());
+
             mockMvc.perform(patch("/members/me")
+                            .header(HttpHeaders.AUTHORIZATION, token)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andDo(print())
@@ -179,7 +165,10 @@ public class MemberControllerTest {
     }
 
     private void assertValidation(final MockHttpServletRequestBuilder url, final Object request) throws Exception {
+        final String token = "Bearer " + tokenProvider.createAccessToken(1L);
+
         mockMvc.perform(url
+                        .header(HttpHeaders.AUTHORIZATION, token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request))
                 )

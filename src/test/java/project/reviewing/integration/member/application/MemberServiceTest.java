@@ -8,28 +8,19 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import project.reviewing.common.exception.ErrorType;
+import project.reviewing.integration.IntegrationTest;
 import project.reviewing.member.command.application.MemberService;
 import project.reviewing.member.command.application.request.MyInformationUpdateRequest;
 import project.reviewing.member.command.application.request.ReviewerRegistrationRequest;
 import project.reviewing.member.command.application.request.ReviewerUpdateRequest;
 import project.reviewing.member.command.domain.Member;
-import project.reviewing.member.command.domain.MemberRepository;
 import project.reviewing.member.command.domain.Reviewer;
 import project.reviewing.member.exception.MemberNotFoundException;
 
 @DisplayName("MemberService 는 ")
-@DataJpaTest
-public class MemberServiceTest {
-
-    @Autowired
-    private MemberRepository memberRepository;
-
-    @Autowired
-    private TestEntityManager entityManager;
+public class MemberServiceTest extends IntegrationTest {
 
     @DisplayName("내 정보 수정 시")
     @Nested
