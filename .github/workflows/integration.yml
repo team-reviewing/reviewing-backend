@@ -17,7 +17,13 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-
+    env:
+      github-client-id: ${{secrets.CLIENT_ID_GITHUB}}
+      github-client-secrets: ${{secrets.CLIENT_SECRETS_GITHUB}}
+      access-token-secret-key: ${{secrets.ACCESS_TOKEN_SECRET_KEY}}
+      access-token-valid-time: ${{secrets.ACCESS_TOKEN_VALID_TIME}}
+      refresh-token-secret-key: ${{secrets.REFRESH_TOKEN_SECRET_KEY}}
+      refresh-token-valid-time: ${{secrets.REFRESH_TOKEN_VALID_TIME}}
     steps:
 
       - name: Checkout
@@ -33,4 +39,4 @@ jobs:
         run: ./gradlew build --exclude-task test
 
       - name: Test
-        run: ./gradlew test
+        run: ./gradlew test -Dgithub.api.client-id=${{env.github-client-id}} -Dgithub.api.client-secrets=${{env.github-client-secrets}} -Djwt.access-token.secret-key=${{env.access-token-secret-key}} -Djwt.access-token.valid-time=${{env.access-token-valid-time}} -Djwt.refresh-token.secret-key=${{env.refresh-token-secret-key}} -Djwt.refresh-token.valid-time=${{env.refresh-token-valid-time}}
