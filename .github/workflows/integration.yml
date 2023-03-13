@@ -15,7 +15,6 @@ permissions:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
     env:
       github-client-id: ${{secrets.CLIENT_ID_GITHUB}}
@@ -25,7 +24,6 @@ jobs:
       refresh-token-secret-key: ${{secrets.REFRESH_TOKEN_SECRET_KEY}}
       refresh-token-valid-time: ${{secrets.REFRESH_TOKEN_VALID_TIME}}
     steps:
-
       - name: Checkout
         uses: actions/checkout@v3
 
