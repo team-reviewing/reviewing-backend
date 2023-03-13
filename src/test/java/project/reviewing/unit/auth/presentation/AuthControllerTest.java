@@ -23,9 +23,6 @@ public class AuthControllerTest extends ControllerTest {
     @Test
     void validationTest() throws Exception {
         final String authorizationCode = " ";
-        final GithubLoginResponse githubLoginResponse = new GithubLoginResponse(1L, "Access Token", "Refresh Token");
-
-        given(authService.loginGithub(authorizationCode)).willReturn(githubLoginResponse);
 
         mockMvc.perform(post("/auth/login/github")
                         .content(authorizationCode)

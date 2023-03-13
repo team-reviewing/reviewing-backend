@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import project.reviewing.auth.presentation.AuthenticatedMember;
 import project.reviewing.member.command.application.MemberService;
 import project.reviewing.member.command.application.request.MyInformationUpdateRequest;
 import project.reviewing.member.command.application.request.ReviewerRegistrationRequest;
@@ -27,14 +28,14 @@ public class MemberController {
     private final MemberQueryService memberQueryService;
 
     @GetMapping("/me")
-    public MyInformationResponse findMyInformation(final Long memberId) {
+    public MyInformationResponse findMyInformation(@AuthenticatedMember final Long memberId) {
         return memberQueryService.findMember(memberId);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PatchMapping("/me")
     public void updateMember(
-            final Long memberId,
+            @AuthenticatedMember final Long memberId,
             @Valid @RequestBody final MyInformationUpdateRequest myInformationUpdateRequest
     ) {
         memberService.update(memberId, myInformationUpdateRequest);
@@ -42,21 +43,21 @@ public class MemberController {
 
     @PostMapping("/me/reviewer")
     public void registerReviewer(
-            final Long memberId,
+            @AuthenticatedMember final Long memberId,
             @Valid @RequestBody final ReviewerRegistrationRequest reviewerRegistrationRequest
     ) {
         memberService.registerReviewer(memberId, reviewerRegistrationRequest);
     }
 
     @GetMapping("/me/reviewer")
-    public ReviewerInformationResponse findReviewerInformation(final Long memberId) {
+    public ReviewerInformationResponse findReviewerInformation(@AuthenticatedMember final Long memberId) {
         return memberQueryService.findReviewerWithChoiceList(memberId);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PatchMapping("/me/reviewer")
     public void updateReviewer(
-            final Long memberId,
+            @AuthenticatedMember final Long memberId,
             @Valid @RequestBody final ReviewerUpdateRequest reviewerUpdateRequest
     ) {
         memberService.updateReviewer(memberId, reviewerUpdateRequest);
@@ -64,7 +65,7 @@ public class MemberController {
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PatchMapping("/me/reviewer-status")
-    public void changeReviewerStatus(final Long memberId) {
+    public void changeReviewerStatus(@AuthenticatedMember final Long memberId) {
         memberService.changeReviewerStatus(memberId);
     }
 }
