@@ -21,7 +21,7 @@ import project.reviewing.member.query.dao.data.ReviewerData;
 import project.reviewing.tag.command.application.response.TagResponse;
 import project.reviewing.tag.command.domain.TagRepository;
 import project.reviewing.tag.query.dao.TagDao;
-import project.reviewing.tag.query.dao.TagData;
+import project.reviewing.tag.query.dao.data.TagData;
 
 @RequiredArgsConstructor
 @Transactional(readOnly = true)

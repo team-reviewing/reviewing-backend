@@ -13,7 +13,8 @@ import project.reviewing.member.command.domain.Member;
 import project.reviewing.member.command.domain.Reviewer;
 import project.reviewing.tag.command.domain.Category;
 import project.reviewing.tag.command.domain.Tag;
-import project.reviewing.tag.query.dao.TagData;
+import project.reviewing.tag.query.dao.data.TagData;
+import project.reviewing.tag.query.dao.data.TagWithCategoryData;
 
 @DisplayName("TagDao 는")
 public class TagDaoTest extends IntegrationTest {
@@ -34,6 +35,15 @@ public class TagDaoTest extends IntegrationTest {
                 .usingRecursiveFieldByFieldElementComparator()
                 .extracting("id")
                 .containsExactly(1L, 2L);
+    }
+
+    @DisplayName("카테고리와 태그가 존재하지 않으면 빈 값을 반환한다.")
+    @Test
+    void findNotExistCategoryAndTag() {
+        final List<TagWithCategoryData> actual = tagDao.findAll();
+
+        assertThat(actual).hasSize(0)
+                .isEqualTo(List.of());
     }
 
     private Member createMemberAndRegisterReviewer(final Member member, final Reviewer reviewer) {

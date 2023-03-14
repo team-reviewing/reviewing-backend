@@ -7,6 +7,8 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
+import project.reviewing.tag.query.dao.data.TagData;
+import project.reviewing.tag.query.dao.data.TagWithCategoryData;
 
 @RequiredArgsConstructor
 @Repository
@@ -23,17 +25,23 @@ public class TagDao {
         return jdbcTemplate.query(sql, params, rowMapper());
     }
 
-    public List<TagData> findAll() {
-        final String sql = "SELECT t.id, t.name "
-                + "FROM tag t";
-
-        return jdbcTemplate.query(sql, rowMapper());
+    public List<TagWithCategoryData> findAll() {
+        return List.of();
     }
 
     private RowMapper<TagData> rowMapper() {
         return (rs, rowNum) -> new TagData(
                 rs.getLong("id"),
                 rs.getString("name")
+        );
+    }
+
+    private RowMapper<TagWithCategoryData> rowMapperTwc() {
+        return (rs, rowNum) -> new TagWithCategoryData(
+                rs.getLong("category_id"),
+                rs.getString("category_name"),
+                rs.getLong("tag_id"),
+                rs.getString("tag_name")
         );
     }
 }
