@@ -1,18 +1,14 @@
 package project.reviewing.auth.config;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.context.annotation.RequestScope;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import project.reviewing.auth.presentation.AuthArgumentResolver;
-import project.reviewing.auth.presentation.AuthContext;
 import project.reviewing.auth.presentation.AuthInterceptor;
 import project.reviewing.auth.presentation.RefreshInterceptor;
-
-import java.util.List;
 
 @RequiredArgsConstructor
 @Configuration

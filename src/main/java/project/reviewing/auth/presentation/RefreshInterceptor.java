@@ -1,26 +1,25 @@
 package project.reviewing.auth.presentation;
 
-import io.jsonwebtoken.Claims;
+import java.util.Optional;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
-import project.reviewing.auth.domain.RefreshTokenRepository;
 import project.reviewing.auth.domain.RefreshToken;
+import project.reviewing.auth.domain.RefreshTokenRepository;
 import project.reviewing.auth.exception.InvalidTokenException;
 import project.reviewing.auth.infrastructure.TokenProvider;
 import project.reviewing.common.exception.ErrorType;
-import project.reviewing.common.util.CookieType;
-
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Component
 public class RefreshInterceptor implements HandlerInterceptor {
+
+    private static final String REFRESH_TOKEN = "refresh_token";
 
     private final TokenProvider tokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
@@ -56,7 +55,7 @@ public class RefreshInterceptor implements HandlerInterceptor {
         }
 
         for (Cookie cookie : cookies) {
-            if (cookie.getName().equals(CookieType.REFRESH_TOKEN.getValue())) {
+            if (cookie.getName().equals(REFRESH_TOKEN)) {
                 return Optional.of(cookie.getValue());
             }
         }
