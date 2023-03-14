@@ -12,12 +12,14 @@ import project.reviewing.member.command.domain.Member;
 import project.reviewing.member.command.domain.MemberRepository;
 import project.reviewing.member.exception.MemberNotFoundException;
 import project.reviewing.member.exception.ReviewerNotFoundException;
+import project.reviewing.member.query.application.response.MyInformationResponse;
 import project.reviewing.member.query.application.response.ReviewerInformationResponse;
 import project.reviewing.member.query.dao.MyInformationDao;
 import project.reviewing.member.query.dao.ReviewerDao;
 import project.reviewing.member.query.dao.data.MyInformation;
 import project.reviewing.member.query.dao.data.ReviewerData;
-import project.reviewing.member.query.application.response.MyInformationResponse;
+import project.reviewing.tag.command.application.response.TagResponse;
+import project.reviewing.tag.command.domain.TagRepository;
 import project.reviewing.tag.query.dao.TagDao;
 import project.reviewing.tag.query.dao.TagData;
 
@@ -30,6 +32,7 @@ public class MemberQueryService {
     private final ReviewerDao reviewerDao;
     private final TagDao tagDao;
     private final MemberRepository memberRepository;
+    private final TagRepository tagRepository;
 
     public MyInformationResponse findMember(final Long memberId) {
         final MyInformation myInformation = myInformationDao.findById(memberId)
@@ -52,7 +55,7 @@ public class MemberQueryService {
         response.addChoiceList(
                 Arrays.stream(Job.values()).map(Job::getValue).collect(Collectors.toList()),
                 Arrays.stream(Career.values()).map(Career::getCareer).collect(Collectors.toList()),
-                tagDao.findAll()
+                tagRepository.findAll().stream().map(TagResponse::from).collect(Collectors.toList())
         );
         return response;
     }

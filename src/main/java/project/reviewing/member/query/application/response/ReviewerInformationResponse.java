@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import project.reviewing.member.query.dao.data.ReviewerData;
+import project.reviewing.tag.command.application.response.TagResponse;
 import project.reviewing.tag.query.dao.TagData;
 
 @Getter
@@ -17,7 +18,7 @@ public class ReviewerInformationResponse {
     private String introduction;
     private List<String> jobList;
     private List<String> careerList;
-    private List<TagData> tagList;
+    private List<TagResponse> tagList;
 
     public static ReviewerInformationResponse from(final ReviewerData reviewerData, final List<TagData> techStack) {
         return new ReviewerInformationResponse(
@@ -29,7 +30,7 @@ public class ReviewerInformationResponse {
         return new ReviewerInformationResponse(null, null, List.of(), null);
     }
 
-    public void addChoiceList(final List<String> jobList, final List<String> careerList, final List<TagData> tagList) {
+    public void addChoiceList(final List<String> jobList, final List<String> careerList, final List<TagResponse> tagList) {
         this.jobList = jobList;
         this.careerList = careerList;
         this.tagList = tagList;
