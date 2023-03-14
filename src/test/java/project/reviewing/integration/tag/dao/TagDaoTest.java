@@ -24,17 +24,17 @@ public class TagDaoTest extends IntegrationTest {
     @Test
     void findTag() {
         final Category category = createCategory(new Category("백엔드"));
-        createTag(new Tag("Spring", category));
-        createTag(new Tag("Java", category));
+        final Tag tag1 = createTag(new Tag("Spring", category));
+        final Tag tag2 = createTag(new Tag("Java", category));
         final Member member = new Member(1L, "username", "email@gmail.com", "image", "profile");
-        final Reviewer reviewer = new Reviewer(Job.BACKEND, Career.JUNIOR, Set.of(1L, 2L), "안녕하세요");
+        final Reviewer reviewer = new Reviewer(Job.BACKEND, Career.JUNIOR, Set.of(tag1.getId(), tag2.getId()), "안녕하세요");
         final Member savedMember = createMemberAndRegisterReviewer(member, reviewer);
 
         final List<TagData> actual = tagDao.findByReviewerId(savedMember.getReviewer().getId());
 
         assertThat(actual).hasSize(2)
                 .extracting("id")
-                .containsExactly(1L, 2L);
+                .containsExactly(tag1.getId(), tag2.getId());
     }
 
     @DisplayName("카테고리와 태그가 존재하면 해당 값을 반환한다.")
@@ -71,8 +71,8 @@ public class TagDaoTest extends IntegrationTest {
     }
 
     private Member createMemberAndRegisterReviewer(final Member member, final Reviewer reviewer) {
-        final Member result = memberRepository.save(member);
         member.register(reviewer);
+        final Member result = memberRepository.save(member);
         entityManager.flush();
         entityManager.clear();
         return result;

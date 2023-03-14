@@ -5,7 +5,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import project.reviewing.member.query.dao.data.ReviewerData;
-import project.reviewing.tag.command.application.response.TagResponse;
+import project.reviewing.tag.query.application.response.TagResponse;
 import project.reviewing.tag.query.dao.data.TagData;
 
 @Getter
