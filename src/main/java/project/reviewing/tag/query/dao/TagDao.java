@@ -26,7 +26,11 @@ public class TagDao {
     }
 
     public List<TagWithCategoryData> findAll() {
-        return List.of();
+        final String sql = "SELECT c.id category_id, c.name category_name, t.id tag_id, t.name tag_name "
+                + "FROM tag t "
+                + "JOIN category c ON t.category_id = c.id";
+
+        return jdbcTemplate.query(sql, rowMapperTwc());
     }
 
     private RowMapper<TagData> rowMapper() {
