@@ -6,28 +6,15 @@ import java.util.Optional;
 import java.util.Set;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.context.annotation.ComponentScan.Filter;
-import org.springframework.context.annotation.FilterType;
-import org.springframework.stereotype.Repository;
+import project.reviewing.integration.IntegrationTest;
 import project.reviewing.member.command.domain.Career;
 import project.reviewing.member.command.domain.Job;
 import project.reviewing.member.command.domain.Member;
-import project.reviewing.member.command.domain.MemberRepository;
 import project.reviewing.member.command.domain.Reviewer;
-import project.reviewing.member.query.dao.ReviewerDao;
 import project.reviewing.member.query.dao.data.ReviewerData;
 
 @DisplayName("ReviewerDao 는")
-@DataJpaTest(includeFilters = @Filter(type = FilterType.ANNOTATION, classes = Repository.class))
-public class ReviewerDaoTest {
-
-    @Autowired
-    private ReviewerDao reviewerDao;
-
-    @Autowired
-    private MemberRepository memberRepository;
+public class ReviewerDaoTest extends IntegrationTest {
 
     @DisplayName("회원의 리뷰어 정보를 조회한다.")
     @Test

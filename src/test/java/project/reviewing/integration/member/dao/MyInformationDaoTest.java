@@ -6,25 +6,12 @@ import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.context.annotation.ComponentScan.Filter;
-import org.springframework.context.annotation.FilterType;
-import org.springframework.stereotype.Repository;
+import project.reviewing.integration.IntegrationTest;
 import project.reviewing.member.command.domain.Member;
-import project.reviewing.member.command.domain.MemberRepository;
 import project.reviewing.member.query.dao.data.MyInformation;
-import project.reviewing.member.query.dao.MyInformationDao;
 
 @DisplayName("MemberDao 는")
-@DataJpaTest(includeFilters = @Filter(type = FilterType.ANNOTATION, classes = Repository.class))
-public class MyInformationDaoTest {
-
-    @Autowired
-    private MyInformationDao myInformationDao;
-
-    @Autowired
-    private MemberRepository memberRepository;
+public class MyInformationDaoTest extends IntegrationTest {
 
     @DisplayName("내 정보 조회 시")
     @Nested
