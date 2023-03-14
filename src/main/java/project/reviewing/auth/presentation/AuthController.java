@@ -25,7 +25,7 @@ public class AuthController {
 
     @ResponseStatus(HttpStatus.OK)
     @PostMapping(value = "/login/github")
-    public AccessTokenResponse oauthloginGithub(
+    public AccessTokenResponse loginGithub(
             @RequestBody @NotBlank final String authorizationCode, final HttpServletResponse response
     ) {
         GithubLoginResponse githubLoginResponse = authService.loginGithub(authorizationCode);
@@ -41,7 +41,7 @@ public class AuthController {
     @ResponseStatus(HttpStatus.OK)
     @PostMapping(value = "/refresh")
     public AccessTokenResponse refreshTokens(
-            @AuthenticatedMember  final Long memberId, final HttpServletResponse response
+            @AuthenticatedMember final Long memberId, final HttpServletResponse response
     ) {
         RefreshResponse refreshResponse = authService.refreshTokens(memberId);
 
@@ -55,7 +55,7 @@ public class AuthController {
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping(value = "/logout")
-    public void logout(@AuthenticatedMember  final Long memberId) {
+    public void logout(@AuthenticatedMember final Long memberId) {
         authService.removeRefreshToken(memberId);
     }
 }

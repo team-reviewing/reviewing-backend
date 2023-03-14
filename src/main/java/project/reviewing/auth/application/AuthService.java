@@ -5,12 +5,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.reviewing.auth.application.response.GithubLoginResponse;
 import project.reviewing.auth.application.response.RefreshResponse;
-import project.reviewing.auth.infrastructure.response.Profile;
 import project.reviewing.auth.domain.RefreshToken;
 import project.reviewing.auth.domain.RefreshTokenRepository;
 import project.reviewing.auth.infrastructure.TokenProvider;
-import project.reviewing.member.domain.Member;
-import project.reviewing.member.domain.MemberRepository;
+import project.reviewing.auth.infrastructure.response.Profile;
+import project.reviewing.member.command.domain.Member;
+import project.reviewing.member.command.domain.MemberRepository;
 
 
 @Transactional
@@ -25,17 +25,11 @@ public class AuthService {
 
     public GithubLoginResponse loginGithub(final String authorizationCode) {
         final Profile profile = oauthClient.getProfileByAuthorizationCode(authorizationCode);
-        Member member = memberRepository.findByGithubId(profile.getId());
+        final Member loginMember = convertProfileToMember(profile);
+        final Member member = memberRepository.findByGithubId(profile.getId())
+                .orElseGet(() -> memberRepository.save(loginMember));
 
-        if (member == null) {
-            member = memberRepository.save(
-                    new Member(
-                            profile.getId(), profile.getUsername(), profile.getEmail(),
-                            profile.getImageUrl(), profile.getGithubUrl(), ""
-                    ));
-        } else {
-            member.updateGithubURL(profile.getGithubUrl());
-        }
+        member.updateLoginInformation(loginMember);
 
         final String accessToken = tokenProvider.createAccessToken(member.getId());
         final RefreshToken refreshToken = tokenProvider.createRefreshToken(member.getId());
@@ -54,5 +48,12 @@ public class AuthService {
 
     public void removeRefreshToken(final Long memberId) {
         refreshTokenRepository.deleteById(memberId);
+    }
+
+    private Member convertProfileToMember(final Profile profile) {
+        return new Member(
+                profile.getId(), profile.getUsername(), profile.getEmail(),
+                profile.getImageUrl(), profile.getGithubUrl()
+        );
     }
 }

@@ -1,9 +1,7 @@
 package project.reviewing.auth.infrastructure.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Getter
 public class GithubProfileResponse {
