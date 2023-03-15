@@ -21,6 +21,8 @@ import project.reviewing.member.query.application.MemberQueryService;
 import project.reviewing.member.query.application.response.MyInformationResponse;
 import project.reviewing.member.query.application.response.ReviewerInformationResponse;
 import project.reviewing.member.query.dao.data.MyInformation;
+import project.reviewing.tag.command.domain.Category;
+import project.reviewing.tag.command.domain.Tag;
 
 @DisplayName("MemberQueryService 는")
 public class MemberQueryServiceTest extends IntegrationTest {
@@ -32,7 +34,7 @@ public class MemberQueryServiceTest extends IntegrationTest {
         @DisplayName("정상적인 경우 회원을 조회한다.")
         @Test
         void findMember() {
-            final MemberQueryService sut = new MemberQueryService(myInformationDao, reviewerDao, tagDao, memberRepository, tagRepository);
+            final MemberQueryService sut = new MemberQueryService(myInformationDao, reviewerDao, memberRepository, tagRepository);
             final Member member = new Member(1L, "username", "email@gmail.com", "image.png", "github.com/profile");
             final Long memberId = createMember(member).getId();
 
@@ -44,7 +46,7 @@ public class MemberQueryServiceTest extends IntegrationTest {
         @DisplayName("회원이 존재하지 않는 경우 예외를 반환한다.")
         @Test
         void findNotExistMember() {
-            final MemberQueryService sut = new MemberQueryService(myInformationDao, reviewerDao, tagDao, memberRepository, tagRepository);
+            final MemberQueryService sut = new MemberQueryService(myInformationDao, reviewerDao, memberRepository, tagRepository);
             final Long notExistMemberId = -1L;
 
             assertThatThrownBy(() -> sut.findMember(notExistMemberId))
@@ -60,9 +62,12 @@ public class MemberQueryServiceTest extends IntegrationTest {
         @DisplayName("정상적인 경우 회원의 리뷰어 정보와 선택 목록을 반환한다.")
         @Test
         void findReviewerAndChoiceList() {
-            final MemberQueryService sut = new MemberQueryService(myInformationDao, reviewerDao, tagDao, memberRepository, tagRepository);
+            final MemberQueryService sut = new MemberQueryService(myInformationDao, reviewerDao, memberRepository, tagRepository);
             final Member member = new Member(1L, "username", "email@gmail.com", "image.png", "github.com/profile");
-            final Reviewer reviewer = new Reviewer(Job.BACKEND, Career.JUNIOR, Set.of(1L, 2L), "안녕하세요");
+            final Category category = createCategory(new Category("백엔드"));
+            final Tag tag1 = createTag(new Tag("Java", category));
+            final Tag tag2 = createTag(new Tag("Spring", category));
+            final Reviewer reviewer = new Reviewer(Job.BACKEND, Career.JUNIOR, Set.of(tag1.getId(), tag2.getId()), "안녕하세요");
             final Member savedMember = createMemberAndRegisterReviewer(member, reviewer);
 
             final ReviewerInformationResponse actual = sut.findReviewerWithChoiceList(savedMember.getId());
@@ -81,7 +86,7 @@ public class MemberQueryServiceTest extends IntegrationTest {
         @DisplayName("회원이 존재하지 않는 경우 예외를 반환한다.")
         @Test
         void findNotExistMember() {
-            final MemberQueryService sut = new MemberQueryService(myInformationDao, reviewerDao, tagDao, memberRepository, tagRepository);
+            final MemberQueryService sut = new MemberQueryService(myInformationDao, reviewerDao, memberRepository, tagRepository);
             final Long notExistMemberId = -1L;
 
             assertThatThrownBy(() -> sut.findReviewerWithChoiceList(notExistMemberId))
@@ -92,7 +97,7 @@ public class MemberQueryServiceTest extends IntegrationTest {
         @DisplayName("회원이 리뷰어를 등록하지 않은 경우 빈 값을 반환한다.")
         @Test
         void findEmptyReviewer() {
-            final MemberQueryService sut = new MemberQueryService(myInformationDao, reviewerDao, tagDao, memberRepository, tagRepository);
+            final MemberQueryService sut = new MemberQueryService(myInformationDao, reviewerDao, memberRepository, tagRepository);
             final Member member = new Member(1L, "username", "email@gmail.com", "image.png", "github.com/profile");
             final Long memberId = createMember(member).getId();
 
@@ -111,9 +116,22 @@ public class MemberQueryServiceTest extends IntegrationTest {
 
     private Member createMemberAndRegisterReviewer(final Member member, final Reviewer reviewer) {
         member.register(reviewer);
-        final Member result = memberRepository.save(member);
+        final Member savedMember = memberRepository.save(member);
+        entityManager.flush();
         entityManager.clear();
-        return result;
+        return savedMember;
+    }
+
+    private Category createCategory(final Category category) {
+        final Category savedCategory = categoryRepository.save(category);
+        entityManager.clear();
+        return savedCategory;
+    }
+
+    private Tag createTag(final Tag tag) {
+        final Tag savedTag = tagRepository.save(tag);
+        entityManager.clear();
+        return savedTag;
     }
 
     private MyInformationResponse toMyInformationResponse(final Member member) {
