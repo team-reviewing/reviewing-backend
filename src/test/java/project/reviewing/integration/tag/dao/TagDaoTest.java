@@ -69,24 +69,4 @@ public class TagDaoTest extends IntegrationTest {
         assertThat(actual).hasSize(0)
                 .isEqualTo(List.of());
     }
-
-    private Member createMemberAndRegisterReviewer(final Member member, final Reviewer reviewer) {
-        member.register(reviewer);
-        final Member result = memberRepository.save(member);
-        entityManager.flush();
-        entityManager.clear();
-        return result;
-    }
-
-    private Category createCategory(final Category category) {
-        final Category savedCategory = categoryRepository.save(category);
-        entityManager.clear();
-        return savedCategory;
-    }
-
-    private Tag createTag(final Tag tag) {
-        final Tag savedTag = tagRepository.save(tag);
-        entityManager.clear();
-        return savedTag;
-    }
 }

@@ -38,10 +38,6 @@ public class MyInformationDaoTest extends IntegrationTest {
         }
     }
 
-    private Member createMember(final Member member) {
-        return memberRepository.save(member);
-    }
-
     private MyInformation toMyInformation(final Member member) {
         return new MyInformation(
                 member.getUsername(), member.getEmail(),

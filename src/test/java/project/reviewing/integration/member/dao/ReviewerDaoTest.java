@@ -44,26 +44,6 @@ public class ReviewerDaoTest extends IntegrationTest {
         assertThat(actual).isEmpty();
     }
 
-    private Member createMemberAndRegisterReviewer(final Member member, final Reviewer reviewer) {
-        member.register(reviewer);
-        final Member savedMember = memberRepository.save(member);
-        entityManager.flush();
-        entityManager.clear();
-        return savedMember;
-    }
-
-    private Category createCategory(final Category category) {
-        final Category savedCategory = categoryRepository.save(category);
-        entityManager.clear();
-        return savedCategory;
-    }
-
-    private Tag createTag(final Tag tag) {
-        final Tag savedTag = tagRepository.save(tag);
-        entityManager.clear();
-        return savedTag;
-    }
-
     private ReviewerInformationData toReviewerInformationData(final Reviewer reviewer, final Tag tag) {
         return new ReviewerInformationData(
                 reviewer.getJob().getValue(),

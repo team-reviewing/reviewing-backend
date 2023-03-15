@@ -34,18 +34,6 @@ public class TagQueryServiceTest extends IntegrationTest {
                 .isEqualTo(List.of(toCategoryResponse(backend, spring, java)));
     }
 
-    private Category createCategory(final Category category) {
-        final Category savedCategory = categoryRepository.save(category);
-        entityManager.clear();
-        return savedCategory;
-    }
-
-    private Tag createTag(final Tag tag) {
-        final Tag savedTag = tagRepository.save(tag);
-        entityManager.clear();
-        return savedTag;
-    }
-
     private CategoryResponse toCategoryResponse(final Category category, final Tag... tag) {
         final CategoryData categoryData = new CategoryData(category.getId(), category.getName());
         final List<TagData> tagData = Arrays.stream(tag)

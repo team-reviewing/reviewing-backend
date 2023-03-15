@@ -108,32 +108,6 @@ public class MemberQueryServiceTest extends IntegrationTest {
         }
     }
 
-    private Member createMember(final Member member) {
-        final Member savedMember = memberRepository.save(member);
-        entityManager.clear();
-        return savedMember;
-    }
-
-    private Member createMemberAndRegisterReviewer(final Member member, final Reviewer reviewer) {
-        member.register(reviewer);
-        final Member savedMember = memberRepository.save(member);
-        entityManager.flush();
-        entityManager.clear();
-        return savedMember;
-    }
-
-    private Category createCategory(final Category category) {
-        final Category savedCategory = categoryRepository.save(category);
-        entityManager.clear();
-        return savedCategory;
-    }
-
-    private Tag createTag(final Tag tag) {
-        final Tag savedTag = tagRepository.save(tag);
-        entityManager.clear();
-        return savedTag;
-    }
-
     private MyInformationResponse toMyInformationResponse(final Member member) {
         return MyInformationResponse.of(toMyInformation(member));
     }
