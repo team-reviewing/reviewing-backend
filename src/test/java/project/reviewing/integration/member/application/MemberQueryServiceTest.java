@@ -128,8 +128,7 @@ public class MemberQueryServiceTest extends IntegrationTest {
         @DisplayName("카테고리와 태그를 입력하지 않은 경우 전체 리뷰어 목록을 반환한다.")
         @Test
         void findReviewers() {
-            final MemberQueryService sut = new MemberQueryService(myInformationDao, reviewerDao, memberRepository,
-                    tagRepository);
+            final MemberQueryService sut = new MemberQueryService(myInformationDao, reviewerDao, memberRepository, tagRepository);
             final Category backend = createCategory(new Category("백엔드"));
             final Tag java = createTag(new Tag("Java", backend));
             final Tag spring = createTag(new Tag("Spring", backend));
@@ -148,7 +147,7 @@ public class MemberQueryServiceTest extends IntegrationTest {
                     new Reviewer(Job.FRONTEND, Career.JUNIOR, Set.of(react.getId()), "안녕하세요")
             );
 
-            final ReviewersResponse actual = sut.findReviewers(PageRequest.of(0, 3));
+            final ReviewersResponse actual = sut.findReviewers(PageRequest.of(0, 3), null);
 
             assertAll(
                     () -> assertThat(actual.getReviewers()).hasSize(3)
@@ -158,6 +157,33 @@ public class MemberQueryServiceTest extends IntegrationTest {
                                     toReviewerResponse(savedMember2, spring),
                                     toReviewerResponse(savedMember3, react)
                             )),
+                    () -> assertThat(actual.isHasNext()).isFalse()
+            );
+        }
+
+        @DisplayName("카테고리를 입력하는 경우 해당 카테고리의 기술스택을 갖고 있는 리뷰어 목록을 반환한다.")
+        @Test
+        void findReviewersByCategory() {
+            final MemberQueryService sut = new MemberQueryService(myInformationDao, reviewerDao, memberRepository, tagRepository);
+            final Category backend = createCategory(new Category("백엔드"));
+            final Tag java = createTag(new Tag("Java", backend));
+            final Category frontend = createCategory(new Category("프론트엔드"));
+            final Tag react = createTag(new Tag("React", frontend));
+            final Member savedMember1 = createMemberAndRegisterReviewer(
+                    new Member(1L, "username1", "email@gmail.com", "image", "profile1"),
+                    new Reviewer(Job.BACKEND, Career.SENIOR, Set.of(java.getId()), "안녕하세요")
+            );
+            createMemberAndRegisterReviewer(
+                    new Member(2L, "username2", "email@naver.com", "image", "profile2"),
+                    new Reviewer(Job.FRONTEND, Career.JUNIOR, Set.of(react.getId()), "안녕하세요")
+            );
+
+            final ReviewersResponse actual = sut.findReviewers(PageRequest.of(0, 3), backend.getId());
+
+            assertAll(
+                    () -> assertThat(actual.getReviewers()).hasSize(1)
+                            .usingRecursiveComparison()
+                            .isEqualTo(List.of(toReviewerResponse(savedMember1, java))),
                     () -> assertThat(actual.isHasNext()).isFalse()
             );
         }

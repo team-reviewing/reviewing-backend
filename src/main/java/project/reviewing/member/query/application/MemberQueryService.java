@@ -56,8 +56,8 @@ public class MemberQueryService {
         );
     }
 
-    public ReviewersResponse findReviewers(final Pageable pageable) {
-        final Slice<ReviewerData> reviewerData = reviewerDao.findByTag(pageable);
+    public ReviewersResponse findReviewers(final Pageable pageable, final Long categoryId) {
+        final Slice<ReviewerData> reviewerData = reviewerDao.findByTag(pageable, categoryId);
 
         return ReviewersResponse.from(reviewerData);
     }
