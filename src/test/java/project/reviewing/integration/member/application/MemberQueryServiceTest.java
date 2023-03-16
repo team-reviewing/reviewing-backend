@@ -21,7 +21,7 @@ import project.reviewing.member.command.domain.Reviewer;
 import project.reviewing.member.exception.MemberNotFoundException;
 import project.reviewing.member.query.application.MemberQueryService;
 import project.reviewing.member.query.application.response.MyInformationResponse;
-import project.reviewing.member.query.application.response.ReviewerInformationResponse;
+import project.reviewing.member.query.application.response.MyReviewerInformationResponse;
 import project.reviewing.member.query.application.response.ReviewerResponse;
 import project.reviewing.member.query.application.response.ReviewersResponse;
 import project.reviewing.member.query.dao.data.MyInformationData;
@@ -80,7 +80,7 @@ public class MemberQueryServiceTest extends IntegrationTest {
                     "안녕하세요");
             final Member savedMember = createMemberAndRegisterReviewer(member, reviewer);
 
-            final ReviewerInformationResponse actual = sut.findReviewerWithChoiceList(savedMember.getId());
+            final MyReviewerInformationResponse actual = sut.findReviewerWithChoiceList(savedMember.getId());
 
             assertAll(
                     () -> assertThat(actual.getJob()).isEqualTo(Job.BACKEND.getValue()),
@@ -114,10 +114,10 @@ public class MemberQueryServiceTest extends IntegrationTest {
             final Member member = new Member(1L, "username", "email@gmail.com", "image.png", "github.com/profile");
             final Long memberId = createMember(member).getId();
 
-            final ReviewerInformationResponse actual = sut.findReviewerWithChoiceList(memberId);
+            final MyReviewerInformationResponse actual = sut.findReviewerWithChoiceList(memberId);
 
             assertThat(actual).usingRecursiveComparison()
-                    .isEqualTo(ReviewerInformationResponse.empty());
+                    .isEqualTo(MyReviewerInformationResponse.empty());
         }
     }
 

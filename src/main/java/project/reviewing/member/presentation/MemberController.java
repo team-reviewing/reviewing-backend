@@ -16,7 +16,7 @@ import project.reviewing.member.command.application.request.MyInformationUpdateR
 import project.reviewing.member.command.application.request.ReviewerRegistrationRequest;
 import project.reviewing.member.command.application.request.ReviewerUpdateRequest;
 import project.reviewing.member.query.application.MemberQueryService;
-import project.reviewing.member.query.application.response.ReviewerInformationResponse;
+import project.reviewing.member.query.application.response.MyReviewerInformationResponse;
 import project.reviewing.member.query.application.response.MyInformationResponse;
 
 @RequestMapping("/members")
@@ -50,7 +50,7 @@ public class MemberController {
     }
 
     @GetMapping("/me/reviewer")
-    public ReviewerInformationResponse findReviewerInformation(@AuthenticatedMember final Long memberId) {
+    public MyReviewerInformationResponse findReviewerInformation(@AuthenticatedMember final Long memberId) {
         return memberQueryService.findReviewerWithChoiceList(memberId);
     }
 

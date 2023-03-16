@@ -4,14 +4,14 @@ import lombok.Getter;
 import project.reviewing.tag.query.dao.data.TagData;
 
 @Getter
-public class ReviewerInformationData {
+public class MyReviewerInformationData {
 
     private final String job;
     private final String career;
     private final String introduction;
     private final TagData tagData;
 
-    public ReviewerInformationData(
+    public MyReviewerInformationData(
             final String job, final String career, final String introduction, final TagData tagData
     ) {
         this.job = job;

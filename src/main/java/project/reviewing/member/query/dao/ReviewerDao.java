@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
 import project.reviewing.member.command.domain.Career;
 import project.reviewing.member.command.domain.Job;
 import project.reviewing.member.query.dao.data.ReviewerData;
-import project.reviewing.member.query.dao.data.ReviewerInformationData;
+import project.reviewing.member.query.dao.data.MyReviewerInformationData;
 import project.reviewing.member.query.dao.data.ReviewerWithTagData;
 import project.reviewing.member.query.dao.util.ReviewerDataMapper;
 import project.reviewing.tag.query.dao.data.TagData;
@@ -35,7 +35,7 @@ public class ReviewerDao {
         return Boolean.TRUE.equals(jdbcTemplate.queryForObject(sql, params, Boolean.class));
     }
 
-    public List<ReviewerInformationData> findByMemberId(final Long memberId) {
+    public List<MyReviewerInformationData> findByMemberId(final Long memberId) {
         final String sql = "SELECT r.job job, r.career career, r.introduction introduction, t.id tag_id, t.name tag_name "
                 + "FROM reviewer r "
                 + "JOIN reviewer_tag rt ON r.id = rt.reviewer_id "
@@ -113,8 +113,8 @@ public class ReviewerDao {
         );
     }
 
-    private RowMapper<ReviewerInformationData> rowMapperRid() {
-        return (rs, rowNum) -> new ReviewerInformationData(
+    private RowMapper<MyReviewerInformationData> rowMapperRid() {
+        return (rs, rowNum) -> new MyReviewerInformationData(
                 Job.valueOf(rs.getString("job")).getValue(),
                 Career.valueOf(rs.getString("career")).getCareer(),
                 rs.getString("introduction"),

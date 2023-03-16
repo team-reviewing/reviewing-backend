@@ -3,11 +3,11 @@ package project.reviewing.member.query.application.response;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.Getter;
-import project.reviewing.member.query.dao.data.ReviewerInformationData;
+import project.reviewing.member.query.dao.data.MyReviewerInformationData;
 import project.reviewing.tag.query.application.response.TagResponse;
 
 @Getter
-public class ReviewerInformationResponse {
+public class MyReviewerInformationResponse {
 
     private final String job;
     private final String career;
@@ -17,34 +17,34 @@ public class ReviewerInformationResponse {
     private final List<String> careerList;
     private final List<TagResponse> tagList;
 
-    public static ReviewerInformationResponse of(
-            final List<ReviewerInformationData> reviewerInformationData,
+    public static MyReviewerInformationResponse of(
+            final List<MyReviewerInformationData> myReviewerInformationData,
             final List<String> jobList,
             final List<String> careerList,
             final List<TagResponse> tagList
     ) {
-        return new ReviewerInformationResponse(
-                reviewerInformationData.get(0).getJob(),
-                reviewerInformationData.get(0).getCareer(),
-                mapTagResponse(reviewerInformationData),
-                reviewerInformationData.get(0).getIntroduction(),
+        return new MyReviewerInformationResponse(
+                myReviewerInformationData.get(0).getJob(),
+                myReviewerInformationData.get(0).getCareer(),
+                mapTagResponse(myReviewerInformationData),
+                myReviewerInformationData.get(0).getIntroduction(),
                 jobList,
                 careerList,
                 tagList
         );
     }
 
-    public static ReviewerInformationResponse empty() {
-        return new ReviewerInformationResponse(null, null, List.of(), null, List.of(), List.of(), List.of());
+    public static MyReviewerInformationResponse empty() {
+        return new MyReviewerInformationResponse(null, null, List.of(), null, List.of(), List.of(), List.of());
     }
 
-    private static List<TagResponse> mapTagResponse(final List<ReviewerInformationData> reviewerInformationData) {
-        return reviewerInformationData.stream()
+    private static List<TagResponse> mapTagResponse(final List<MyReviewerInformationData> myReviewerInformationData) {
+        return myReviewerInformationData.stream()
                 .map(data -> TagResponse.from(data.getTagData()))
                 .collect(Collectors.toList());
     }
 
-    private ReviewerInformationResponse(
+    private MyReviewerInformationResponse(
             final String job, final String career, final List<TagResponse> techStack, final String introduction,
             final List<String> jobList, final List<String> careerList, final List<TagResponse> tagList
     ) {

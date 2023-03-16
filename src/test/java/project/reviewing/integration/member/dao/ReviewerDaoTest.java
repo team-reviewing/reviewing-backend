@@ -11,7 +11,7 @@ import project.reviewing.member.command.domain.Career;
 import project.reviewing.member.command.domain.Job;
 import project.reviewing.member.command.domain.Member;
 import project.reviewing.member.command.domain.Reviewer;
-import project.reviewing.member.query.dao.data.ReviewerInformationData;
+import project.reviewing.member.query.dao.data.MyReviewerInformationData;
 import project.reviewing.tag.command.domain.Category;
 import project.reviewing.tag.command.domain.Tag;
 import project.reviewing.tag.query.dao.data.TagData;
@@ -28,7 +28,7 @@ public class ReviewerDaoTest extends IntegrationTest {
         final Reviewer reviewer = new Reviewer(Job.BACKEND, Career.JUNIOR, Set.of(tag.getId()), "안녕하세요");
         final Member savedMember = createMemberAndRegisterReviewer(member, reviewer);
 
-        List<ReviewerInformationData> actual = reviewerDao.findByMemberId(savedMember.getId());
+        List<MyReviewerInformationData> actual = reviewerDao.findByMemberId(savedMember.getId());
 
         assertThat(actual).usingRecursiveFieldByFieldElementComparator()
                 .containsExactly(toReviewerInformationData(savedMember.getReviewer(), tag));
@@ -39,13 +39,13 @@ public class ReviewerDaoTest extends IntegrationTest {
     void findNotExistMember() {
         final Long wrongMemberId = 1L;
 
-        final List<ReviewerInformationData> actual = reviewerDao.findByMemberId(wrongMemberId);
+        final List<MyReviewerInformationData> actual = reviewerDao.findByMemberId(wrongMemberId);
 
         assertThat(actual).isEmpty();
     }
 
-    private ReviewerInformationData toReviewerInformationData(final Reviewer reviewer, final Tag tag) {
-        return new ReviewerInformationData(
+    private MyReviewerInformationData toReviewerInformationData(final Reviewer reviewer, final Tag tag) {
+        return new MyReviewerInformationData(
                 reviewer.getJob().getValue(),
                 reviewer.getCareer().getCareer(),
                 reviewer.getIntroduction(),
