@@ -10,6 +10,7 @@ import project.reviewing.auth.domain.RefreshTokenRepository;
 import project.reviewing.member.command.domain.MemberRepository;
 import project.reviewing.member.query.dao.MyInformationDao;
 import project.reviewing.member.query.dao.ReviewerDao;
+import project.reviewing.review.domain.ReviewRepository;
 import project.reviewing.tag.query.dao.TagDao;
 
 @DataJpaTest(includeFilters = @Filter(type = FilterType.ANNOTATION, classes = Repository.class))
@@ -20,6 +21,9 @@ public class IntegrationTest {
 
     @Autowired
     protected RefreshTokenRepository refreshTokenRepository;
+
+    @Autowired
+    protected ReviewRepository reviewRepository;
 
     @Autowired
     protected MyInformationDao myInformationDao;
