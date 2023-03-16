@@ -9,7 +9,6 @@ import project.reviewing.review.presentation.request.ReviewCreateRequest;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
 
 @Validated
 @RequestMapping("/reviewers")

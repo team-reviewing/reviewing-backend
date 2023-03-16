@@ -4,6 +4,7 @@ import lombok.Getter;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 @Getter
@@ -17,7 +18,8 @@ public class ReviewCreateRequest {
     @NotEmpty(message = "본문을 입력해 주세요.")
     private final String content;
 
-    @NotBlank(message = "PR url을 입력해 주세요.")
+    @Pattern(regexp = "^(https://)?github\\.com/.+/.+/pull/[0-9]+$", message = "올바른 PR URL을 입력해 주세요.")
+    @NotBlank(message = "PR URL을 입력해 주세요.")
     private final String prUrl;
 
     public ReviewCreateRequest(final String title, final String content, final String prUrl) {

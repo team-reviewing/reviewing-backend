@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
@@ -116,6 +117,23 @@ public class ReviewControllerTest extends ControllerTest {
         @NullAndEmptySource
         @ParameterizedTest
         void createReviewWithPrUrlNullAndEmpty(final String prUrl) throws Exception {
+            final ReviewCreateRequest reviewCreateRequest = new ReviewCreateRequest("리뷰 요청합니다.", "본문", prUrl);
+
+            requestToCreateReview(post("/reviewers/1/reviews"), reviewCreateRequest)
+                    .andExpectAll(
+                            result -> assertTrue(result.getResolvedException() instanceof MethodArgumentNotValidException),
+                            status().isBadRequest()
+                    );
+        }
+
+        @DisplayName("prUrl이 형식에 맞지 않으면 400 반환한다.")
+        @ValueSource(strings = {
+                "ttps://github.com/bboor/project/pull/1", "github.combboor/project/pull/1",
+                "github.com/bboor/project/pull/", "github.com/bboor/project/1", "github.com/pull/1",
+                "github.com/project/pull/1", "/bboor/project/pull/1", "github.com/bboor/project/pull/1a"
+        })
+        @ParameterizedTest
+        void createReviewWithInvalidPrUrl(final String prUrl) throws Exception {
             final ReviewCreateRequest reviewCreateRequest = new ReviewCreateRequest("리뷰 요청합니다.", "본문", prUrl);
 
             requestToCreateReview(post("/reviewers/1/reviews"), reviewCreateRequest)
