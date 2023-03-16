@@ -32,18 +32,18 @@ public class ReviewServiceTest extends IntegrationTest {
         void validCreateReview() {
             final ReviewService reviewService = new ReviewService(reviewRepository, memberRepository);
             final Member reviewee = createMember(1L, "Tom", "Tom@gmail.com", "imageUrl", "https://github.com/Tom");
-            final Member reviewerMember = createReviewer(2L, "bboor", "bboor@gmail.com", "imageUrl", "https://github.com/bboor");
+            final Member reviewer = createReviewer(2L, "bboor", "bboor@gmail.com", "imageUrl", "https://github.com/bboor");
             final ReviewCreateRequest reviewCreateRequest = new ReviewCreateRequest(
-                    reviewerMember.getId(), "리뷰 요청합니다.", "본문", "https://github.com/Tom/myproject/pull/1"
+                    "리뷰 요청합니다.", "본문", "https://github.com/Tom/myproject/pull/1"
             );
 
-            reviewService.createReview(reviewee.getId(), reviewCreateRequest);
+            reviewService.createReview(reviewee.getId(), reviewer.getId(), reviewCreateRequest);
 
-            final Review newReview = reviewRepository.findByRevieweeIdAndReviewerId(reviewee.getId(), reviewerMember.getId())
+            final Review newReview = reviewRepository.findByRevieweeIdAndReviewerId(reviewee.getId(), reviewer.getId())
                             .orElseThrow(ReviewNotFoundException::new);
             assertAll(
                     () -> assertThat(newReview.getTitle()).isEqualTo(reviewCreateRequest.getTitle()),
-                    () -> assertThat(newReview.getText()).isEqualTo(reviewCreateRequest.getText()),
+                    () -> assertThat(newReview.getContent()).isEqualTo(reviewCreateRequest.getContent()),
                     () -> assertThat(newReview.getPrUrl()).isEqualTo(reviewCreateRequest.getPrUrl())
             );
         }
@@ -52,12 +52,12 @@ public class ReviewServiceTest extends IntegrationTest {
         @Test
         void createReviewWithSameReviewerAsReviewee() {
             final ReviewService reviewService = new ReviewService(reviewRepository, memberRepository);
-            final Member reviewerMember = createReviewer(2L, "bboor", "bboor@gmail.com", "imageUrl", "https://github.com/bboor");
+            final Member reviewer = createReviewer(2L, "bboor", "bboor@gmail.com", "imageUrl", "https://github.com/bboor");
             final ReviewCreateRequest reviewCreateRequest = new ReviewCreateRequest(
-                    reviewerMember.getId(), "리뷰 요청합니다.", "본문", "https://github.com/Tom/myproject/pull/1"
+                    "리뷰 요청합니다.", "본문", "https://github.com/Tom/myproject/pull/1"
             );
 
-            assertThatThrownBy(() -> reviewService.createReview(reviewerMember.getId(), reviewCreateRequest))
+            assertThatThrownBy(() -> reviewService.createReview(reviewer.getId(), reviewer.getId(), reviewCreateRequest))
                     .isInstanceOf(InvalidReviewException.class)
                     .hasMessage(ErrorType.SAME_REVIEWER_AS_REVIEWEE.getMessage());
         }
@@ -66,13 +66,13 @@ public class ReviewServiceTest extends IntegrationTest {
         @Test
         void createReviewWithNotExistReviewerMember() {
             final ReviewService reviewService = new ReviewService(reviewRepository, memberRepository);
-            final long reviewerMemberId = -1L;
+            final long reviewerId = -1L;
             final Member reviewee = createMember(1L, "Tom", "Tom@gmail.com", "imageUrl", "https://github.com/Tom");
             final ReviewCreateRequest reviewCreateRequest = new ReviewCreateRequest(
-                    reviewerMemberId, "리뷰 요청합니다.", "본문", "https://github.com/Tom/myproject/pull/1"
+                    "리뷰 요청합니다.", "본문", "https://github.com/Tom/myproject/pull/1"
             );
 
-            assertThatThrownBy(() -> reviewService.createReview(reviewee.getId(), reviewCreateRequest))
+            assertThatThrownBy(() -> reviewService.createReview(reviewee.getId(), reviewerId, reviewCreateRequest))
                     .isInstanceOf(MemberNotFoundException.class);
         }
 
@@ -81,12 +81,12 @@ public class ReviewServiceTest extends IntegrationTest {
         void createReviewWithReviewerNotRegistered() {
             final ReviewService reviewService = new ReviewService(reviewRepository, memberRepository);
             final Member reviewee = createMember(1L, "Tom", "Tom@gmail.com", "imageUrl", "https://github.com/Tom");
-            final Member reviewerMember = createMember(2L, "bboor", "bboor@gmail.com", "imageUrl", "https://github.com/bboor");
+            final Member reviewer = createMember(2L, "bboor", "bboor@gmail.com", "imageUrl", "https://github.com/bboor");
             final ReviewCreateRequest reviewCreateRequest = new ReviewCreateRequest(
-                    reviewerMember.getId(), "리뷰 요청합니다.", "본문", "https://github.com/Tom/myproject/pull/1"
+                    "리뷰 요청합니다.", "본문", "https://github.com/Tom/myproject/pull/1"
             );
 
-            assertThatThrownBy(() -> reviewService.createReview(reviewee.getId(), reviewCreateRequest))
+            assertThatThrownBy(() -> reviewService.createReview(reviewee.getId(), reviewer.getId(), reviewCreateRequest))
                     .isInstanceOf(InvalidReviewException.class)
                     .hasMessage(ErrorType.DO_NOT_REGISTERED.getMessage());
         }
@@ -96,14 +96,14 @@ public class ReviewServiceTest extends IntegrationTest {
         void createAlreadyExistReviewToSameReviewer() {
             final ReviewService reviewService = new ReviewService(reviewRepository, memberRepository);
             final Member reviewee = createMember(1L, "Tom", "Tom@gmail.com", "imageUrl", "https://github.com/Tom");
-            final Member reviewerMember = createReviewer(2L, "bboor", "bboor@gmail.com", "imageUrl", "https://github.com/bboor");
+            final Member reviewer = createReviewer(2L, "bboor", "bboor@gmail.com", "imageUrl", "https://github.com/bboor");
             final ReviewCreateRequest reviewCreateRequest = new ReviewCreateRequest(
-                    reviewerMember.getId(), "리뷰 요청합니다.", "본문", "https://github.com/Tom/myproject/pull/1"
+                    "리뷰 요청합니다.", "본문", "https://github.com/Tom/myproject/pull/1"
             );
 
-            createReview(reviewee.getId(), reviewerMember.getId());
+            createReview(reviewee.getId(), reviewer.getId());
 
-            assertThatThrownBy(() -> reviewService.createReview(reviewee.getId(), reviewCreateRequest))
+            assertThatThrownBy(() -> reviewService.createReview(reviewee.getId(), reviewer.getId(), reviewCreateRequest))
                     .isInstanceOf(InvalidReviewException.class)
                     .hasMessage(ErrorType.ALREADY_REQUESTED.getMessage());
         }

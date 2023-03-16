@@ -25,18 +25,18 @@ public class Review {
     private String title;
 
     @Column(nullable = false)
-    private String text;
+    private String content;
 
     @Column(nullable = false)
     private String prUrl;
 
     public Review(
-            final Long revieweeId, final Long reviewerId, final String title, final String text, final String prUrl
+            final Long revieweeId, final Long reviewerId, final String title, final String content, final String prUrl
     ) {
         this.revieweeId = revieweeId;
         this.reviewerId = reviewerId;
         this.title = title;
-        this.text = text;
+        this.content = content;
         this.prUrl = prUrl;
     }
 }

@@ -20,33 +20,33 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final MemberRepository memberRepository;
 
-    public void createReview(final long revieweeId, final ReviewCreateRequest reviewCreateRequest) {
-        if (revieweeId == reviewCreateRequest.getReviewerMemberId()) {
+    public void createReview(final Long revieweeId, final Long reviewerId, final ReviewCreateRequest reviewCreateRequest) {
+        if (revieweeId.equals(reviewerId)) {
             throw new InvalidReviewException(ErrorType.SAME_REVIEWER_AS_REVIEWEE);
         }
 
-        final Member reviewerMember = findMemberById(reviewCreateRequest.getReviewerMemberId());
+        final Member reviewer = findMemberByReviewerId(reviewerId);
 
-        if (!reviewerMember.isReviewer()) {
+        if (!reviewer.isReviewer()) {
             throw new InvalidReviewException(ErrorType.DO_NOT_REGISTERED);
         }
-        reviewRepository.findByRevieweeIdAndReviewerId(revieweeId, reviewerMember.getId())
+        reviewRepository.findByRevieweeIdAndReviewerId(revieweeId, reviewerId)
                 .ifPresent(review -> { throw new InvalidReviewException(ErrorType.ALREADY_REQUESTED); });
 
-        reviewRepository.save(makeReview(revieweeId, reviewerMember.getId(), reviewCreateRequest));
+        reviewRepository.save(makeReview(revieweeId, reviewerId, reviewCreateRequest));
     }
 
-    private Member findMemberById(final long memberId) {
-        return memberRepository.findById(memberId)
+    private Member findMemberByReviewerId(final Long reviewerId) {
+        return memberRepository.findById(reviewerId)
                 .orElseThrow(MemberNotFoundException::new);
     }
 
     private Review makeReview(
-            final long revieweeId, final long reviewerId, final ReviewCreateRequest reviewCreateRequest
+            final Long revieweeId, final Long reviewerId, final ReviewCreateRequest reviewCreateRequest
     ) {
         return new Review(
                 revieweeId, reviewerId, reviewCreateRequest.getTitle(),
-                reviewCreateRequest.getText(), reviewCreateRequest.getPrUrl()
+                reviewCreateRequest.getContent(), reviewCreateRequest.getPrUrl()
         );
     }
 }
