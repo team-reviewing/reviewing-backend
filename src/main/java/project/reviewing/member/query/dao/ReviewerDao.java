@@ -47,13 +47,13 @@ public class ReviewerDao {
     }
 
     public Slice<ReviewerData> findByTag(final Pageable pageable, final Long categoryId, final List<Long> tagIds) {
-        final String sql = "SELECT r.id, r.job, r.career, r.introduction, m.username, m.image_url, m.profile_url, t.id tag_id, t.name tag_name "
-                        + "FROM reviewer r "
-                        + "JOIN member m ON r.member_id = m.id "
-                        + "JOIN reviewer_tag rt ON r.id = rt.reviewer_id "
-                        + "JOIN tag t ON rt.tag_id = t.id "
-                        + checkWhereClause(categoryId, tagIds)
-                        + "LIMIT :limit OFFSET :offset";
+        final String sql = "SELECT r.job, r.career, r.introduction, m.id, m.username, m.image_url, m.profile_url, t.id tag_id, t.name tag_name "
+                + "FROM reviewer r "
+                + "JOIN member m ON r.member_id = m.id "
+                + "JOIN reviewer_tag rt ON r.id = rt.reviewer_id "
+                + "JOIN tag t ON rt.tag_id = t.id "
+                + checkWhereClause(categoryId, tagIds)
+                + "LIMIT :limit OFFSET :offset";
         final SqlParameterSource params = new MapSqlParameterSource("limit", pageable.getPageSize() + 1)
                 .addValue("offset", pageable.getOffset())
                 .addValue("categoryId", categoryId)
