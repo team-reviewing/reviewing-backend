@@ -147,7 +147,7 @@ public class MemberQueryServiceTest extends IntegrationTest {
                     new Reviewer(Job.FRONTEND, Career.JUNIOR, Set.of(react.getId()), "안녕하세요")
             );
 
-            final ReviewersResponse actual = sut.findReviewers(PageRequest.of(0, 3), null);
+            final ReviewersResponse actual = sut.findReviewers(PageRequest.of(0, 3), null, null);
 
             assertAll(
                     () -> assertThat(actual.getReviewers()).hasSize(3)
@@ -178,12 +178,38 @@ public class MemberQueryServiceTest extends IntegrationTest {
                     new Reviewer(Job.FRONTEND, Career.JUNIOR, Set.of(react.getId()), "안녕하세요")
             );
 
-            final ReviewersResponse actual = sut.findReviewers(PageRequest.of(0, 3), backend.getId());
+            final ReviewersResponse actual = sut.findReviewers(PageRequest.of(0, 3), backend.getId(), null);
 
             assertAll(
                     () -> assertThat(actual.getReviewers()).hasSize(1)
                             .usingRecursiveComparison()
                             .isEqualTo(List.of(toReviewerResponse(savedMember1, java))),
+                    () -> assertThat(actual.isHasNext()).isFalse()
+            );
+        }
+
+        @DisplayName("태그를 입력하는 경우 해당 태그를 갖고 있는 리뷰어 목록을 반환한다.")
+        @Test
+        void findReviewersByTags() {
+            final MemberQueryService sut = new MemberQueryService(myInformationDao, reviewerDao, memberRepository, tagRepository);
+            final Category backend = createCategory(new Category("백엔드"));
+            final Tag java = createTag(new Tag("Java", backend));
+            final Tag spring = createTag(new Tag("Spring", backend));
+            final Member savedMember1 = createMemberAndRegisterReviewer(
+                    new Member(1L, "username1", "email@gmail.com", "image", "profile1"),
+                    new Reviewer(Job.BACKEND, Career.SENIOR, Set.of(java.getId(), spring.getId()), "안녕하세요")
+            );
+            createMemberAndRegisterReviewer(
+                    new Member(2L, "username2", "email@daum.com", "image", "profile2"),
+                    new Reviewer(Job.BACKEND, Career.JUNIOR, Set.of(spring.getId()), "안녕하세요")
+            );
+
+            final ReviewersResponse actual = sut.findReviewers(PageRequest.of(0, 3), backend.getId(), List.of(java.getId()));
+
+            assertAll(
+                    () -> assertThat(actual.getReviewers()).hasSize(1)
+                            .usingRecursiveComparison()
+                            .isEqualTo(List.of(toReviewerResponse(savedMember1, java, spring))),
                     () -> assertThat(actual.isHasNext()).isFalse()
             );
         }

@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.reviewing.member.command.domain.Career;
@@ -18,7 +17,6 @@ import project.reviewing.member.query.application.response.ReviewersResponse;
 import project.reviewing.member.query.dao.MyInformationDao;
 import project.reviewing.member.query.dao.ReviewerDao;
 import project.reviewing.member.query.dao.data.MyInformation;
-import project.reviewing.member.query.dao.data.ReviewerData;
 import project.reviewing.member.query.dao.data.ReviewerInformationData;
 import project.reviewing.tag.command.domain.TagRepository;
 import project.reviewing.tag.query.application.response.TagResponse;
@@ -56,9 +54,7 @@ public class MemberQueryService {
         );
     }
 
-    public ReviewersResponse findReviewers(final Pageable pageable, final Long categoryId) {
-        final Slice<ReviewerData> reviewerData = reviewerDao.findByTag(pageable, categoryId);
-
-        return ReviewersResponse.from(reviewerData);
+    public ReviewersResponse findReviewers(final Pageable pageable, final Long categoryId, final List<Long> tagIds) {
+        return ReviewersResponse.from(reviewerDao.findByTag(pageable, categoryId, tagIds));
     }
 }

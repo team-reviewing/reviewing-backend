@@ -46,27 +46,47 @@ public class ReviewerDao {
         return jdbcTemplate.query(sql, params, rowMapperRid());
     }
 
-    public Slice<ReviewerData> findByTag(final Pageable pageable, final Long categoryId) {
+    public Slice<ReviewerData> findByTag(final Pageable pageable, final Long categoryId, final List<Long> tagIds) {
         final String sql = "SELECT r.id, r.job, r.career, r.introduction, m.username, m.image_url, m.profile_url, t.id tag_id, t.name tag_name "
-                + "FROM reviewer r "
-                + "JOIN member m ON r.member_id = m.id "
-                + "JOIN reviewer_tag rt ON r.id = rt.reviewer_id "
-                + "JOIN tag t ON rt.tag_id = t.id "
-                + checkCategoryIdIsEqual(categoryId)
-                + "LIMIT :limit OFFSET :offset";
+                        + "FROM reviewer r "
+                        + "JOIN member m ON r.member_id = m.id "
+                        + "JOIN reviewer_tag rt ON r.id = rt.reviewer_id "
+                        + "JOIN tag t ON rt.tag_id = t.id "
+                        + checkWhereClause(categoryId, tagIds)
+                        + "LIMIT :limit OFFSET :offset";
         final SqlParameterSource params = new MapSqlParameterSource("limit", pageable.getPageSize() + 1)
                 .addValue("offset", pageable.getOffset())
-                .addValue("categoryId", categoryId);
+                .addValue("categoryId", categoryId)
+                .addValue("tagIds", tagIds);
 
         final List<ReviewerData> reviewerData = ReviewerDataMapper.map(jdbcTemplate.query(sql, params, rowMapper()));
         return new SliceImpl<>(getCurrentPageReviewers(reviewerData, pageable), pageable, hasNext(reviewerData, pageable));
     }
 
-    private String checkCategoryIdIsEqual(final Long categoryId) {
-        if (categoryId == null) {
+    private String checkWhereClause(final Long categoryId, final List<Long> tagIds) {
+        final String whereClause = checkTagIdsAreIn(tagIds);
+        if (categoryId != null) {
+            return whereClause.concat(checkCategoryIdIsEqual(tagIds));
+        }
+        return whereClause;
+    }
+
+    private String checkTagIdsAreIn(final List<Long> tagIds) {
+        if (tagIds == null) {
             return "";
         }
-        return "WHERE t.category_id = :categoryId ";
+        return "WHERE r.id IN ( "
+                + "SELECT rt.reviewer_id "
+                + "FROM reviewer_tag rt "
+                + "WHERE rt.tag_id IN (:tagIds) "
+                + ") ";
+    }
+
+    private String checkCategoryIdIsEqual(final List<Long> tagIds) {
+        if (tagIds == null) {
+            return "WHERE t.category_id = :categoryId ";
+        }
+        return "AND t.category_id = :categoryId ";
     }
 
     private List<ReviewerData> getCurrentPageReviewers(final List<ReviewerData> reviewerData, final Pageable pageable) {
