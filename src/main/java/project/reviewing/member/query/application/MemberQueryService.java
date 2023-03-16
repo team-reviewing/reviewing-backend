@@ -16,7 +16,7 @@ import project.reviewing.member.query.application.response.ReviewerInformationRe
 import project.reviewing.member.query.application.response.ReviewersResponse;
 import project.reviewing.member.query.dao.MyInformationDao;
 import project.reviewing.member.query.dao.ReviewerDao;
-import project.reviewing.member.query.dao.data.MyInformation;
+import project.reviewing.member.query.dao.data.MyInformationData;
 import project.reviewing.member.query.dao.data.ReviewerInformationData;
 import project.reviewing.tag.command.domain.TagRepository;
 import project.reviewing.tag.query.application.response.TagResponse;
@@ -32,10 +32,10 @@ public class MemberQueryService {
     private final TagRepository tagRepository;
 
     public MyInformationResponse findMember(final Long memberId) {
-        final MyInformation myInformation = myInformationDao.findById(memberId)
+        final MyInformationData myInformationData = myInformationDao.findById(memberId)
                 .orElseThrow(MemberNotFoundException::new);
 
-        return MyInformationResponse.of(myInformation);
+        return MyInformationResponse.of(myInformationData);
     }
 
     public ReviewerInformationResponse findReviewerWithChoiceList(final Long memberId) {

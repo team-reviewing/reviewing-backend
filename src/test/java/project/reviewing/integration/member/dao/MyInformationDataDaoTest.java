@@ -8,10 +8,10 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import project.reviewing.integration.IntegrationTest;
 import project.reviewing.member.command.domain.Member;
-import project.reviewing.member.query.dao.data.MyInformation;
+import project.reviewing.member.query.dao.data.MyInformationData;
 
 @DisplayName("MemberDao 는")
-public class MyInformationDaoTest extends IntegrationTest {
+public class MyInformationDataDaoTest extends IntegrationTest {
 
     @DisplayName("내 정보 조회 시")
     @Nested
@@ -22,7 +22,7 @@ public class MyInformationDaoTest extends IntegrationTest {
         void findMember() {
             final Member member = createMember(new Member(1L, "username", "email@gmail.com", "image.png", "github.com/profile"));
 
-            final MyInformation actual = myInformationDao.findById(member.getId()).get();
+            final MyInformationData actual = myInformationDao.findById(member.getId()).get();
 
             assertThat(actual).usingRecursiveComparison().isEqualTo(toMyInformation(member));
         }
@@ -32,14 +32,14 @@ public class MyInformationDaoTest extends IntegrationTest {
         void findNotExistMember() {
             final Long wrongMemberId = 1L;
 
-            final Optional<MyInformation> actual = myInformationDao.findById(wrongMemberId);
+            final Optional<MyInformationData> actual = myInformationDao.findById(wrongMemberId);
 
             assertThat(actual).isEqualTo(Optional.empty());
         }
     }
 
-    private MyInformation toMyInformation(final Member member) {
-        return new MyInformation(
+    private MyInformationData toMyInformation(final Member member) {
+        return new MyInformationData(
                 member.getUsername(), member.getEmail(),
                 member.getImageUrl(), member.getProfileUrl(),
                 member.isReviewer()

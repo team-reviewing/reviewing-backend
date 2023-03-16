@@ -24,7 +24,7 @@ import project.reviewing.member.query.application.response.MyInformationResponse
 import project.reviewing.member.query.application.response.ReviewerInformationResponse;
 import project.reviewing.member.query.application.response.ReviewerResponse;
 import project.reviewing.member.query.application.response.ReviewersResponse;
-import project.reviewing.member.query.dao.data.MyInformation;
+import project.reviewing.member.query.dao.data.MyInformationData;
 import project.reviewing.member.query.dao.data.ReviewerData;
 import project.reviewing.tag.command.domain.Category;
 import project.reviewing.tag.command.domain.Tag;
@@ -219,8 +219,8 @@ public class MemberQueryServiceTest extends IntegrationTest {
         return MyInformationResponse.of(toMyInformation(member));
     }
 
-    private MyInformation toMyInformation(final Member member) {
-        return new MyInformation(
+    private MyInformationData toMyInformation(final Member member) {
+        return new MyInformationData(
                 member.getUsername(), member.getEmail(),
                 member.getImageUrl(), member.getProfileUrl(),
                 member.isReviewer()

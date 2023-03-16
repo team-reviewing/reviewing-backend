@@ -16,10 +16,8 @@ public class ReviewerWithTagData {
     private final TagData tagData;
 
     public ReviewerWithTagData(
-            final Long id, final String job,
-            final String career, final String introduction,
-            final String username, final String imageUrl,
-            final String profileUrl, final TagData tagData
+            final Long id, final String job, final String career, final String introduction,
+            final String username, final String imageUrl, final String profileUrl, final TagData tagData
     ) {
         this.id = id;
         this.job = job;
