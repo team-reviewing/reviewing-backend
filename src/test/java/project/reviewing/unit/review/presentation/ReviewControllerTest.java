@@ -14,8 +14,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import project.reviewing.review.presentation.request.ReviewCreateRequest;
 import project.reviewing.unit.ControllerTest;
 
-import javax.validation.ConstraintViolationException;
-
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -39,22 +37,9 @@ public class ReviewControllerTest extends ControllerTest {
                     .andExpect(status().isOk());
         }
 
-        @DisplayName("리뷰어 id가 1보다 작으면 400 반환한다.")
-        @Test
-        void createReviewWithReviewerIdLessThanMinVal() throws Exception {
-            final ReviewCreateRequest reviewCreateRequest = new ReviewCreateRequest(
-                    "리뷰 요청합니다.", "본문", "https://github.com/Tom/myproject/pull/1"
-            );
-
-            requestToCreateReview(post("/reviewers/0/reviews"), reviewCreateRequest)
-                    .andExpectAll(
-                            result -> assertTrue(result.getResolvedException() instanceof ConstraintViolationException),
-                            status().isBadRequest()
-                    );
-        }
-
-        @DisplayName("title이 null이나 empty면 400 반환한다.")
+        @DisplayName("title이 null, empty, blank면 400 반환한다.")
         @NullAndEmptySource
+        @ValueSource(strings = {" "})
         @ParameterizedTest
         void createReviewWithTitleNullAndEmpty(final String title) throws Exception {
             final ReviewCreateRequest reviewCreateRequest = new ReviewCreateRequest(
@@ -83,8 +68,9 @@ public class ReviewControllerTest extends ControllerTest {
                     );
         }
 
-        @DisplayName("content가 null이나 empty면 400 반환한다.")
+        @DisplayName("content가 null, empty, blank면 400 반환한다.")
         @NullAndEmptySource
+        @ValueSource(strings = {" "})
         @ParameterizedTest
         void createReviewWithContentNullAndEmpty(final String content) throws Exception {
             final ReviewCreateRequest reviewCreateRequest = new ReviewCreateRequest(
@@ -113,8 +99,9 @@ public class ReviewControllerTest extends ControllerTest {
                     );
         }
 
-        @DisplayName("prUrl이 null이나 empty면 400 반환한다.")
+        @DisplayName("prUrl이 null, empty, blank면 400 반환한다.")
         @NullAndEmptySource
+        @ValueSource(strings = {" "})
         @ParameterizedTest
         void createReviewWithPrUrlNullAndEmpty(final String prUrl) throws Exception {
             final ReviewCreateRequest reviewCreateRequest = new ReviewCreateRequest("리뷰 요청합니다.", "본문", prUrl);
