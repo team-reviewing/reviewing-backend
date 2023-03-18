@@ -1,6 +1,7 @@
 package project.reviewing.review.presentation.request;
 
 import lombok.Getter;
+import project.reviewing.review.domain.Review;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
@@ -20,6 +21,10 @@ public class ReviewCreateRequest {
     @Pattern(regexp = "^(https://)?github\\.com/.+/.+/pull/[0-9]+$", message = "올바른 PR URL을 입력해 주세요.")
     @NotBlank(message = "PR URL을 입력해 주세요.")
     private final String prUrl;
+
+    public Review toEntity() {
+        return new Review(null, null, title, content, prUrl);
+    }
 
     public ReviewCreateRequest(final String title, final String content, final String prUrl) {
         this.title = title;
