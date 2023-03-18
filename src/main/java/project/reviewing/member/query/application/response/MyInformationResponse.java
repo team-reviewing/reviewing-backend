@@ -1,24 +1,22 @@
 package project.reviewing.member.query.application.response;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import project.reviewing.member.query.dao.data.MyInformation;
+import project.reviewing.member.query.dao.data.MyInformationData;
 
 @Getter
-@NoArgsConstructor
 public class MyInformationResponse {
 
-    private String username;
-    private String email;
-    private String imageUrl;
-    private String profileUrl;
-    private boolean isReviewer;
+    private final String username;
+    private final String email;
+    private final String imageUrl;
+    private final String profileUrl;
+    private final boolean isReviewer;
 
-    public static MyInformationResponse of(final MyInformation myInformation) {
+    public static MyInformationResponse of(final MyInformationData myInformationData) {
         return new MyInformationResponse(
-                myInformation.getUsername(), myInformation.getEmail(),
-                myInformation.getImageUrl(), myInformation.getProfileUrl(),
-                myInformation.isReviewer()
+                myInformationData.getUsername(), myInformationData.getEmail(),
+                myInformationData.getImageUrl(), myInformationData.getProfileUrl(),
+                myInformationData.isReviewer()
         );
     }
 

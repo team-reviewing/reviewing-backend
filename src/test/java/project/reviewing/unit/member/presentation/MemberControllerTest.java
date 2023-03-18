@@ -68,7 +68,7 @@ public class MemberControllerTest extends ControllerTest {
 
     @DisplayName("리뷰어 등록 시")
     @Nested
-    class ReviewerInformationResponseRegisterTest {
+    class MyReviewerInformationResponseRegisterTest {
 
         @DisplayName("직무를 입력하지 않은 경우 400을 반환한다.")
         @NullAndEmptySource

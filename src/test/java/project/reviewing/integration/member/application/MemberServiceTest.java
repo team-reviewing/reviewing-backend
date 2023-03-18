@@ -8,7 +8,6 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import project.reviewing.common.exception.ErrorType;
 import project.reviewing.integration.IntegrationTest;
 import project.reviewing.member.command.application.MemberService;
@@ -170,12 +169,6 @@ public class MemberServiceTest extends IntegrationTest {
             final Member actual = getMember(member.getId());
             assertThat(actual.isReviewer()).isFalse();
         }
-    }
-
-    private Member createMember(final Member member) {
-        final Member savedMember = memberRepository.save(member);
-        entityManager.clear();
-        return savedMember;
     }
 
     private void registerReviewer(final MemberService sut, final Long id, final ReviewerRegistrationRequest request) {

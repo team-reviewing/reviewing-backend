@@ -2,44 +2,36 @@ package project.reviewing.integration.member.dao;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.util.Optional;
+import java.util.List;
 import java.util.Set;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.context.annotation.ComponentScan.Filter;
-import org.springframework.context.annotation.FilterType;
-import org.springframework.stereotype.Repository;
+import project.reviewing.integration.IntegrationTest;
 import project.reviewing.member.command.domain.Career;
 import project.reviewing.member.command.domain.Job;
 import project.reviewing.member.command.domain.Member;
-import project.reviewing.member.command.domain.MemberRepository;
 import project.reviewing.member.command.domain.Reviewer;
-import project.reviewing.member.query.dao.ReviewerDao;
-import project.reviewing.member.query.dao.data.ReviewerData;
+import project.reviewing.member.query.dao.data.MyReviewerInformationData;
+import project.reviewing.tag.command.domain.Category;
+import project.reviewing.tag.command.domain.Tag;
+import project.reviewing.tag.query.dao.data.TagData;
 
 @DisplayName("ReviewerDao 는")
-@DataJpaTest(includeFilters = @Filter(type = FilterType.ANNOTATION, classes = Repository.class))
-public class ReviewerDaoTest {
-
-    @Autowired
-    private ReviewerDao reviewerDao;
-
-    @Autowired
-    private MemberRepository memberRepository;
+public class ReviewerDaoTest extends IntegrationTest {
 
     @DisplayName("회원의 리뷰어 정보를 조회한다.")
     @Test
     void getReviewer() {
         final Member member = new Member(1L, "username", "email@gmail.com", "image", "profile");
-        final Reviewer reviewer = new Reviewer(Job.BACKEND, Career.JUNIOR, Set.of(1L, 2L), "안녕하세요");
+        final Category category = createCategory(new Category("백엔드"));
+        final Tag tag = createTag(new Tag("Java", category));
+        final Reviewer reviewer = new Reviewer(Job.BACKEND, Career.JUNIOR, Set.of(tag.getId()), "안녕하세요");
         final Member savedMember = createMemberAndRegisterReviewer(member, reviewer);
 
-        ReviewerData actual = reviewerDao.findByMemberId(savedMember.getId()).get();
+        List<MyReviewerInformationData> actual = reviewerDao.findByMemberId(savedMember.getId());
 
-        assertThat(actual).usingRecursiveComparison()
-                .isEqualTo(toReviewerData(savedMember.getReviewer()));
+        assertThat(actual).usingRecursiveFieldByFieldElementComparator()
+                .containsExactly(toReviewerInformationData(savedMember.getReviewer(), tag));
     }
 
     @DisplayName("회원이 존재하지 않으면 빈 값을 조회한다.")
@@ -47,21 +39,17 @@ public class ReviewerDaoTest {
     void findNotExistMember() {
         final Long wrongMemberId = 1L;
 
-        final Optional<ReviewerData> actual = reviewerDao.findByMemberId(wrongMemberId);
+        final List<MyReviewerInformationData> actual = reviewerDao.findByMemberId(wrongMemberId);
 
-        assertThat(actual).isEqualTo(Optional.empty());
+        assertThat(actual).isEmpty();
     }
 
-    private Member createMemberAndRegisterReviewer(final Member member, final Reviewer reviewer) {
-        member.register(reviewer);
-        return memberRepository.save(member);
-    }
-
-    private ReviewerData toReviewerData(final Reviewer reviewer) {
-        return new ReviewerData(
+    private MyReviewerInformationData toReviewerInformationData(final Reviewer reviewer, final Tag tag) {
+        return new MyReviewerInformationData(
                 reviewer.getJob().getValue(),
                 reviewer.getCareer().getCareer(),
-                reviewer.getIntroduction()
+                reviewer.getIntroduction(),
+                new TagData(tag.getId(), tag.getName())
         );
     }
 }
