@@ -32,7 +32,10 @@ public class Review {
     @Column(nullable = false)
     private String prUrl;
 
-    public void assign(final Long revieweeId, final Long reviewerId, final boolean isReviewer) {
+    public static Review of(
+            final Long revieweeId, final Long reviewerId, final String title,
+            final String content, final String prUrl, final boolean isReviewer
+    ) {
         if (revieweeId.equals(reviewerId)) {
             throw new InvalidReviewException(ErrorType.SAME_REVIEWER_AS_REVIEWEE);
         }
@@ -40,11 +43,10 @@ public class Review {
             throw new InvalidReviewException(ErrorType.DO_NOT_REGISTERED);
         }
 
-        this.revieweeId = revieweeId;
-        this.reviewerId = reviewerId;
+        return new Review(revieweeId, reviewerId, title, content, prUrl);
     }
 
-    public Review(
+    private Review(
             final Long revieweeId, final Long reviewerId, final String title, final String content, final String prUrl
     ) {
         this.revieweeId = revieweeId;

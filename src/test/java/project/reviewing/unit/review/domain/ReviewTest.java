@@ -14,13 +14,13 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 @DisplayName("Review 는 ")
 public class ReviewTest {
 
-    @DisplayName("리뷰이와 리뷰어를 지정할 수 있다.")
+    @DisplayName("리뷰를 생성할 수 있다.")
     @CsvSource(value = {"1, 2, true"})
     @ParameterizedTest
-    void validAssign(final Long revieweeId, final Long reviewerId, final Boolean isReviewer) {
-        final Review newReview = new Review(null, null, "제목", "본문", "github.com/bboor/project/pull/1");
-
-        newReview.assign(revieweeId, reviewerId, isReviewer);
+    void validCreateReview(final Long revieweeId, final Long reviewerId, final Boolean isReviewer) {
+        final Review newReview = Review.of(
+                revieweeId, reviewerId, "제목", "본문", "github.com/bboor/project/pull/1", isReviewer
+        );
 
         assertAll(
                 () -> assertThat(newReview.getRevieweeId()).isEqualTo(revieweeId),
@@ -28,24 +28,24 @@ public class ReviewTest {
         );
     }
 
-    @DisplayName("리뷰이와 동일한 리뷰어는 지정할 수 없다.")
+    @DisplayName("리뷰이와 동일한 리뷰어에게 요청하는 리뷰는 생성할 수 없다.")
     @CsvSource(value = {"1, 1, true"})
     @ParameterizedTest
-    void assignWithSameReviewerAsReviewee(final Long revieweeId, final Long reviewerId, final Boolean isReviewer) {
-        final Review review = new Review(null, null, "제목", "본문", "github.com/bboor/project/pull/1");
-
-        assertThatThrownBy(() -> review.assign(revieweeId, reviewerId, isReviewer))
+    void createWithSameReviewerAsReviewee(final Long revieweeId, final Long reviewerId, final Boolean isReviewer) {
+        assertThatThrownBy(
+                () -> Review.of(revieweeId, reviewerId, "제목", "본문", "github.com/bboor/project/pull/1", isReviewer)
+        )
                 .isInstanceOf(InvalidReviewException.class)
                 .hasMessage(ErrorType.SAME_REVIEWER_AS_REVIEWEE.getMessage());
     }
 
-    @DisplayName("활동하지 않는 리뷰어는 지정할 수 없다.")
+    @DisplayName("활동하지 않는 리뷰어에게 요청하는 리뷰는 생성할 수 없다.")
     @CsvSource(value = {"1, 2, false"})
     @ParameterizedTest
-    void assignWithNotRegisteredReviewer(final Long revieweeId, final Long reviewerId, final Boolean isReviewer) {
-        final Review review = new Review(null, null, "제목", "본문", "github.com/bboor/project/pull/1");
-
-        assertThatThrownBy(() -> review.assign(revieweeId, reviewerId, isReviewer))
+    void createWithNotRegisteredReviewer(final Long revieweeId, final Long reviewerId, final Boolean isReviewer) {
+        assertThatThrownBy(
+                () -> Review.of(revieweeId, reviewerId, "제목", "본문", "github.com/bboor/project/pull/1", isReviewer)
+        )
                 .isInstanceOf(InvalidReviewException.class)
                 .hasMessage(ErrorType.DO_NOT_REGISTERED.getMessage());
     }
