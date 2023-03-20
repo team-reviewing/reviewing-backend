@@ -76,8 +76,8 @@ public abstract class IntegrationTest {
         return savedTag;
     }
 
-    protected void createReview(final Review newReview) {
-        reviewRepository.save(newReview);
+    protected void createReview(final Review review) {
+        reviewRepository.save(review);
         entityManager.clear();
     }
 }
