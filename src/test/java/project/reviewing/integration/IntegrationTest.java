@@ -12,6 +12,7 @@ import project.reviewing.member.command.domain.MemberRepository;
 import project.reviewing.member.command.domain.Reviewer;
 import project.reviewing.member.query.dao.MyInformationDao;
 import project.reviewing.member.query.dao.ReviewerDao;
+import project.reviewing.review.domain.Review;
 import project.reviewing.tag.command.domain.Category;
 import project.reviewing.tag.command.domain.CategoryRepository;
 import project.reviewing.tag.command.domain.Tag;
@@ -73,5 +74,10 @@ public abstract class IntegrationTest {
         final Tag savedTag = tagRepository.save(tag);
         entityManager.clear();
         return savedTag;
+    }
+
+    protected void createReview(final Review newReview) {
+        reviewRepository.save(newReview);
+        entityManager.clear();
     }
 }

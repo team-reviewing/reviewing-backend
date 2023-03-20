@@ -31,8 +31,11 @@ public class ReviewServiceTest extends IntegrationTest {
         @Test
         void validCreateReview() {
             final ReviewService reviewService = new ReviewService(reviewRepository, memberRepository);
-            final Member reviewee = createMember(1L, "Tom", "Tom@gmail.com", "imageUrl", "https://github.com/Tom");
-            final Member reviewer = createReviewer(2L, "bboor", "bboor@gmail.com", "imageUrl", "https://github.com/bboor");
+            final Member reviewee = createMember(new Member(1L, "Tom", "Tom@gmail.com", "imageUrl", "https://github.com/Tom"));
+            final Member reviewer = createMemberAndRegisterReviewer(
+                    new Member(2L, "bboor", "bboor@gmail.com", "imageUrl", "https://github.com/bboor"),
+                    new Reviewer(Job.BACKEND, Career.JUNIOR, Set.of(1L), "소개글")
+            );
             final ReviewCreateRequest reviewCreateRequest = new ReviewCreateRequest(
                     "리뷰 요청합니다.", "본문", "https://github.com/Tom/myproject/pull/1"
             );
@@ -52,13 +55,19 @@ public class ReviewServiceTest extends IntegrationTest {
         @Test
         void createAlreadyExistReviewToSameReviewer() {
             final ReviewService reviewService = new ReviewService(reviewRepository, memberRepository);
-            final Member reviewee = createMember(1L, "Tom", "Tom@gmail.com", "imageUrl", "https://github.com/Tom");
-            final Member reviewer = createReviewer(2L, "bboor", "bboor@gmail.com", "imageUrl", "https://github.com/bboor");
+            final Member reviewee = createMember(new Member(1L, "Tom", "Tom@gmail.com", "imageUrl", "https://github.com/Tom"));
+            final Member reviewer = createMemberAndRegisterReviewer(
+                    new Member(2L, "bboor", "bboor@gmail.com", "imageUrl", "https://github.com/bboor"),
+                    new Reviewer(Job.BACKEND, Career.JUNIOR, Set.of(1L), "소개글")
+            );
             final ReviewCreateRequest reviewCreateRequest = new ReviewCreateRequest(
                     "리뷰 요청합니다.", "본문", "https://github.com/Tom/myproject/pull/1"
             );
 
-            createReview(reviewee.getId(), reviewer.getId());
+            createReview(Review.assign(
+                    reviewee.getId(), reviewer.getId(), reviewCreateRequest.getTitle(),
+                    reviewCreateRequest.getContent(), reviewCreateRequest.getPrUrl(), reviewer.isReviewer()
+            ));
 
             assertThatThrownBy(() -> reviewService.createReview(reviewee.getId(), reviewer.getId(), reviewCreateRequest))
                     .isInstanceOf(InvalidReviewException.class)
@@ -70,7 +79,7 @@ public class ReviewServiceTest extends IntegrationTest {
         void createReviewWithNotExistReviewerMember() {
             final ReviewService reviewService = new ReviewService(reviewRepository, memberRepository);
             final long reviewerId = -1L;
-            final Member reviewee = createMember(1L, "Tom", "Tom@gmail.com", "imageUrl", "https://github.com/Tom");
+            final Member reviewee = createMember(new Member(1L, "Tom", "Tom@gmail.com", "imageUrl", "https://github.com/Tom"));
             final ReviewCreateRequest reviewCreateRequest = new ReviewCreateRequest(
                     "리뷰 요청합니다.", "본문", "https://github.com/Tom/myproject/pull/1"
             );
@@ -78,38 +87,5 @@ public class ReviewServiceTest extends IntegrationTest {
             assertThatThrownBy(() -> reviewService.createReview(reviewee.getId(), reviewerId, reviewCreateRequest))
                     .isInstanceOf(MemberNotFoundException.class);
         }
-    }
-
-    private Member createReviewer(
-            final Long githubId, final String username, final String email,
-            final String imageUrl, final String profileUrl
-    ) {
-        final Member member = createMember(githubId, username, email, imageUrl, profileUrl);
-        final Reviewer reviewer = new Reviewer(Job.BACKEND, Career.JUNIOR, Set.of(1L), "소개글");
-
-        member.register(reviewer);
-
-        entityManager.merge(member);
-        entityManager.flush();
-        entityManager.clear();
-        return member;
-    }
-
-    private Member createMember(
-            final Long githubId, final String username, final String email,
-            final String imageUrl, final String profileUrl
-    ) {
-        final Member member = memberRepository.save(new Member(githubId, username, email, imageUrl, profileUrl));
-        entityManager.clear();
-        return member;
-    }
-
-    private void createReview(final Long revieweeId, final Long reviewerMemberId) {
-        reviewRepository.save(
-                Review.assign(
-                        revieweeId, reviewerMemberId, "리뷰 요청합니다.",
-                        "본문", "https://github.com/Tom/myproject/pull/1", true
-                ));
-        entityManager.clear();
     }
 }
