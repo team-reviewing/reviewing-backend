@@ -18,6 +18,7 @@ import project.reviewing.auth.presentation.RefreshInterceptor;
 import project.reviewing.member.command.application.MemberService;
 import project.reviewing.member.query.application.MemberQueryService;
 import project.reviewing.tag.query.application.TagQueryService;
+import project.reviewing.review.application.ReviewService;
 
 @WebMvcTest(includeFilters = @Filter(type = FilterType.ANNOTATION, classes = RestController.class))
 @Import({
@@ -42,6 +43,9 @@ public class ControllerTest {
 
     @MockBean
     protected MemberQueryService memberQueryService;
+
+    @MockBean
+    protected ReviewService reviewService;
 
     @MockBean
     protected RefreshTokenRepository refreshTokenRepository;
