@@ -32,7 +32,7 @@ public class Review {
     @Column(nullable = false)
     private String prUrl;
 
-    public static Review of(
+    public static Review assign(
             final Long revieweeId, final Long reviewerId, final String title,
             final String content, final String prUrl, final boolean isReviewer
     ) {

@@ -22,10 +22,6 @@ public class ReviewCreateRequest {
     @NotBlank(message = "PR URL을 입력해 주세요.")
     private final String prUrl;
 
-    public Review toEntity(final Long revieweeId, final Long reviewerId, final boolean isReviewer) {
-        return Review.of(revieweeId, reviewerId, title, content, prUrl, isReviewer);
-    }
-
     public ReviewCreateRequest(final String title, final String content, final String prUrl) {
         this.title = title;
         this.content = content;

@@ -26,8 +26,10 @@ public class ReviewService {
         }
 
         final Member reviewer = findMemberByReviewerId(reviewerId);
-        final Review newReview = reviewCreateRequest.toEntity(revieweeId, reviewerId, reviewer.isReviewer());
-
+        final Review newReview = Review.assign(
+                revieweeId, reviewerId, reviewCreateRequest.getTitle(),
+                reviewCreateRequest.getContent(), reviewCreateRequest.getPrUrl(), reviewer.isReviewer()
+        );
         reviewRepository.save(newReview);
     }
 
