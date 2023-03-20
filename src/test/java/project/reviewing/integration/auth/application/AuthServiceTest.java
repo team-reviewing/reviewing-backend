@@ -87,10 +87,4 @@ public class AuthServiceTest extends IntegrationTest {
                 () -> assertThat(updatedMember.getProfileUrl()).isEqualTo(expectedMember.getProfileUrl())
         );
     }
-
-    private Member createMember(final Member member) {
-        final Member savedMember = memberRepository.save(member);
-        entityManager.clear();
-        return savedMember;
-    }
 }

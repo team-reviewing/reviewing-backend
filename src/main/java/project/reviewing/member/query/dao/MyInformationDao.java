@@ -8,7 +8,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
-import project.reviewing.member.query.dao.data.MyInformation;
+import project.reviewing.member.query.dao.data.MyInformationData;
 
 @RequiredArgsConstructor
 @Repository
@@ -16,7 +16,7 @@ public class MyInformationDao {
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
-    public Optional<MyInformation> findById(final Long memberId) {
+    public Optional<MyInformationData> findById(final Long memberId) {
         try {
             final String sql = "SELECT username, email, image_url, profile_url, is_reviewer "
                     + "FROM member "
@@ -29,8 +29,8 @@ public class MyInformationDao {
         }
     }
 
-    private RowMapper<MyInformation> rowMapper() {
-        return (rs, rowNum) -> new MyInformation(
+    private RowMapper<MyInformationData> rowMapper() {
+        return (rs, rowNum) -> new MyInformationData(
                 rs.getString("username"),
                 rs.getString("email"),
                 rs.getString("image_url"),

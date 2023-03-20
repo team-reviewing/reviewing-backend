@@ -1,11 +1,10 @@
 package project.reviewing.member.query.dao.data;
 
-import java.util.List;
 import lombok.Getter;
 import project.reviewing.tag.query.dao.data.TagData;
 
 @Getter
-public class ReviewerData {
+public class ReviewerWithTagData {
 
     private final Long id;
     private final String job;
@@ -14,13 +13,11 @@ public class ReviewerData {
     private final String username;
     private final String imageUrl;
     private final String profileUrl;
-    private final List<TagData> tagData;
+    private final TagData tagData;
 
-    public ReviewerData(
-            final Long id, final String job,
-            final String career, final String introduction,
-            final String username, final String imageUrl,
-            final String profileUrl, final List<TagData> tagData
+    public ReviewerWithTagData(
+            final Long id, final String job, final String career, final String introduction,
+            final String username, final String imageUrl, final String profileUrl, final TagData tagData
     ) {
         this.id = id;
         this.job = job;

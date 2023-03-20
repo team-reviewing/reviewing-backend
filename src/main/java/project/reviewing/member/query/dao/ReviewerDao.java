@@ -1,8 +1,10 @@
 package project.reviewing.member.query.dao;
 
-import java.util.Optional;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -11,6 +13,10 @@ import org.springframework.stereotype.Repository;
 import project.reviewing.member.command.domain.Career;
 import project.reviewing.member.command.domain.Job;
 import project.reviewing.member.query.dao.data.ReviewerData;
+import project.reviewing.member.query.dao.data.MyReviewerInformationData;
+import project.reviewing.member.query.dao.data.ReviewerWithTagData;
+import project.reviewing.member.query.dao.util.ReviewerDataMapper;
+import project.reviewing.tag.query.dao.data.TagData;
 
 @RequiredArgsConstructor
 @Repository
@@ -29,24 +35,90 @@ public class ReviewerDao {
         return Boolean.TRUE.equals(jdbcTemplate.queryForObject(sql, params, Boolean.class));
     }
 
-    public Optional<ReviewerData> findByMemberId(final Long memberId) {
-        try {
-            final String sql = "SELECT job, career, introduction "
-                    + "FROM reviewer "
-                    + "WHERE member_id = :memberId";
-            final SqlParameterSource params = new MapSqlParameterSource("memberId", memberId);
+    public List<MyReviewerInformationData> findByMemberId(final Long memberId) {
+        final String sql = "SELECT r.job job, r.career career, r.introduction introduction, t.id tag_id, t.name tag_name "
+                + "FROM reviewer r "
+                + "JOIN reviewer_tag rt ON r.id = rt.reviewer_id "
+                + "JOIN tag t ON rt.tag_id = t.id "
+                + "WHERE r.member_id = :memberId";
+        final SqlParameterSource params = new MapSqlParameterSource("memberId", memberId);
 
-            return Optional.ofNullable(jdbcTemplate.queryForObject(sql, params, rowMapper()));
-        } catch (EmptyResultDataAccessException e) {
-            return Optional.empty();
-        }
+        return jdbcTemplate.query(sql, params, rowMapperRid());
     }
 
-    private RowMapper<ReviewerData> rowMapper() {
-        return (rs, rowNum) -> new ReviewerData(
+    public Slice<ReviewerData> findByTag(final Pageable pageable, final Long categoryId, final List<Long> tagIds) {
+        final String sql = "SELECT r.job, r.career, r.introduction, m.id, m.username, m.image_url, m.profile_url, t.id tag_id, t.name tag_name "
+                + "FROM reviewer r "
+                + "JOIN member m ON r.member_id = m.id "
+                + "JOIN reviewer_tag rt ON r.id = rt.reviewer_id "
+                + "JOIN tag t ON rt.tag_id = t.id "
+                + checkWhereClause(categoryId, tagIds)
+                + "LIMIT :limit OFFSET :offset";
+        final SqlParameterSource params = new MapSqlParameterSource("limit", pageable.getPageSize() + 1)
+                .addValue("offset", pageable.getOffset())
+                .addValue("categoryId", categoryId)
+                .addValue("tagIds", tagIds);
+
+        final List<ReviewerData> reviewerData = ReviewerDataMapper.map(jdbcTemplate.query(sql, params, rowMapper()));
+        return new SliceImpl<>(getCurrentPageReviewers(reviewerData, pageable), pageable, hasNext(reviewerData, pageable));
+    }
+
+    private String checkWhereClause(final Long categoryId, final List<Long> tagIds) {
+        final String whereClause = checkTagIdsAreIn(tagIds);
+        if (categoryId != null) {
+            return whereClause.concat(checkCategoryIdIsEqual(tagIds));
+        }
+        return whereClause;
+    }
+
+    private String checkTagIdsAreIn(final List<Long> tagIds) {
+        if (tagIds == null) {
+            return "";
+        }
+        return "WHERE r.id IN ( "
+                + "SELECT rt.reviewer_id "
+                + "FROM reviewer_tag rt "
+                + "WHERE rt.tag_id IN (:tagIds) "
+                + ") ";
+    }
+
+    private String checkCategoryIdIsEqual(final List<Long> tagIds) {
+        if (tagIds == null) {
+            return "WHERE t.category_id = :categoryId ";
+        }
+        return "AND t.category_id = :categoryId ";
+    }
+
+    private List<ReviewerData> getCurrentPageReviewers(final List<ReviewerData> reviewerData, final Pageable pageable) {
+        if (hasNext(reviewerData, pageable)) {
+            return reviewerData.subList(0, reviewerData.size() - 1);
+        }
+        return reviewerData;
+    }
+
+    private boolean hasNext(final List<ReviewerData> reviewerData, final Pageable pageable) {
+        return reviewerData.size() > pageable.getPageSize();
+    }
+
+    private RowMapper<ReviewerWithTagData> rowMapper() {
+        return (rs, rowNum) -> new ReviewerWithTagData(
+                rs.getLong("id"),
                 Job.valueOf(rs.getString("job")).getValue(),
                 Career.valueOf(rs.getString("career")).getCareer(),
-                rs.getString("introduction")
+                rs.getString("introduction"),
+                rs.getString("username"),
+                rs.getString("image_url"),
+                rs.getString("profile_url"),
+                new TagData(rs.getLong("tag_id"), rs.getString("tag_name"))
+        );
+    }
+
+    private RowMapper<MyReviewerInformationData> rowMapperRid() {
+        return (rs, rowNum) -> new MyReviewerInformationData(
+                Job.valueOf(rs.getString("job")).getValue(),
+                Career.valueOf(rs.getString("career")).getCareer(),
+                rs.getString("introduction"),
+                new TagData(rs.getLong("tag_id"), rs.getString("tag_name"))
         );
     }
 }

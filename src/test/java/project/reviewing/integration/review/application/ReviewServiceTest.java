@@ -106,7 +106,7 @@ public class ReviewServiceTest extends IntegrationTest {
 
     private void createReview(final Long revieweeId, final Long reviewerMemberId) {
         reviewRepository.save(
-                Review.of(
+                Review.assign(
                         revieweeId, reviewerMemberId, "리뷰 요청합니다.",
                         "본문", "https://github.com/Tom/myproject/pull/1", true
                 ));
