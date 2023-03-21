@@ -4,9 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.reviewing.common.exception.ErrorType;
-import project.reviewing.member.command.domain.Member;
-import project.reviewing.member.command.domain.MemberRepository;
-import project.reviewing.member.exception.MemberNotFoundException;
+import project.reviewing.member.command.domain.Reviewer;
+import project.reviewing.member.command.domain.ReviewerRepository;
+import project.reviewing.member.exception.ReviewerNotFoundException;
 import project.reviewing.review.domain.Review;
 import project.reviewing.review.domain.ReviewRepository;
 import project.reviewing.review.exception.InvalidReviewException;
@@ -18,23 +18,22 @@ import project.reviewing.review.presentation.request.ReviewCreateRequest;
 public class ReviewService {
 
     private final ReviewRepository reviewRepository;
-    private final MemberRepository memberRepository;
+    private final ReviewerRepository reviewerRepository;
 
     public void createReview(final Long revieweeId, final Long reviewerId, final ReviewCreateRequest reviewCreateRequest) {
         if (reviewRepository.existsByRevieweeIdAndReviewerId(revieweeId, reviewerId)) {
             throw new InvalidReviewException(ErrorType.ALREADY_REQUESTED);
         }
 
-        final Member reviewer = findMemberByReviewerId(reviewerId);
-        final Review newReview = Review.assign(
-                revieweeId, reviewerId, reviewCreateRequest.getTitle(),
-                reviewCreateRequest.getContent(), reviewCreateRequest.getPrUrl(), reviewer.isReviewer()
+        final Reviewer reviewer = findReviewerById(reviewerId);
+        final Review newReview = reviewCreateRequest.toEntity(
+                revieweeId, reviewerId, reviewer.getMember().getId(), reviewer.getMember().isReviewer()
         );
         reviewRepository.save(newReview);
     }
 
-    private Member findMemberByReviewerId(final Long reviewerId) {
-        return memberRepository.findById(reviewerId)
-                .orElseThrow(MemberNotFoundException::new);
+    private Reviewer findReviewerById(final Long id) {
+        return reviewerRepository.findById(id)
+                .orElseThrow(ReviewerNotFoundException::new);
     }
 }

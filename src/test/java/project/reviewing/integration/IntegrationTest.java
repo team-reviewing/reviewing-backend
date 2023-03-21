@@ -10,6 +10,7 @@ import project.reviewing.auth.domain.RefreshTokenRepository;
 import project.reviewing.member.command.domain.Member;
 import project.reviewing.member.command.domain.MemberRepository;
 import project.reviewing.member.command.domain.Reviewer;
+import project.reviewing.member.command.domain.ReviewerRepository;
 import project.reviewing.member.query.dao.MyInformationDao;
 import project.reviewing.member.query.dao.ReviewerDao;
 import project.reviewing.review.domain.Review;
@@ -37,6 +38,9 @@ public abstract class IntegrationTest {
 
     @Autowired
     protected ReviewRepository reviewRepository;
+
+    @Autowired
+    protected ReviewerRepository reviewerRepository;
 
     @Autowired
     protected MyInformationDao myInformationDao;

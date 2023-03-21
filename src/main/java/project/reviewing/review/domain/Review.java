@@ -33,10 +33,10 @@ public class Review {
     private String prUrl;
 
     public static Review assign(
-            final Long revieweeId, final Long reviewerId, final String title,
-            final String content, final String prUrl, final boolean isReviewer
+            final Long revieweeId, final Long reviewerId, final String title, final String content,
+            final String prUrl, final Long reviewerMemberId, final boolean isReviewer
     ) {
-        if (revieweeId.equals(reviewerId)) {
+        if (revieweeId.equals(reviewerMemberId)) {
             throw new InvalidReviewException(ErrorType.SAME_REVIEWER_AS_REVIEWEE);
         }
         if (!isReviewer) {

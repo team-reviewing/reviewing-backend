@@ -2,7 +2,6 @@ package project.reviewing.review.presentation;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import project.reviewing.auth.presentation.AuthenticatedMember;
 import project.reviewing.review.application.ReviewService;
@@ -31,6 +30,7 @@ public class ReviewController {
     @PatchMapping("/{review-id}")
     public void updateReview(
             @AuthenticatedMember final Long memberId,
+            @PathVariable("reviewer-id") final Long reviewerId,
             @PathVariable("review-id") final Long reviewId,
             @Valid @RequestBody final ReviewUpdateRequest reviewUpdateRequest
     ) {
