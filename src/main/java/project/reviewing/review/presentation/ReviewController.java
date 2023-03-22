@@ -30,10 +30,9 @@ public class ReviewController {
     @PatchMapping("/{review-id}")
     public void updateReview(
             @AuthenticatedMember final Long memberId,
-            @PathVariable("reviewer-id") final Long reviewerId,
             @PathVariable("review-id") final Long reviewId,
             @Valid @RequestBody final ReviewUpdateRequest reviewUpdateRequest
     ) {
-
+        reviewService.updateReview(memberId, reviewId, reviewUpdateRequest);
     }
 }

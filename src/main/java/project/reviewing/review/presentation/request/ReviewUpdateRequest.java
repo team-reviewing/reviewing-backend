@@ -2,6 +2,7 @@ package project.reviewing.review.presentation.request;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import project.reviewing.review.domain.Review;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
@@ -16,5 +17,9 @@ public class ReviewUpdateRequest {
 
     public ReviewUpdateRequest(final String content) {
         this.content = content;
+    }
+
+    public Review toEntity(final Long revieweeId) {
+        return Review.assign(revieweeId, -1L, null, content, null, -1L, true);
     }
 }

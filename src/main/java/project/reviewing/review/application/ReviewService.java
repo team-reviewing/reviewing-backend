@@ -10,7 +10,9 @@ import project.reviewing.member.exception.ReviewerNotFoundException;
 import project.reviewing.review.domain.Review;
 import project.reviewing.review.domain.ReviewRepository;
 import project.reviewing.review.exception.InvalidReviewException;
+import project.reviewing.review.exception.ReviewNotFoundException;
 import project.reviewing.review.presentation.request.ReviewCreateRequest;
+import project.reviewing.review.presentation.request.ReviewUpdateRequest;
 
 @RequiredArgsConstructor
 @Transactional
@@ -32,8 +34,20 @@ public class ReviewService {
         reviewRepository.save(newReview);
     }
 
+    public void updateReview(final Long revieweeId, final Long reviewId, final ReviewUpdateRequest reviewUpdateRequest) {
+        final Review review = findReviewById(reviewId);
+        final Review updatedReview = reviewUpdateRequest.toEntity(revieweeId);
+
+        review.update(updatedReview);
+    }
+
     private Reviewer findReviewerById(final Long id) {
         return reviewerRepository.findById(id)
                 .orElseThrow(ReviewerNotFoundException::new);
+    }
+
+    private Review findReviewById(final Long id) {
+        return reviewRepository.findById(id)
+                .orElseThrow(ReviewNotFoundException::new);
     }
 }

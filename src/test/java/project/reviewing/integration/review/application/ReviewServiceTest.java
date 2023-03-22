@@ -17,6 +17,7 @@ import project.reviewing.review.domain.Review;
 import project.reviewing.review.exception.InvalidReviewException;
 import project.reviewing.review.exception.ReviewNotFoundException;
 import project.reviewing.review.presentation.request.ReviewCreateRequest;
+import project.reviewing.review.presentation.request.ReviewUpdateRequest;
 
 import java.util.Set;
 
@@ -89,6 +90,41 @@ public class ReviewServiceTest extends IntegrationTest {
 
             assertThatThrownBy(() -> reviewService.createReview(reviewee.getId(), reviewerId, reviewCreateRequest))
                     .isInstanceOf(ReviewerNotFoundException.class);
+        }
+    }
+
+    @DisplayName("리뷰 수정 시 ")
+    @Nested
+    class ReviewUpdateTest {
+
+        @DisplayName("정상적으로 리뷰가 수정된다.")
+        @Test
+        void validUpdateReview() {
+            final ReviewService reviewService = new ReviewService(reviewRepository, reviewerRepository);
+            final ReviewCreateRequest reviewCreateRequest = new ReviewCreateRequest(
+                    "리뷰 요청합니다.", "본문", "https://github.com/Tom/myproject/pull/1"
+            );
+            final ReviewUpdateRequest reviewUpdateRequest = new ReviewUpdateRequest("수정본문");
+            final Review review = createReview(reviewCreateRequest.toEntity(1L, 2L, 2L, true));
+
+            reviewService.updateReview(review.getRevieweeId(), review.getId(), reviewUpdateRequest);
+            entityManager.flush();
+            entityManager.clear();
+
+            final Review updatedReview = reviewRepository.findById(review.getId())
+                            .orElseThrow(ReviewNotFoundException::new);
+            assertThat(updatedReview.getContent()).isEqualTo(reviewUpdateRequest.getContent());
+        }
+
+        @DisplayName("리뷰 정보가 없으면 예외 발생한다.")
+        @Test
+        void updateReviewWithNotExistReview() {
+            final ReviewService reviewService = new ReviewService(reviewRepository, reviewerRepository);
+            final long reviewId = -1L;
+            final ReviewUpdateRequest reviewUpdateRequest = new ReviewUpdateRequest("수정본문");
+
+            assertThatThrownBy(() -> reviewService.updateReview(1L, reviewId, reviewUpdateRequest))
+                    .isInstanceOf(ReviewNotFoundException.class);
         }
     }
 }
