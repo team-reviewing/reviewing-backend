@@ -1,5 +1,6 @@
 package project.reviewing.review.presentation.request;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import project.reviewing.review.domain.Review;
@@ -8,7 +9,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ReviewUpdateRequest {
 
     @Size(min = 1, max = 1500, message = "본문은 1500자 이하로 작성해 주세요.")

@@ -1,5 +1,6 @@
 package project.reviewing.review.presentation.request;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import project.reviewing.review.domain.Review;
@@ -9,7 +10,7 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ReviewCreateRequest {
 
     @Size(min = 1, max = 50, message = "제목은 50자 이하로 작성해 주세요.")
