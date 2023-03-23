@@ -46,11 +46,11 @@ public class Review {
         return new Review(revieweeId, reviewerId, title, content, prUrl);
     }
 
-    public void update(final Review updatedReview) {
-        if (!this.revieweeId.equals(updatedReview.getRevieweeId())) {
+    public void update(final Long revieweeId, final String content) {
+        if (!this.revieweeId.equals(revieweeId)) {
             throw new InvalidReviewException(ErrorType.NOT_REVIEWEE_OF_REVIEW);
         }
-        updateContent(updatedReview.getContent());
+        this.content = content;
     }
 
     private Review(
@@ -61,12 +61,5 @@ public class Review {
         this.title = title;
         this.content = content;
         this.prUrl = prUrl;
-    }
-
-    private void updateContent(final String content) {
-        if (this.content.equals(content)) {
-            throw new InvalidReviewException(ErrorType.SAME_CONTENT_AS_BEFORE);
-        }
-        this.content = content;
     }
 }

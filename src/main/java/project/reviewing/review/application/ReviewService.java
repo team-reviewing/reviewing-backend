@@ -38,8 +38,7 @@ public class ReviewService {
     public void updateReview(final Long revieweeId, final Long reviewId, final ReviewUpdateRequest reviewUpdateRequest) {
         final Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(ReviewNotFoundException::new);
-        final Review updatedReview = reviewUpdateRequest.toEntity(revieweeId);
 
-        review.update(updatedReview);
+        review.update(revieweeId, reviewUpdateRequest.getContent());
     }
 }

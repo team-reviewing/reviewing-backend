@@ -4,7 +4,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.junit.jupiter.params.provider.ValueSource;
 import project.reviewing.common.exception.ErrorType;
 import project.reviewing.review.domain.Review;
 import project.reviewing.review.exception.InvalidReviewException;
@@ -66,34 +65,21 @@ public class ReviewTest {
     @Test
     void validUpdateReview() {
         final Review review = Review.assign(1L, 1L, "제목", "본문", "github.com/bboor/project/pull/1", 2L, true);
-        final Review updatedReview = Review.assign(review.getRevieweeId(), 1L, null, "수정본문", null, 2L, true);
 
-        review.update(updatedReview);
+        review.update(1L, "수정본문");
 
-        assertThat(review.getContent()).isEqualTo(updatedReview.getContent());
+        assertThat(review.getContent()).isEqualTo("수정본문");
     }
 
     @DisplayName("리뷰를 생성한 리뷰이가 아니면 수정할 수 없다.")
-    @CsvSource(value = {"1, 2"})
-    @ParameterizedTest
-    void updateWithNotRevieweeOfReview(final Long revieweeId, final Long anotherRevieweeId) {
-        final Review review = Review.assign(revieweeId, 1L, "제목", "본문", "github.com/bboor/project/pull/1", -1L, true);
-        final Review updatedReview = Review.assign(anotherRevieweeId, 1L, null, "수정본문", null, -1L, true);
+    @Test
+    void updateWithNotRevieweeOfReview() {
+        final Long revieweeId = 1L;
+        final Long anotherRevieweeId = 2L;
+        final Review review = Review.assign(revieweeId, 1L, "제목", "본문", "github.com/bboor/project/pull/1", 2L, true);
 
-        assertThatThrownBy(() -> review.update(updatedReview))
+        assertThatThrownBy(() -> review.update(anotherRevieweeId, "수정본문"))
                 .isInstanceOf(InvalidReviewException.class)
                 .hasMessage(ErrorType.NOT_REVIEWEE_OF_REVIEW.getMessage());
-    }
-
-    @DisplayName("리뷰를 동일한 본문으로 수정할 수 없다.")
-    @ValueSource(strings = {"본문"})
-    @ParameterizedTest
-    void updateWithSameContentAsBefore(final String content) {
-        final Review review = Review.assign(1L, 1L, "제목", content, "github.com/bboor/project/pull/1", 2L, true);
-        final Review updatedReview = Review.assign(review.getRevieweeId(), 1L, null, content, null, 2L, true);
-
-        assertThatThrownBy(() -> review.update(updatedReview))
-                .isInstanceOf(InvalidReviewException.class)
-                .hasMessage(ErrorType.SAME_CONTENT_AS_BEFORE.getMessage());
     }
 }

@@ -19,8 +19,4 @@ public class ReviewUpdateRequest {
     public ReviewUpdateRequest(final String content) {
         this.content = content;
     }
-
-    public Review toEntity(final Long revieweeId) {
-        return Review.assign(revieweeId, -1L, null, content, null, -1L, true);
-    }
 }
