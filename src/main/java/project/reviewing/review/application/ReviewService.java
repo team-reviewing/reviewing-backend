@@ -27,7 +27,8 @@ public class ReviewService {
             throw new InvalidReviewException(ErrorType.ALREADY_REQUESTED);
         }
 
-        final Reviewer reviewer = findReviewerById(reviewerId);
+        final Reviewer reviewer = reviewerRepository.findById(reviewerId)
+                .orElseThrow(ReviewerNotFoundException::new);
         final Review newReview = reviewCreateRequest.toEntity(
                 revieweeId, reviewerId, reviewer.getMember().getId(), reviewer.getMember().isReviewer()
         );
@@ -35,19 +36,10 @@ public class ReviewService {
     }
 
     public void updateReview(final Long revieweeId, final Long reviewId, final ReviewUpdateRequest reviewUpdateRequest) {
-        final Review review = findReviewById(reviewId);
+        final Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(ReviewNotFoundException::new);
         final Review updatedReview = reviewUpdateRequest.toEntity(revieweeId);
 
         review.update(updatedReview);
-    }
-
-    private Reviewer findReviewerById(final Long id) {
-        return reviewerRepository.findById(id)
-                .orElseThrow(ReviewerNotFoundException::new);
-    }
-
-    private Review findReviewById(final Long id) {
-        return reviewRepository.findById(id)
-                .orElseThrow(ReviewNotFoundException::new);
     }
 }
