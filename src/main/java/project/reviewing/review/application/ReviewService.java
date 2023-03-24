@@ -4,9 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.reviewing.common.exception.ErrorType;
-import project.reviewing.member.command.domain.Reviewer;
-import project.reviewing.member.command.domain.ReviewerRepository;
-import project.reviewing.member.exception.ReviewerNotFoundException;
+import project.reviewing.member.command.domain.Member;
+import project.reviewing.member.command.domain.MemberRepository;
+import project.reviewing.member.exception.MemberNotFoundException;
 import project.reviewing.review.domain.Review;
 import project.reviewing.review.domain.ReviewRepository;
 import project.reviewing.review.exception.InvalidReviewException;
@@ -20,17 +20,17 @@ import project.reviewing.review.presentation.request.ReviewUpdateRequest;
 public class ReviewService {
 
     private final ReviewRepository reviewRepository;
-    private final ReviewerRepository reviewerRepository;
+    private final MemberRepository memberRepository;
 
     public void createReview(final Long revieweeId, final Long reviewerId, final ReviewCreateRequest reviewCreateRequest) {
         if (reviewRepository.existsByRevieweeIdAndReviewerId(revieweeId, reviewerId)) {
             throw new InvalidReviewException(ErrorType.ALREADY_REQUESTED);
         }
 
-        final Reviewer reviewer = reviewerRepository.findById(reviewerId)
-                .orElseThrow(ReviewerNotFoundException::new);
+        final Member reviewerMember = memberRepository.findByReviewerId(reviewerId)
+                .orElseThrow(MemberNotFoundException::new);
         final Review newReview = reviewCreateRequest.toEntity(
-                revieweeId, reviewerId, reviewer.getMember().getId(), reviewer.getMember().isReviewer()
+                revieweeId, reviewerId, reviewerMember.getId(), reviewerMember.isReviewer()
         );
         reviewRepository.save(newReview);
     }

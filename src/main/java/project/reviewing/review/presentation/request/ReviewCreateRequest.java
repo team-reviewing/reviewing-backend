@@ -32,7 +32,7 @@ public class ReviewCreateRequest {
     }
 
     public Review toEntity(
-            final Long revieweeId, final Long reviewerId, final Long reviewerMemberId, final Boolean isReviewer
+            final Long revieweeId, final Long reviewerId, final Long reviewerMemberId, final boolean isReviewer
     ) {
         return Review.assign(revieweeId, reviewerId, title, content, prUrl, reviewerMemberId, isReviewer);
     }

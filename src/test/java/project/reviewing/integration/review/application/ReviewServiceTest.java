@@ -11,7 +11,7 @@ import project.reviewing.member.command.domain.Career;
 import project.reviewing.member.command.domain.Job;
 import project.reviewing.member.command.domain.Member;
 import project.reviewing.member.command.domain.Reviewer;
-import project.reviewing.member.exception.ReviewerNotFoundException;
+import project.reviewing.member.exception.MemberNotFoundException;
 import project.reviewing.review.application.ReviewService;
 import project.reviewing.review.domain.Review;
 import project.reviewing.review.exception.InvalidReviewException;
@@ -31,7 +31,7 @@ public class ReviewServiceTest extends IntegrationTest {
         @DisplayName("정상적으로 새 리뷰가 생성된다.")
         @Test
         void validCreateReview() {
-            final ReviewService reviewService = new ReviewService(reviewRepository, reviewerRepository);
+            final ReviewService reviewService = new ReviewService(reviewRepository, memberRepository);
             final Member reviewee = createMember(new Member(1L, "Tom", "Tom@gmail.com", "imageUrl", "https://github.com/Tom"));
             final Member reviewer = createMemberAndRegisterReviewer(
                     new Member(2L, "bboor", "bboor@gmail.com", "imageUrl", "https://github.com/bboor"),
@@ -55,7 +55,7 @@ public class ReviewServiceTest extends IntegrationTest {
         @DisplayName("동일 리뷰어에게 요청한 리뷰가 이미 존재한다면 예외 발생한다.")
         @Test
         void createAlreadyExistReviewToSameReviewer() {
-            final ReviewService reviewService = new ReviewService(reviewRepository, reviewerRepository);
+            final ReviewService reviewService = new ReviewService(reviewRepository, memberRepository);
             final Member reviewee = createMember(new Member(1L, "Tom", "Tom@gmail.com", "imageUrl", "https://github.com/Tom"));
             final Member reviewerMember = createMemberAndRegisterReviewer(
                     new Member(2L, "bboor", "bboor@gmail.com", "imageUrl", "https://github.com/bboor"),
@@ -81,7 +81,7 @@ public class ReviewServiceTest extends IntegrationTest {
         @DisplayName("리뷰어의 정보가 없으면 예외 발생한다.")
         @Test
         void createReviewWithNotExistReviewer() {
-            final ReviewService reviewService = new ReviewService(reviewRepository, reviewerRepository);
+            final ReviewService reviewService = new ReviewService(reviewRepository, memberRepository);
             final long reviewerId = -1L;
             final Member reviewee = createMember(new Member(1L, "Tom", "Tom@gmail.com", "imageUrl", "https://github.com/Tom"));
             final ReviewCreateRequest reviewCreateRequest = new ReviewCreateRequest(
@@ -89,7 +89,7 @@ public class ReviewServiceTest extends IntegrationTest {
             );
 
             assertThatThrownBy(() -> reviewService.createReview(reviewee.getId(), reviewerId, reviewCreateRequest))
-                    .isInstanceOf(ReviewerNotFoundException.class);
+                    .isInstanceOf(MemberNotFoundException.class);
         }
     }
 
@@ -100,7 +100,7 @@ public class ReviewServiceTest extends IntegrationTest {
         @DisplayName("정상적으로 리뷰가 수정된다.")
         @Test
         void validUpdateReview() {
-            final ReviewService reviewService = new ReviewService(reviewRepository, reviewerRepository);
+            final ReviewService reviewService = new ReviewService(reviewRepository, memberRepository);
             final ReviewCreateRequest reviewCreateRequest = new ReviewCreateRequest(
                     "리뷰 요청합니다.", "본문", "https://github.com/Tom/myproject/pull/1"
             );
@@ -119,7 +119,7 @@ public class ReviewServiceTest extends IntegrationTest {
         @DisplayName("리뷰 정보가 없으면 예외 발생한다.")
         @Test
         void updateReviewWithNotExistReview() {
-            final ReviewService reviewService = new ReviewService(reviewRepository, reviewerRepository);
+            final ReviewService reviewService = new ReviewService(reviewRepository, memberRepository);
             final long reviewId = -1L;
             final ReviewUpdateRequest reviewUpdateRequest = new ReviewUpdateRequest("수정본문");
 
