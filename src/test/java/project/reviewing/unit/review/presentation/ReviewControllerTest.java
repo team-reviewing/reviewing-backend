@@ -15,6 +15,9 @@ import project.reviewing.review.presentation.request.ReviewCreateRequest;
 import project.reviewing.review.presentation.request.ReviewUpdateRequest;
 import project.reviewing.unit.ControllerTest;
 
+import java.util.Objects;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -50,7 +53,11 @@ public class ReviewControllerTest extends ControllerTest {
 
             requestAboutReview(post("/reviewers/1/reviews"), reviewCreateRequest)
                     .andExpectAll(
-                            result -> assertTrue(result.getResolvedException() instanceof MethodArgumentNotValidException),
+                            result -> assertTrue(
+                                    result.getResolvedException()
+                                            .getClass()
+                                            .isAssignableFrom(MethodArgumentNotValidException.class)
+                            ),
                             status().isBadRequest()
                     );
         }
@@ -65,7 +72,11 @@ public class ReviewControllerTest extends ControllerTest {
 
             requestAboutReview(post("/reviewers/1/reviews"), reviewCreateRequest)
                     .andExpectAll(
-                            result -> assertTrue(result.getResolvedException() instanceof MethodArgumentNotValidException),
+                            result -> assertTrue(
+                                    result.getResolvedException()
+                                            .getClass()
+                                            .isAssignableFrom(MethodArgumentNotValidException.class)
+                            ),
                             status().isBadRequest()
                     );
         }
@@ -81,7 +92,11 @@ public class ReviewControllerTest extends ControllerTest {
 
             requestAboutReview(post("/reviewers/1/reviews"), reviewCreateRequest)
                     .andExpectAll(
-                            result -> assertTrue(result.getResolvedException() instanceof MethodArgumentNotValidException),
+                            result -> assertTrue(
+                                    result.getResolvedException()
+                                            .getClass()
+                                            .isAssignableFrom(MethodArgumentNotValidException.class)
+                            ),
                             status().isBadRequest()
                     );
         }
@@ -96,7 +111,11 @@ public class ReviewControllerTest extends ControllerTest {
 
             requestAboutReview(post("/reviewers/1/reviews"), reviewCreateRequest)
                     .andExpectAll(
-                            result -> assertTrue(result.getResolvedException() instanceof MethodArgumentNotValidException),
+                            result -> assertTrue(
+                                    result.getResolvedException()
+                                            .getClass()
+                                            .isAssignableFrom(MethodArgumentNotValidException.class)
+                            ),
                             status().isBadRequest()
                     );
         }
@@ -110,7 +129,11 @@ public class ReviewControllerTest extends ControllerTest {
 
             requestAboutReview(post("/reviewers/1/reviews"), reviewCreateRequest)
                     .andExpectAll(
-                            result -> assertTrue(result.getResolvedException() instanceof MethodArgumentNotValidException),
+                            result -> assertTrue(
+                                    result.getResolvedException()
+                                            .getClass()
+                                            .isAssignableFrom(MethodArgumentNotValidException.class)
+                            ),
                             status().isBadRequest()
                     );
         }
@@ -127,7 +150,11 @@ public class ReviewControllerTest extends ControllerTest {
 
             requestAboutReview(post("/reviewers/1/reviews"), reviewCreateRequest)
                     .andExpectAll(
-                            result -> assertTrue(result.getResolvedException() instanceof MethodArgumentNotValidException),
+                            result -> assertTrue(
+                                    result.getResolvedException()
+                                            .getClass()
+                                            .isAssignableFrom(MethodArgumentNotValidException.class)
+                            ),
                             status().isBadRequest()
                     );
         }
@@ -155,7 +182,11 @@ public class ReviewControllerTest extends ControllerTest {
 
             requestAboutReview(patch("/reviewers/1/reviews/1"), reviewUpdateRequest)
                     .andExpectAll(
-                            result -> assertTrue(result.getResolvedException() instanceof MethodArgumentNotValidException),
+                            result -> assertTrue(
+                                    result.getResolvedException()
+                                            .getClass()
+                                            .isAssignableFrom(MethodArgumentNotValidException.class)
+                            ),
                             status().isBadRequest()
                     );
         }
@@ -168,7 +199,11 @@ public class ReviewControllerTest extends ControllerTest {
 
             requestAboutReview(patch("/reviewers/1/reviews/1"), reviewUpdateRequest)
                     .andExpectAll(
-                            result -> assertTrue(result.getResolvedException() instanceof MethodArgumentNotValidException),
+                            result -> assertTrue(
+                                    result.getResolvedException()
+                                            .getClass()
+                                            .isAssignableFrom(MethodArgumentNotValidException.class)
+                            ),
                             status().isBadRequest()
                     );
         }
