@@ -7,6 +7,7 @@ import project.reviewing.common.exception.ErrorType;
 import project.reviewing.member.command.domain.Member;
 import project.reviewing.member.command.domain.MemberRepository;
 import project.reviewing.member.exception.MemberNotFoundException;
+import project.reviewing.review.application.response.ReviewReadResponse;
 import project.reviewing.review.domain.Review;
 import project.reviewing.review.domain.ReviewRepository;
 import project.reviewing.review.exception.InvalidReviewException;
@@ -31,6 +32,10 @@ public class ReviewService {
                 reviewCreateRequest.getContent(), reviewCreateRequest.getPrUrl(), reviewer.isReviewer()
         );
         reviewRepository.save(newReview);
+    }
+
+    public ReviewReadResponse readReview(final Long reviewId) {
+        return new ReviewReadResponse(1, 1, "", "", "");
     }
 
     private Member findMemberByReviewerId(final Long reviewerId) {
