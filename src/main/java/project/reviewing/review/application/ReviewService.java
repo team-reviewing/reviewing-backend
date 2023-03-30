@@ -11,6 +11,7 @@ import project.reviewing.review.application.response.ReviewReadResponse;
 import project.reviewing.review.domain.Review;
 import project.reviewing.review.domain.ReviewRepository;
 import project.reviewing.review.exception.InvalidReviewException;
+import project.reviewing.review.exception.ReviewNotFoundException;
 import project.reviewing.review.presentation.request.ReviewCreateRequest;
 
 @RequiredArgsConstructor
@@ -35,7 +36,10 @@ public class ReviewService {
     }
 
     public ReviewReadResponse readReview(final Long reviewId) {
-        return new ReviewReadResponse(1, 1, "", "", "");
+        final Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(ReviewNotFoundException::new);
+
+        return ReviewReadResponse.from(review);
     }
 
     private Member findMemberByReviewerId(final Long reviewerId) {

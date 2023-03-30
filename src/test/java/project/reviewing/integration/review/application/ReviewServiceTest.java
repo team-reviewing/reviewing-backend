@@ -13,6 +13,7 @@ import project.reviewing.member.command.domain.Member;
 import project.reviewing.member.command.domain.Reviewer;
 import project.reviewing.member.exception.MemberNotFoundException;
 import project.reviewing.review.application.ReviewService;
+import project.reviewing.review.application.response.ReviewReadResponse;
 import project.reviewing.review.domain.Review;
 import project.reviewing.review.exception.InvalidReviewException;
 import project.reviewing.review.exception.ReviewNotFoundException;
@@ -86,6 +87,29 @@ public class ReviewServiceTest extends IntegrationTest {
 
             assertThatThrownBy(() -> reviewService.createReview(reviewee.getId(), reviewerId, reviewCreateRequest))
                     .isInstanceOf(MemberNotFoundException.class);
+        }
+    }
+
+    @DisplayName("단일 리뷰 상세 정보 조회 시 ")
+    @Nested
+    class ReviewReadTest {
+
+        @DisplayName("정상적으로 리뷰 정보를 조회한다.")
+        @Test
+        void validReviewRead() {
+            final ReviewService reviewService = new ReviewService(reviewRepository, memberRepository);
+            final Review savedReview = createReview(Review.assign(1L, 2L, "제목", "본문", "github.com/Tom/p/pull/1", true));
+
+            assertDoesNotThrow(() -> reviewService.readReview(savedReview.getId()));
+        }
+
+        @DisplayName("리뷰 정보가 없으면 예외 발생한다.")
+        @Test
+        void readNotExistReview() {
+            final ReviewService reviewService = new ReviewService(reviewRepository, memberRepository);
+
+            assertThatThrownBy(() -> reviewService.readReview(-1L))
+                    .isInstanceOf(ReviewNotFoundException.class);
         }
     }
 }

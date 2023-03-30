@@ -34,7 +34,7 @@ public class ReviewControllerTest extends ControllerTest {
                     "리뷰 요청합니다.", "본문", "https://github.com/Tom/myproject/pull/1"
             );
 
-            requestAboutReview(post("/reviewers/1/reviews"), reviewCreateRequest)
+            requestAboutReview(post("/reviewers/1/reviews/1"), reviewCreateRequest)
                     .andExpect(status().isOk());
         }
 
@@ -47,7 +47,7 @@ public class ReviewControllerTest extends ControllerTest {
                     title, "본문", "https://github.com/Tom/myproject/pull/1"
             );
 
-            requestAboutReview(post("/reviewers/1/reviews"), reviewCreateRequest)
+            requestAboutReview(post("/reviewers/1/reviews/1"), reviewCreateRequest)
                     .andExpectAll(
                             result -> assertTrue(
                                     result.getResolvedException()
@@ -66,7 +66,7 @@ public class ReviewControllerTest extends ControllerTest {
                     title, "본문", "https://github.com/Tom/myproject/pull/1"
             );
 
-            requestAboutReview(post("/reviewers/1/reviews"), reviewCreateRequest)
+            requestAboutReview(post("/reviewers/1/reviews/1"), reviewCreateRequest)
                     .andExpectAll(
                             result -> assertTrue(
                                     result.getResolvedException()
@@ -86,7 +86,7 @@ public class ReviewControllerTest extends ControllerTest {
                     "리뷰 요청합니다.", content, "https://github.com/Tom/myproject/pull/1"
             );
 
-            requestAboutReview(post("/reviewers/1/reviews"), reviewCreateRequest)
+            requestAboutReview(post("/reviewers/1/reviews/1"), reviewCreateRequest)
                     .andExpectAll(
                             result -> assertTrue(
                                     result.getResolvedException()
@@ -105,7 +105,7 @@ public class ReviewControllerTest extends ControllerTest {
                     "리뷰 요청합니다.", content, "https://github.com/Tom/myproject/pull/1"
             );
 
-            requestAboutReview(post("/reviewers/1/reviews"), reviewCreateRequest)
+            requestAboutReview(post("/reviewers/1/reviews/1"), reviewCreateRequest)
                     .andExpectAll(
                             result -> assertTrue(
                                     result.getResolvedException()
@@ -123,7 +123,7 @@ public class ReviewControllerTest extends ControllerTest {
         void createReviewWithPrUrlNullAndEmpty(final String prUrl) throws Exception {
             final ReviewCreateRequest reviewCreateRequest = new ReviewCreateRequest("리뷰 요청합니다.", "본문", prUrl);
 
-            requestAboutReview(post("/reviewers/1/reviews"), reviewCreateRequest)
+            requestAboutReview(post("/reviewers/1/reviews/1"), reviewCreateRequest)
                     .andExpectAll(
                             result -> assertTrue(
                                     result.getResolvedException()
@@ -144,7 +144,7 @@ public class ReviewControllerTest extends ControllerTest {
         void createReviewWithInvalidPrUrl(final String prUrl) throws Exception {
             final ReviewCreateRequest reviewCreateRequest = new ReviewCreateRequest("리뷰 요청합니다.", "본문", prUrl);
 
-            requestAboutReview(post("/reviewers/1/reviews"), reviewCreateRequest)
+            requestAboutReview(post("/reviewers/1/reviews/1"), reviewCreateRequest)
                     .andExpectAll(
                             result -> assertTrue(
                                     result.getResolvedException()
