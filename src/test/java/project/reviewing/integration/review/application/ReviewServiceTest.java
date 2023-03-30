@@ -13,7 +13,6 @@ import project.reviewing.member.command.domain.Member;
 import project.reviewing.member.command.domain.Reviewer;
 import project.reviewing.member.exception.MemberNotFoundException;
 import project.reviewing.review.application.ReviewService;
-import project.reviewing.review.application.response.ReviewReadResponse;
 import project.reviewing.review.domain.Review;
 import project.reviewing.review.exception.InvalidReviewException;
 import project.reviewing.review.exception.ReviewNotFoundException;

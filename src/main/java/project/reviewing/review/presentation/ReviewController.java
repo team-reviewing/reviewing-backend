@@ -26,7 +26,7 @@ public class ReviewController {
     }
 
     @GetMapping
-    public ReviewReadResponse readReviewDetail(@PathVariable("review-id") final Long reviewId) {
+    public ReviewReadResponse readReview(@PathVariable("review-id") final Long reviewId) {
         return reviewService.readReview(reviewId);
     }
 }
