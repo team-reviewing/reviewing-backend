@@ -15,6 +15,7 @@ import project.reviewing.review.presentation.request.ReviewCreateRequest;
 import project.reviewing.unit.ControllerTest;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -33,7 +34,7 @@ public class ReviewControllerTest extends ControllerTest {
                     "리뷰 요청합니다.", "본문", "https://github.com/Tom/myproject/pull/1"
             );
 
-            requestToCreateReview(post("/reviewers/1/reviews"), reviewCreateRequest)
+            requestAboutReview(post("/reviewers/1/reviews"), reviewCreateRequest)
                     .andExpect(status().isOk());
         }
 
@@ -46,9 +47,13 @@ public class ReviewControllerTest extends ControllerTest {
                     title, "본문", "https://github.com/Tom/myproject/pull/1"
             );
 
-            requestToCreateReview(post("/reviewers/1/reviews"), reviewCreateRequest)
+            requestAboutReview(post("/reviewers/1/reviews"), reviewCreateRequest)
                     .andExpectAll(
-                            result -> assertTrue(result.getResolvedException() instanceof MethodArgumentNotValidException),
+                            result -> assertTrue(
+                                    result.getResolvedException()
+                                            .getClass()
+                                            .isAssignableFrom(MethodArgumentNotValidException.class)
+                            ),
                             status().isBadRequest()
                     );
         }
@@ -61,9 +66,13 @@ public class ReviewControllerTest extends ControllerTest {
                     title, "본문", "https://github.com/Tom/myproject/pull/1"
             );
 
-            requestToCreateReview(post("/reviewers/1/reviews"), reviewCreateRequest)
+            requestAboutReview(post("/reviewers/1/reviews"), reviewCreateRequest)
                     .andExpectAll(
-                            result -> assertTrue(result.getResolvedException() instanceof MethodArgumentNotValidException),
+                            result -> assertTrue(
+                                    result.getResolvedException()
+                                            .getClass()
+                                            .isAssignableFrom(MethodArgumentNotValidException.class)
+                            ),
                             status().isBadRequest()
                     );
         }
@@ -77,9 +86,13 @@ public class ReviewControllerTest extends ControllerTest {
                     "리뷰 요청합니다.", content, "https://github.com/Tom/myproject/pull/1"
             );
 
-            requestToCreateReview(post("/reviewers/1/reviews"), reviewCreateRequest)
+            requestAboutReview(post("/reviewers/1/reviews"), reviewCreateRequest)
                     .andExpectAll(
-                            result -> assertTrue(result.getResolvedException() instanceof MethodArgumentNotValidException),
+                            result -> assertTrue(
+                                    result.getResolvedException()
+                                            .getClass()
+                                            .isAssignableFrom(MethodArgumentNotValidException.class)
+                            ),
                             status().isBadRequest()
                     );
         }
@@ -92,9 +105,13 @@ public class ReviewControllerTest extends ControllerTest {
                     "리뷰 요청합니다.", content, "https://github.com/Tom/myproject/pull/1"
             );
 
-            requestToCreateReview(post("/reviewers/1/reviews"), reviewCreateRequest)
+            requestAboutReview(post("/reviewers/1/reviews"), reviewCreateRequest)
                     .andExpectAll(
-                            result -> assertTrue(result.getResolvedException() instanceof MethodArgumentNotValidException),
+                            result -> assertTrue(
+                                    result.getResolvedException()
+                                            .getClass()
+                                            .isAssignableFrom(MethodArgumentNotValidException.class)
+                            ),
                             status().isBadRequest()
                     );
         }
@@ -106,9 +123,13 @@ public class ReviewControllerTest extends ControllerTest {
         void createReviewWithPrUrlNullAndEmpty(final String prUrl) throws Exception {
             final ReviewCreateRequest reviewCreateRequest = new ReviewCreateRequest("리뷰 요청합니다.", "본문", prUrl);
 
-            requestToCreateReview(post("/reviewers/1/reviews"), reviewCreateRequest)
+            requestAboutReview(post("/reviewers/1/reviews"), reviewCreateRequest)
                     .andExpectAll(
-                            result -> assertTrue(result.getResolvedException() instanceof MethodArgumentNotValidException),
+                            result -> assertTrue(
+                                    result.getResolvedException()
+                                            .getClass()
+                                            .isAssignableFrom(MethodArgumentNotValidException.class)
+                            ),
                             status().isBadRequest()
                     );
         }
@@ -123,16 +144,32 @@ public class ReviewControllerTest extends ControllerTest {
         void createReviewWithInvalidPrUrl(final String prUrl) throws Exception {
             final ReviewCreateRequest reviewCreateRequest = new ReviewCreateRequest("리뷰 요청합니다.", "본문", prUrl);
 
-            requestToCreateReview(post("/reviewers/1/reviews"), reviewCreateRequest)
+            requestAboutReview(post("/reviewers/1/reviews"), reviewCreateRequest)
                     .andExpectAll(
-                            result -> assertTrue(result.getResolvedException() instanceof MethodArgumentNotValidException),
+                            result -> assertTrue(
+                                    result.getResolvedException()
+                                            .getClass()
+                                            .isAssignableFrom(MethodArgumentNotValidException.class)
+                            ),
                             status().isBadRequest()
                     );
         }
     }
 
-    private ResultActions requestToCreateReview(
-            final MockHttpServletRequestBuilder mockHttpServletRequestBuilder, final ReviewCreateRequest request
+    @DisplayName("단일 리뷰 상세 정보 조회 시 ")
+    @Nested
+    class ReviewReadTest {
+
+        @DisplayName("유효한 요청 시 200 반환한다.")
+        @Test
+        void validReadReview() throws Exception {
+            requestAboutReview(get("/reviewers/1/reviews/1"), null)
+                    .andExpect(status().isOk());
+        }
+    }
+
+    private ResultActions requestAboutReview(
+            final MockHttpServletRequestBuilder mockHttpServletRequestBuilder, final Object request
     ) throws Exception {
         final String accessToken = tokenProvider.createAccessToken(1L);
         return mockMvc.perform(mockHttpServletRequestBuilder
