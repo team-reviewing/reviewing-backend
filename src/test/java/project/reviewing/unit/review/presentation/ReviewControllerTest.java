@@ -8,8 +8,6 @@ import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import project.reviewing.review.presentation.request.ReviewCreateRequest;
 import project.reviewing.unit.ControllerTest;
@@ -34,7 +32,12 @@ public class ReviewControllerTest extends ControllerTest {
                     "리뷰 요청합니다.", "본문", "https://github.com/Tom/myproject/pull/1"
             );
 
-            requestAboutReview(post("/reviewers/1/reviews/1"), reviewCreateRequest)
+            mockMvc.perform(post("/reviewers/1/reviews/1")
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenProvider.createAccessToken(1L))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .characterEncoding("UTF-8")
+                            .content(objectMapper.writeValueAsString(reviewCreateRequest)))
+                    .andDo(print())
                     .andExpect(status().isOk());
         }
 
@@ -47,7 +50,12 @@ public class ReviewControllerTest extends ControllerTest {
                     title, "본문", "https://github.com/Tom/myproject/pull/1"
             );
 
-            requestAboutReview(post("/reviewers/1/reviews/1"), reviewCreateRequest)
+            mockMvc.perform(post("/reviewers/1/reviews/1")
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenProvider.createAccessToken(1L))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .characterEncoding("UTF-8")
+                            .content(objectMapper.writeValueAsString(reviewCreateRequest)))
+                    .andDo(print())
                     .andExpectAll(
                             result -> assertTrue(
                                     result.getResolvedException()
@@ -66,7 +74,12 @@ public class ReviewControllerTest extends ControllerTest {
                     title, "본문", "https://github.com/Tom/myproject/pull/1"
             );
 
-            requestAboutReview(post("/reviewers/1/reviews/1"), reviewCreateRequest)
+            mockMvc.perform(post("/reviewers/1/reviews/1")
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenProvider.createAccessToken(1L))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .characterEncoding("UTF-8")
+                            .content(objectMapper.writeValueAsString(reviewCreateRequest)))
+                    .andDo(print())
                     .andExpectAll(
                             result -> assertTrue(
                                     result.getResolvedException()
@@ -86,7 +99,12 @@ public class ReviewControllerTest extends ControllerTest {
                     "리뷰 요청합니다.", content, "https://github.com/Tom/myproject/pull/1"
             );
 
-            requestAboutReview(post("/reviewers/1/reviews/1"), reviewCreateRequest)
+            mockMvc.perform(post("/reviewers/1/reviews/1")
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenProvider.createAccessToken(1L))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .characterEncoding("UTF-8")
+                            .content(objectMapper.writeValueAsString(reviewCreateRequest)))
+                    .andDo(print())
                     .andExpectAll(
                             result -> assertTrue(
                                     result.getResolvedException()
@@ -105,7 +123,12 @@ public class ReviewControllerTest extends ControllerTest {
                     "리뷰 요청합니다.", content, "https://github.com/Tom/myproject/pull/1"
             );
 
-            requestAboutReview(post("/reviewers/1/reviews/1"), reviewCreateRequest)
+            mockMvc.perform(post("/reviewers/1/reviews/1")
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenProvider.createAccessToken(1L))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .characterEncoding("UTF-8")
+                            .content(objectMapper.writeValueAsString(reviewCreateRequest)))
+                    .andDo(print())
                     .andExpectAll(
                             result -> assertTrue(
                                     result.getResolvedException()
@@ -123,7 +146,12 @@ public class ReviewControllerTest extends ControllerTest {
         void createReviewWithPrUrlNullAndEmpty(final String prUrl) throws Exception {
             final ReviewCreateRequest reviewCreateRequest = new ReviewCreateRequest("리뷰 요청합니다.", "본문", prUrl);
 
-            requestAboutReview(post("/reviewers/1/reviews/1"), reviewCreateRequest)
+            mockMvc.perform(post("/reviewers/1/reviews/1")
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenProvider.createAccessToken(1L))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .characterEncoding("UTF-8")
+                            .content(objectMapper.writeValueAsString(reviewCreateRequest)))
+                    .andDo(print())
                     .andExpectAll(
                             result -> assertTrue(
                                     result.getResolvedException()
@@ -144,7 +172,12 @@ public class ReviewControllerTest extends ControllerTest {
         void createReviewWithInvalidPrUrl(final String prUrl) throws Exception {
             final ReviewCreateRequest reviewCreateRequest = new ReviewCreateRequest("리뷰 요청합니다.", "본문", prUrl);
 
-            requestAboutReview(post("/reviewers/1/reviews/1"), reviewCreateRequest)
+            mockMvc.perform(post("/reviewers/1/reviews/1")
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenProvider.createAccessToken(1L))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .characterEncoding("UTF-8")
+                            .content(objectMapper.writeValueAsString(reviewCreateRequest)))
+                    .andDo(print())
                     .andExpectAll(
                             result -> assertTrue(
                                     result.getResolvedException()
@@ -163,21 +196,11 @@ public class ReviewControllerTest extends ControllerTest {
         @DisplayName("유효한 요청 시 200 반환한다.")
         @Test
         void validReadReview() throws Exception {
-            requestAboutReview(get("/reviewers/1/reviews/1"), null)
+            mockMvc.perform(get("/reviewers/1/reviews/1")
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenProvider.createAccessToken(1L)))
+                    .andDo(print())
                     .andExpect(status().isOk());
         }
-    }
-
-    private ResultActions requestAboutReview(
-            final MockHttpServletRequestBuilder mockHttpServletRequestBuilder, final Object request
-    ) throws Exception {
-        final String accessToken = tokenProvider.createAccessToken(1L);
-        return mockMvc.perform(mockHttpServletRequestBuilder
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-                .contentType(MediaType.APPLICATION_JSON)
-                .characterEncoding("UTF-8")
-                .content(objectMapper.writeValueAsString(request)))
-                .andDo(print());
     }
 
     private String makeStringByLength(final int length) {
