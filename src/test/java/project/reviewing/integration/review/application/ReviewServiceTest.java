@@ -13,6 +13,7 @@ import project.reviewing.member.command.domain.Member;
 import project.reviewing.member.command.domain.Reviewer;
 import project.reviewing.member.exception.MemberNotFoundException;
 import project.reviewing.review.application.ReviewService;
+import project.reviewing.review.application.response.ReviewReadResponse;
 import project.reviewing.review.domain.Review;
 import project.reviewing.review.exception.InvalidReviewException;
 import project.reviewing.review.exception.ReviewNotFoundException;
@@ -99,7 +100,13 @@ public class ReviewServiceTest extends IntegrationTest {
             final ReviewService reviewService = new ReviewService(reviewRepository, memberRepository);
             final Review savedReview = createReview(Review.assign(1L, 2L, "제목", "본문", "github.com/Tom/p/pull/1", true));
 
-            assertDoesNotThrow(() -> reviewService.readReview(savedReview.getId()));
+            final ReviewReadResponse reviewReadResponse = reviewService.readReview(savedReview.getId());
+            assertAll(
+                    () -> assertThat(reviewReadResponse.getReviewerId()).isEqualTo(savedReview.getReviewerId()),
+                    () -> assertThat(reviewReadResponse.getTitle()).isEqualTo(savedReview.getTitle()),
+                    () -> assertThat(reviewReadResponse.getContent()).isEqualTo(savedReview.getContent()),
+                    () -> assertThat(reviewReadResponse.getPrUrl()).isEqualTo(savedReview.getPrUrl())
+            );
         }
 
         @DisplayName("리뷰 정보가 없으면 예외 발생한다.")
