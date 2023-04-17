@@ -34,7 +34,7 @@ public class Review {
 
     public static Review assign(
             final Long revieweeId, final Long reviewerId, final String title,
-            final String content, final String prUrl, final boolean isReviewer, final Long reviewerMemberId
+            final String content, final String prUrl, final Long reviewerMemberId, final boolean isReviewer
     ) {
         if (revieweeId.equals(reviewerMemberId)) {
             throw new InvalidReviewException(ErrorType.SAME_REVIEWER_AS_REVIEWEE);
@@ -44,6 +44,13 @@ public class Review {
         }
 
         return new Review(revieweeId, reviewerId, title, content, prUrl);
+    }
+
+    public void updateReview(final Long revieweeId, final String updatingContent) {
+        if (!this.revieweeId.equals(revieweeId)) {
+            throw new InvalidReviewException(ErrorType.NOT_REVIEWEE_OF_REVIEW);
+        }
+        this.content = updatingContent;
     }
 
     private Review(
