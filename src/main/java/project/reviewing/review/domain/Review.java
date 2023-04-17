@@ -34,9 +34,9 @@ public class Review {
 
     public static Review assign(
             final Long revieweeId, final Long reviewerId, final String title,
-            final String content, final String prUrl, final boolean isReviewer
+            final String content, final String prUrl, final boolean isReviewer, final Long reviewerMemberId
     ) {
-        if (revieweeId.equals(reviewerId)) {
+        if (revieweeId.equals(reviewerMemberId)) {
             throw new InvalidReviewException(ErrorType.SAME_REVIEWER_AS_REVIEWEE);
         }
         if (!isReviewer) {

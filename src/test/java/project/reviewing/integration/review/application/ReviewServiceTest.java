@@ -32,7 +32,7 @@ public class ReviewServiceTest extends IntegrationTest {
         void validCreateReview() {
             final ReviewService reviewService = new ReviewService(reviewRepository, memberRepository);
             final Member reviewee = createMember(new Member(1L, "Tom", "Tom@gmail.com", "imageUrl", "https://github.com/Tom"));
-            final Member reviewer = createMemberAndRegisterReviewer(
+            final Member reviewerMember = createMemberAndRegisterReviewer(
                     new Member(2L, "bboor", "bboor@gmail.com", "imageUrl", "https://github.com/bboor"),
                     new Reviewer(Job.BACKEND, Career.JUNIOR, Set.of(1L), "소개글")
             );
@@ -40,10 +40,11 @@ public class ReviewServiceTest extends IntegrationTest {
                     "리뷰 요청합니다.", "본문", "https://github.com/Tom/myproject/pull/1"
             );
 
-            reviewService.createReview(reviewee.getId(), reviewer.getId(), reviewCreateRequest);
+            reviewService.createReview(reviewee.getId(), reviewerMember.getReviewer().getId(), reviewCreateRequest);
 
-            final Review newReview = reviewRepository.findByRevieweeIdAndReviewerId(reviewee.getId(), reviewer.getId())
-                            .orElseThrow(ReviewNotFoundException::new);
+            final Review newReview = reviewRepository
+                    .findByRevieweeIdAndReviewerId(reviewee.getId(), reviewerMember.getReviewer().getId())
+                    .orElseThrow(ReviewNotFoundException::new);
             assertAll(
                     () -> assertThat(newReview.getTitle()).isEqualTo(reviewCreateRequest.getTitle()),
                     () -> assertThat(newReview.getContent()).isEqualTo(reviewCreateRequest.getContent()),
@@ -56,7 +57,7 @@ public class ReviewServiceTest extends IntegrationTest {
         void createAlreadyExistReviewToSameReviewer() {
             final ReviewService reviewService = new ReviewService(reviewRepository, memberRepository);
             final Member reviewee = createMember(new Member(1L, "Tom", "Tom@gmail.com", "imageUrl", "https://github.com/Tom"));
-            final Member reviewer = createMemberAndRegisterReviewer(
+            final Member reviewerMember = createMemberAndRegisterReviewer(
                     new Member(2L, "bboor", "bboor@gmail.com", "imageUrl", "https://github.com/bboor"),
                     new Reviewer(Job.BACKEND, Career.JUNIOR, Set.of(1L), "소개글")
             );
@@ -65,11 +66,14 @@ public class ReviewServiceTest extends IntegrationTest {
             );
 
             createReview(Review.assign(
-                    reviewee.getId(), reviewer.getId(), reviewCreateRequest.getTitle(),
-                    reviewCreateRequest.getContent(), reviewCreateRequest.getPrUrl(), reviewer.isReviewer()
+                    reviewee.getId(), reviewerMember.getReviewer().getId(),
+                    reviewCreateRequest.getTitle(), reviewCreateRequest.getContent(),
+                    reviewCreateRequest.getPrUrl(), reviewerMember.isReviewer(), reviewerMember.getId()
             ));
 
-            assertThatThrownBy(() -> reviewService.createReview(reviewee.getId(), reviewer.getId(), reviewCreateRequest))
+            assertThatThrownBy(() -> reviewService.createReview(
+                    reviewee.getId(), reviewerMember.getReviewer().getId(), reviewCreateRequest
+                    ))
                     .isInstanceOf(InvalidReviewException.class)
                     .hasMessage(ErrorType.ALREADY_REQUESTED.getMessage());
         }

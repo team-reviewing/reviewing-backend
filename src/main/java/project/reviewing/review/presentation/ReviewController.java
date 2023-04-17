@@ -8,7 +8,7 @@ import project.reviewing.review.presentation.request.ReviewCreateRequest;
 
 import javax.validation.Valid;
 
-@RequestMapping("/reviewers/{id}/reviews")
+@RequestMapping("/reviewers/{reviewer-id}/reviews")
 @RequiredArgsConstructor
 @RestController
 public class ReviewController {
@@ -18,7 +18,7 @@ public class ReviewController {
     @PostMapping
     public void createReview(
             @AuthenticatedMember final Long memberId,
-            @PathVariable("id") final Long reviewerId,
+            @PathVariable("reviewer-id") final Long reviewerId,
             @Valid @RequestBody final ReviewCreateRequest reviewCreateRequest
     ) {
         reviewService.createReview(memberId, reviewerId, reviewCreateRequest);

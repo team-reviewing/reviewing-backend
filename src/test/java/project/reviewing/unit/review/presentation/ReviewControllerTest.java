@@ -22,7 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("ReviewController 는 ")
 public class ReviewControllerTest extends ControllerTest {
 
-    @DisplayName("Review 생성 시 ")
+    @DisplayName("리뷰 생성 시 ")
     @Nested
     class ReviewCreateTest {
 

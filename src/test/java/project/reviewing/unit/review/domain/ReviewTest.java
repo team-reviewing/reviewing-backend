@@ -19,7 +19,7 @@ public class ReviewTest {
     @ParameterizedTest
     void validCreateReview(final Long revieweeId, final Long reviewerId, final Boolean isReviewer) {
         final Review newReview = Review.assign(
-                revieweeId, reviewerId, "제목", "본문", "github.com/bboor/project/pull/1", isReviewer
+                revieweeId, reviewerId, "제목", "본문", "github.com/bboor/project/pull/1", isReviewer, 2L
         );
 
         assertAll(
@@ -33,7 +33,7 @@ public class ReviewTest {
     @ParameterizedTest
     void createWithSameReviewerAsReviewee(final Long revieweeId, final Long reviewerId, final Boolean isReviewer) {
         assertThatThrownBy(
-                () -> Review.assign(revieweeId, reviewerId, "제목", "본문", "github.com/bboor/project/pull/1", isReviewer)
+                () -> Review.assign(revieweeId, reviewerId, "제목", "본문", "github.com/bboor/project/pull/1", isReviewer, 1L)
         )
                 .isInstanceOf(InvalidReviewException.class)
                 .hasMessage(ErrorType.SAME_REVIEWER_AS_REVIEWEE.getMessage());
@@ -44,7 +44,7 @@ public class ReviewTest {
     @ParameterizedTest
     void createWithNotRegisteredReviewer(final Long revieweeId, final Long reviewerId, final Boolean isReviewer) {
         assertThatThrownBy(
-                () -> Review.assign(revieweeId, reviewerId, "제목", "본문", "github.com/bboor/project/pull/1", isReviewer)
+                () -> Review.assign(revieweeId, reviewerId, "제목", "본문", "github.com/bboor/project/pull/1", isReviewer, 2L)
         )
                 .isInstanceOf(InvalidReviewException.class)
                 .hasMessage(ErrorType.DO_NOT_REGISTERED.getMessage());
