@@ -25,16 +25,12 @@ public class ReviewService {
             throw new InvalidReviewException(ErrorType.ALREADY_REQUESTED);
         }
 
-        final Member reviewer = findMemberByReviewerId(reviewerId);
-        final Review newReview = Review.assign(
-                revieweeId, reviewerId, reviewCreateRequest.getTitle(),
-                reviewCreateRequest.getContent(), reviewCreateRequest.getPrUrl(), reviewer.isReviewer()
+        final Member reviewerMember = memberRepository.findByReviewerId(reviewerId)
+                .orElseThrow(MemberNotFoundException::new);
+
+        final Review newReview = reviewCreateRequest.toEntity(
+                revieweeId, reviewerId, reviewerMember.isReviewer(), reviewerMember.getId()
         );
         reviewRepository.save(newReview);
-    }
-
-    private Member findMemberByReviewerId(final Long reviewerId) {
-        return memberRepository.findById(reviewerId)
-                .orElseThrow(MemberNotFoundException::new);
     }
 }
