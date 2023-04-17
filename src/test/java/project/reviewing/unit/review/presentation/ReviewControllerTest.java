@@ -17,8 +17,7 @@ import project.reviewing.unit.ControllerTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -180,6 +179,18 @@ public class ReviewControllerTest extends ControllerTest {
                             result -> assertThat(result.getResolvedException())
                                     .isInstanceOf(MethodArgumentNotValidException.class)
                     );
+        }
+    }
+
+    @DisplayName("단일 리뷰 상세 정보 조회 시")
+    @Nested
+    class ReadSingleReviewTest {
+
+        @DisplayName("요청이 유효하면 200 반환한다.")
+        @Test
+        void validReadSingleReview() throws Exception {
+            requestAboutReview(get("/reviewers/1/reviews/1"), null)
+                    .andExpect(status().isOk());
         }
     }
 

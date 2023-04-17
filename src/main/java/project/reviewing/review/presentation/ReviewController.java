@@ -35,4 +35,12 @@ public class ReviewController {
     ) {
         reviewService.updateReview(memberId, reviewId, request);
     }
+
+    @GetMapping("/{review-id}")
+    public void readSingleReview(
+            @AuthenticatedMember final Long memberId,
+            @PathVariable("review-id") final Long reviewId
+    ) {
+
+    }
 }
