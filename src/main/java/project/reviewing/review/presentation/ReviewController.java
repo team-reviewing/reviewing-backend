@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import project.reviewing.auth.presentation.AuthenticatedMember;
 import project.reviewing.review.application.ReviewService;
+import project.reviewing.review.application.response.SingleReviewReadResponse;
 import project.reviewing.review.presentation.request.ReviewCreateRequest;
 import project.reviewing.review.presentation.request.ReviewUpdateRequest;
 
@@ -34,5 +35,10 @@ public class ReviewController {
             @Valid @RequestBody final ReviewUpdateRequest request
     ) {
         reviewService.updateReview(memberId, reviewId, request);
+    }
+
+    @GetMapping("/{review-id}")
+    public SingleReviewReadResponse readSingleReview(@PathVariable("review-id") final Long reviewId) {
+        return reviewService.readSingleReview(reviewId);
     }
 }

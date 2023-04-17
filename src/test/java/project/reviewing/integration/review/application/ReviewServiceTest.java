@@ -13,6 +13,7 @@ import project.reviewing.member.command.domain.Member;
 import project.reviewing.member.command.domain.Reviewer;
 import project.reviewing.member.exception.MemberNotFoundException;
 import project.reviewing.review.application.ReviewService;
+import project.reviewing.review.application.response.SingleReviewReadResponse;
 import project.reviewing.review.domain.Review;
 import project.reviewing.review.exception.InvalidReviewException;
 import project.reviewing.review.exception.ReviewNotFoundException;
@@ -86,7 +87,7 @@ public class ReviewServiceTest extends IntegrationTest {
         @DisplayName("리뷰어의 회원 정보가 없으면 예외 발생한다.")
         @Test
         void createReviewWithNotExistReviewerMember() {
-            final long reviewerId = -1L;
+            final Long reviewerId = -1L;
             final Member reviewee = createMember(new Member(1L, "Tom", "Tom@gmail.com", "imageUrl", "https://github.com/Tom"));
             final ReviewCreateRequest reviewCreateRequest = new ReviewCreateRequest(
                     "리뷰 요청합니다.", "본문", "https://github.com/Tom/myproject/pull/1"
@@ -104,8 +105,7 @@ public class ReviewServiceTest extends IntegrationTest {
         @DisplayName("정상적으로 리뷰가 수정된다.")
         @Test
         void validUpdateReview() {
-            final ReviewCreateRequest reviewCreateRequest = new ReviewCreateRequest("제목", "본문", "prUrl");
-            final Review review = createReview(reviewCreateRequest.toEntity(1L, 1L, 2L, true));
+            final Review review = createReview(Review.assign(1L, 1L, "제목", "본문", "prUrl", 2L, true));
             final ReviewUpdateRequest reviewUpdateRequest = new ReviewUpdateRequest("새 본문");
 
             reviewService.updateReview(review.getRevieweeId(), review.getId(), reviewUpdateRequest);
@@ -124,6 +124,35 @@ public class ReviewServiceTest extends IntegrationTest {
             final ReviewUpdateRequest request = new ReviewUpdateRequest("새 본문");
 
             assertThatThrownBy(() -> reviewService.updateReview(1L, reviewId, request))
+                    .isInstanceOf(ReviewNotFoundException.class);
+        }
+    }
+
+    @DisplayName("단일 리뷰 상세 정보 조회 시")
+    @Nested
+    class SingleReviewReadTest {
+
+        @DisplayName("정상적으로 단일 리뷰 상세 정보를 조회한다.")
+        @Test
+        void validReadSingleReview() {
+            final Review review = createReview(Review.assign(1L, 1L, "제목", "본문", "prUrl", 2L, true));
+
+            final SingleReviewReadResponse response = reviewService.readSingleReview(review.getId());
+
+            assertAll(
+                    () -> assertThat(response.getReviewerId()).isEqualTo(review.getReviewerId()),
+                    () -> assertThat(response.getTitle()).isEqualTo(review.getTitle()),
+                    () -> assertThat(response.getContent()).isEqualTo(review.getContent()),
+                    () -> assertThat(response.getPrUrl()).isEqualTo(review.getPrUrl())
+            );
+        }
+
+        @DisplayName("리뷰 정보가 없으면 예외 발생한다.")
+        @Test
+        void readNotExistSingleReview() {
+            final Long invalidReviewId = -1L;
+
+            assertThatThrownBy(() -> reviewService.readSingleReview(invalidReviewId))
                     .isInstanceOf(ReviewNotFoundException.class);
         }
     }
