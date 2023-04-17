@@ -47,10 +47,14 @@ public class Review {
     }
 
     public void updateReview(final Long revieweeId, final String updatingContent) {
-        if (!this.revieweeId.equals(revieweeId)) {
+        if (!isRevieweeOfReview(revieweeId)) {
             throw new InvalidReviewException(ErrorType.NOT_REVIEWEE_OF_REVIEW);
         }
         this.content = updatingContent;
+    }
+
+    public boolean isRevieweeOfReview(final Long revieweeId) {
+        return this.revieweeId.equals(revieweeId);
     }
 
     private Review(
