@@ -105,8 +105,7 @@ public class ReviewServiceTest extends IntegrationTest {
         @DisplayName("정상적으로 리뷰가 수정된다.")
         @Test
         void validUpdateReview() {
-            final ReviewCreateRequest reviewCreateRequest = new ReviewCreateRequest("제목", "본문", "prUrl");
-            final Review review = createReview(reviewCreateRequest.toEntity(1L, 1L, 2L, true));
+            final Review review = createReview(Review.assign(1L, 1L, "제목", "본문", "prUrl", 2L, true));
             final ReviewUpdateRequest reviewUpdateRequest = new ReviewUpdateRequest("새 본문");
 
             reviewService.updateReview(review.getRevieweeId(), review.getId(), reviewUpdateRequest);
@@ -136,8 +135,7 @@ public class ReviewServiceTest extends IntegrationTest {
         @DisplayName("정상적으로 단일 리뷰 상세 정보를 조회한다.")
         @Test
         void validReadSingleReview() {
-            final ReviewCreateRequest request = new ReviewCreateRequest("제목", "본문", "prUrl");
-            final Review review = createReview(request.toEntity(1L, 1L, 2L, true));
+            final Review review = createReview(Review.assign(1L, 1L, "제목", "본문", "prUrl", 2L, true));
 
             final SingleReviewReadResponse response = reviewService.readSingleReview(review.getId());
 
