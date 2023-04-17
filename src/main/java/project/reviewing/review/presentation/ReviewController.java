@@ -33,6 +33,6 @@ public class ReviewController {
             @PathVariable("review-id") final Long reviewId,
             @Valid @RequestBody final ReviewUpdateRequest request
     ) {
-
+        reviewService.updateReview(memberId, reviewId, request);
     }
 }
