@@ -27,4 +27,10 @@ public class ReviewCreateRequest {
         this.content = content;
         this.prUrl = prUrl;
     }
+
+    public Review toEntity(
+            final Long revieweeId, final Long reviewerId, final boolean isReviewer, final Long reviewerMemberId
+    ) {
+        return Review.assign(revieweeId, reviewerId, title, content, prUrl, isReviewer, reviewerMemberId);
+    }
 }

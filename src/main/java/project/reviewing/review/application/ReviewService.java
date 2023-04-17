@@ -28,9 +28,8 @@ public class ReviewService {
         final Member reviewerMember = memberRepository.findByReviewerId(reviewerId)
                 .orElseThrow(MemberNotFoundException::new);
 
-        final Review newReview = Review.assign(
-                revieweeId, reviewerId, reviewCreateRequest.getTitle(), reviewCreateRequest.getContent(),
-                reviewCreateRequest.getPrUrl(), reviewerMember.isReviewer(), reviewerMember.getId()
+        final Review newReview = reviewCreateRequest.toEntity(
+                revieweeId, reviewerId, reviewerMember.isReviewer(), reviewerMember.getId()
         );
         reviewRepository.save(newReview);
     }

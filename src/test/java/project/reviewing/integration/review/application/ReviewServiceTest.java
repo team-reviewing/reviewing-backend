@@ -65,11 +65,10 @@ public class ReviewServiceTest extends IntegrationTest {
                     "리뷰 요청합니다.", "본문", "https://github.com/Tom/myproject/pull/1"
             );
 
-            createReview(Review.assign(
-                    reviewee.getId(), reviewerMember.getReviewer().getId(),
-                    reviewCreateRequest.getTitle(), reviewCreateRequest.getContent(),
-                    reviewCreateRequest.getPrUrl(), reviewerMember.isReviewer(), reviewerMember.getId()
-            ));
+            createReview(reviewCreateRequest.toEntity(
+                            reviewee.getId(), reviewerMember.getReviewer().getId(),
+                            reviewerMember.isReviewer(), reviewerMember.getId())
+            );
 
             assertThatThrownBy(() -> reviewService.createReview(
                     reviewee.getId(), reviewerMember.getReviewer().getId(), reviewCreateRequest
