@@ -30,7 +30,7 @@ public class ReviewService {
         final Member reviewerMember = memberRepository.findByReviewerId(reviewerId)
                 .orElseThrow(MemberNotFoundException::new);
         final Review newReview = request.toEntity(
-                revieweeId, reviewerId, reviewerMember.isReviewer(), reviewerMember.getId()
+                revieweeId, reviewerId, reviewerMember.getId(), reviewerMember.isReviewer()
         );
         reviewRepository.save(newReview);
     }

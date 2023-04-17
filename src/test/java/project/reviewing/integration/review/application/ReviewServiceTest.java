@@ -73,7 +73,7 @@ public class ReviewServiceTest extends IntegrationTest {
 
             createReview(reviewCreateRequest.toEntity(
                             reviewee.getId(), reviewerMember.getReviewer().getId(),
-                            reviewerMember.isReviewer(), reviewerMember.getId())
+                            reviewerMember.getId(), reviewerMember.isReviewer())
             );
 
             assertThatThrownBy(() -> reviewService.createReview(
@@ -105,7 +105,7 @@ public class ReviewServiceTest extends IntegrationTest {
         @Test
         void validUpdateReview() {
             final ReviewCreateRequest reviewCreateRequest = new ReviewCreateRequest("제목", "본문", "prUrl");
-            final Review review = createReview(reviewCreateRequest.toEntity(1L, 1L, true, 2L));
+            final Review review = createReview(reviewCreateRequest.toEntity(1L, 1L, 2L, true));
             final ReviewUpdateRequest reviewUpdateRequest = new ReviewUpdateRequest("새 본문");
 
             reviewService.updateReview(review.getRevieweeId(), review.getId(), reviewUpdateRequest);
