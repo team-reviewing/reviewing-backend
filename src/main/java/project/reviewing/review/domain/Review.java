@@ -51,14 +51,20 @@ public class Review {
     }
 
     public void updateReview(final Long revieweeId, final String updatingContent) {
-        if (!isRevieweeOfReview(revieweeId)) {
+        if (!this.revieweeId.equals(revieweeId)) {
             throw new InvalidReviewException(ErrorType.NOT_REVIEWEE_OF_REVIEW);
         }
         this.content = updatingContent;
     }
 
-    public boolean isRevieweeOfReview(final Long revieweeId) {
-        return this.revieweeId.equals(revieweeId);
+    public void acceptReview(final Long reviewerId) {
+        if (!this.reviewerId.equals(reviewerId)) {
+            throw new InvalidReviewException(ErrorType.NOT_REVIEWER_OF_REVIEW);
+        }
+        if (!status.equals(ReviewStatus.CREATED)) {
+            throw new InvalidReviewException(ErrorType.NOT_PROPER_REVIEW_STATUS);
+        }
+        this.status = ReviewStatus.ACCEPTED;
     }
 
     private Review(

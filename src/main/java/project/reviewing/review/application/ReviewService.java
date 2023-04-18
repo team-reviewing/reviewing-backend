@@ -50,7 +50,12 @@ public class ReviewService {
         review.updateReview(revieweeId, request.getContent());
     }
 
-    public void acceptReview(final Long revieweeId, final Long reviewId) {
+    public void acceptReview(final Long memberId, final Long reviewId) {
+        final Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(ReviewNotFoundException::new);
+        final Member reviewerMember = memberRepository.findById(memberId)
+                .orElseThrow(MemberNotFoundException::new);
 
+        review.acceptReview(reviewerMember.getReviewer().getId());
     }
 }
