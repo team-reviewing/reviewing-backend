@@ -59,4 +59,15 @@ public class ReviewService {
 
         review.acceptReview(reviewerMember.getReviewer().getId());
     }
+
+    public void refuseReview(final Long memberId, final Long reviewId) {
+        final Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(ReviewNotFoundException::new);
+        final Member reviewerMember = memberRepository.findById(memberId)
+                .orElseThrow(MemberNotFoundException::new);
+
+        if (review.canRefuse(reviewerMember.getReviewer().getId())) {
+            reviewRepository.delete(review);
+        }
+    }
 }

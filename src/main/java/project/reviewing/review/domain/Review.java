@@ -64,7 +64,17 @@ public class Review {
         if (!status.equals(ReviewStatus.CREATED)) {
             throw new InvalidReviewException(ErrorType.NOT_PROPER_REVIEW_STATUS);
         }
-        this.status = ReviewStatus.ACCEPTED;
+        status = ReviewStatus.ACCEPTED;
+    }
+
+    public boolean canRefuse(final Long reviewerId) {
+        if (!this.reviewerId.equals(reviewerId)) {
+            throw new InvalidReviewException(ErrorType.NOT_REVIEWER_OF_REVIEW);
+        }
+        if (!status.equals(ReviewStatus.CREATED)) {
+            throw new InvalidReviewException(ErrorType.NOT_PROPER_REVIEW_STATUS);
+        }
+        return true;
     }
 
     private Review(

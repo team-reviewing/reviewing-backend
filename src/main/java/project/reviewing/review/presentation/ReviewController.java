@@ -57,5 +57,6 @@ public class ReviewController {
             @AuthenticatedMember final Long memberId,
             @PathVariable("review-id") final Long reviewId
     ) {
+        reviewService.refuseReview(memberId, reviewId);
     }
 }
