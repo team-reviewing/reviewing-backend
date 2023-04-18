@@ -42,7 +42,7 @@ public class ReviewControllerTest extends ControllerTest {
         @NullAndEmptySource
         @ValueSource(strings = {" "})
         @ParameterizedTest
-        void createReviewWithTitleNullAndEmpty(final String title) throws Exception {
+        void createWithTitleNullAndEmpty(final String title) throws Exception {
             final ReviewCreateRequest request = new ReviewCreateRequest(
                     title, "본문", "https://github.com/Tom/myproject/pull/1"
             );
@@ -57,7 +57,7 @@ public class ReviewControllerTest extends ControllerTest {
 
         @DisplayName("title이 제한 길이 50자보다 길면 400 반환한다.")
         @Test
-        void createReviewWithTitleGreaterThanMaxLen() throws Exception {
+        void createWithTitleGreaterThanMaxLen() throws Exception {
             final String title = makeStringByLength(51);
             final ReviewCreateRequest request = new ReviewCreateRequest(
                     title, "본문", "https://github.com/Tom/myproject/pull/1"
@@ -75,7 +75,7 @@ public class ReviewControllerTest extends ControllerTest {
         @NullAndEmptySource
         @ValueSource(strings = {" "})
         @ParameterizedTest
-        void createReviewWithContentNullAndEmpty(final String content) throws Exception {
+        void createWithContentNullAndEmpty(final String content) throws Exception {
             final ReviewCreateRequest request = new ReviewCreateRequest(
                     "리뷰 요청합니다.", content, "https://github.com/Tom/myproject/pull/1"
             );
@@ -90,7 +90,7 @@ public class ReviewControllerTest extends ControllerTest {
 
         @DisplayName("content가 제한 길이 1500자보다 길면 400 반환한다.")
         @Test
-        void createReviewWithContentGreaterThanMaxLen() throws Exception {
+        void createWithContentGreaterThanMaxLen() throws Exception {
             final String content = makeStringByLength(1501);
             final ReviewCreateRequest request = new ReviewCreateRequest(
                     "리뷰 요청합니다.", content, "https://github.com/Tom/myproject/pull/1"
@@ -108,7 +108,7 @@ public class ReviewControllerTest extends ControllerTest {
         @NullAndEmptySource
         @ValueSource(strings = {" "})
         @ParameterizedTest
-        void createReviewWithPrUrlNullAndEmpty(final String prUrl) throws Exception {
+        void createWithPrUrlNullAndEmpty(final String prUrl) throws Exception {
             final ReviewCreateRequest request = new ReviewCreateRequest("리뷰 요청합니다.", "본문", prUrl);
 
             requestAboutReview(post("/reviewers/1/reviews"), request)
@@ -126,7 +126,7 @@ public class ReviewControllerTest extends ControllerTest {
                 "github.com/project/pull/1", "/bboor/project/pull/1", "github.com/bboor/project/pull/1a"
         })
         @ParameterizedTest
-        void createReviewWithInvalidPrUrl(final String prUrl) throws Exception {
+        void createWithInvalidPrUrl(final String prUrl) throws Exception {
             final ReviewCreateRequest request = new ReviewCreateRequest("리뷰 요청합니다.", "본문", prUrl);
 
             requestAboutReview(post("/reviewers/1/reviews"), request)
@@ -135,6 +135,18 @@ public class ReviewControllerTest extends ControllerTest {
                             result -> assertThat(result.getResolvedException())
                                     .isInstanceOf(MethodArgumentNotValidException.class)
                     );
+        }
+    }
+
+    @DisplayName("단일 리뷰 상세 정보 조회 시")
+    @Nested
+    class ReadSingleReviewTest {
+
+        @DisplayName("요청이 유효하면 200 반환한다.")
+        @Test
+        void validReadSingleReview() throws Exception {
+            requestAboutReview(get("/reviewers/1/reviews/1"), null)
+                    .andExpect(status().isOk());
         }
     }
 
@@ -155,7 +167,7 @@ public class ReviewControllerTest extends ControllerTest {
         @NullAndEmptySource
         @ValueSource(strings = {" "})
         @ParameterizedTest
-        void updateReviewWithContentNullAndEmpty(final String content) throws Exception {
+        void updateWithContentNullAndEmpty(final String content) throws Exception {
             final ReviewUpdateRequest request = new ReviewUpdateRequest(content);
 
             requestAboutReview(patch("/reviewers/1/reviews/1"), request)
@@ -168,7 +180,7 @@ public class ReviewControllerTest extends ControllerTest {
 
         @DisplayName("content가 제한 길이 1500자보다 길면 400 반환한다.")
         @Test
-        void updateReviewWithContentGreaterThanMaxLen() throws Exception {
+        void updateWithContentGreaterThanMaxLen() throws Exception {
             final String content = makeStringByLength(1501);
             final ReviewUpdateRequest request = new ReviewUpdateRequest(content);
 
@@ -181,15 +193,15 @@ public class ReviewControllerTest extends ControllerTest {
         }
     }
 
-    @DisplayName("단일 리뷰 상세 정보 조회 시")
+    @DisplayName("리뷰 승인 시")
     @Nested
-    class ReadSingleReviewTest {
+    class ReviewAcceptTest {
 
         @DisplayName("요청이 유효하면 200 반환한다.")
         @Test
-        void validReadSingleReview() throws Exception {
-            requestAboutReview(get("/reviewers/1/reviews/1"), null)
-                    .andExpect(status().isOk());
+        void validAcceptReview() throws Exception {
+            requestAboutReview(patch("/reviewers/1/reviews/1/status-accepted"), null)
+                    .andExpect(status().isNoContent());
         }
     }
 

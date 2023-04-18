@@ -27,6 +27,11 @@ public class ReviewController {
         reviewService.createReview(memberId, reviewerId, request);
     }
 
+    @GetMapping("/{review-id}")
+    public SingleReviewReadResponse readSingleReview(@PathVariable("review-id") final Long reviewId) {
+        return reviewService.readSingleReview(reviewId);
+    }
+
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PatchMapping("/{review-id}")
     public void updateReview(
@@ -37,8 +42,12 @@ public class ReviewController {
         reviewService.updateReview(memberId, reviewId, request);
     }
 
-    @GetMapping("/{review-id}")
-    public SingleReviewReadResponse readSingleReview(@PathVariable("review-id") final Long reviewId) {
-        return reviewService.readSingleReview(reviewId);
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PatchMapping("/{review-id}/status-accepted")
+    public void acceptReview(
+            @AuthenticatedMember final Long memberId,
+            @PathVariable("review-id") final Long reviewId
+    ) {
+        reviewService.acceptReview(memberId, reviewId);
     }
 }

@@ -36,6 +36,14 @@ public class ReviewService {
         reviewRepository.save(newReview);
     }
 
+    @Transactional(readOnly = true)
+    public SingleReviewReadResponse readSingleReview(final Long reviewId) {
+        final Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(ReviewNotFoundException::new);
+
+        return SingleReviewReadResponse.from(review);
+    }
+
     public void updateReview(final Long revieweeId, final Long reviewId, final ReviewUpdateRequest request) {
         final Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(ReviewNotFoundException::new);
@@ -43,10 +51,12 @@ public class ReviewService {
         review.updateReview(revieweeId, request.getContent());
     }
 
-    public SingleReviewReadResponse readSingleReview(final Long reviewId) {
+    public void acceptReview(final Long memberId, final Long reviewId) {
         final Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(ReviewNotFoundException::new);
+        final Member reviewerMember = memberRepository.findById(memberId)
+                .orElseThrow(MemberNotFoundException::new);
 
-        return SingleReviewReadResponse.from(review);
+        review.acceptReview(reviewerMember.getReviewer().getId());
     }
 }

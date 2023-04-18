@@ -6,6 +6,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import project.reviewing.common.exception.ErrorType;
 import project.reviewing.review.domain.Review;
+import project.reviewing.review.domain.ReviewStatus;
 import project.reviewing.review.exception.InvalidReviewException;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -59,5 +60,37 @@ public class ReviewTest {
         assertThatThrownBy(() -> review.updateReview(invalidRevieweeId, "새 본문"))
                 .isInstanceOf(InvalidReviewException.class)
                 .hasMessage(ErrorType.NOT_REVIEWEE_OF_REVIEW.getMessage());
+    }
+
+    @DisplayName("리뷰를 승인할 수 있다.")
+    @Test
+    void validAcceptReview() {
+        final Review review = Review.assign(1L, 1L, "제목", "본문", "prUrl", 2L, true);
+
+        review.acceptReview(1L);
+
+        assertThat(review.getStatus()).isEqualTo(ReviewStatus.ACCEPTED);
+    }
+
+    @DisplayName("리뷰를 요청받은 리뷰어가 아니면 승인할 수 없다.")
+    @Test
+    void acceptWithNotReviewerOfReview() {
+        final Review review = Review.assign(1L, 1L, "제목", "본문", "prUrl", 2L, true);
+
+        assertThatThrownBy(() -> review.acceptReview(2L))
+                .isInstanceOf(InvalidReviewException.class)
+                .hasMessage(ErrorType.NOT_REVIEWER_OF_REVIEW.getMessage());
+    }
+
+    @DisplayName("리뷰의 상태가 CREATED(생성) 상태가 아니면 승인할 수 없다.")
+    @Test
+    void acceptWithNotProperStatus() {
+        final Review review = Review.assign(1L, 1L, "제목", "본문", "prUrl", 2L, true);
+
+        review.acceptReview(1L);
+
+        assertThatThrownBy(() -> review.acceptReview(1L))
+                .isInstanceOf(InvalidReviewException.class)
+                .hasMessage(ErrorType.NOT_PROPER_REVIEW_STATUS.getMessage());
     }
 }
