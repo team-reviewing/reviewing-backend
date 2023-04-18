@@ -4,6 +4,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.http.HttpHeaders;
@@ -146,6 +147,19 @@ public class ReviewControllerTest extends ControllerTest {
         @Test
         void validReadSingleReview() throws Exception {
             requestAboutReview(get("/reviewers/1/reviews/1"), null)
+                    .andExpect(status().isOk());
+        }
+    }
+
+    @DisplayName("역할별 리뷰 목록 조회 시")
+    @Nested
+    class ReadReviewsByRoleTest {
+
+        @DisplayName("요청이 유효하면 200 반환한다.")
+        @ValueSource(strings = {"reviewee", "reviewer"})
+        @ParameterizedTest
+        void validReadReviewsByRole(final String role) throws Exception {
+            requestAboutReview(get("/reviews?role=" + role), null)
                     .andExpect(status().isOk());
         }
     }
