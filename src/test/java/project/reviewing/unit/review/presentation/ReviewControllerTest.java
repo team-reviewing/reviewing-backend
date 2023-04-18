@@ -138,6 +138,18 @@ public class ReviewControllerTest extends ControllerTest {
         }
     }
 
+    @DisplayName("단일 리뷰 상세 정보 조회 시")
+    @Nested
+    class ReadSingleReviewTest {
+
+        @DisplayName("요청이 유효하면 200 반환한다.")
+        @Test
+        void validReadSingleReview() throws Exception {
+            requestAboutReview(get("/reviewers/1/reviews/1"), null)
+                    .andExpect(status().isOk());
+        }
+    }
+
     @DisplayName("리뷰 수정 시")
     @Nested
     class ReviewUpdateTest {
@@ -181,15 +193,15 @@ public class ReviewControllerTest extends ControllerTest {
         }
     }
 
-    @DisplayName("단일 리뷰 상세 정보 조회 시")
+    @DisplayName("리뷰 승인 시")
     @Nested
-    class ReadSingleReviewTest {
+    class ReviewAcceptTest {
 
         @DisplayName("요청이 유효하면 200 반환한다.")
         @Test
-        void validReadSingleReview() throws Exception {
-            requestAboutReview(get("/reviewers/1/reviews/1"), null)
-                    .andExpect(status().isOk());
+        void validAcceptReview() throws Exception {
+            requestAboutReview(patch("/reviewers/1/reviews/1/status-accepted"), null)
+                    .andExpect(status().isNoContent());
         }
     }
 
