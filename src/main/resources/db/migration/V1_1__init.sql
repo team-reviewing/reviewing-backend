@@ -56,7 +56,8 @@ CREATE TABLE IF NOT EXISTS review (
     title           VARCHAR(50)     NOT NULL,
     content         VARCHAR(1500)   NOT NULL,
     pr_url          VARCHAR(255)    NOT NULL,
+    status          VARCHAR(50)     NOT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (reviewee_id) REFERENCES member (id),
-    FOREIGN KEY (reviewer_id) REFERENCES member (id),
+    FOREIGN KEY (reviewer_id) REFERENCES member (id)
 ) ENGINE = InnoDB;
