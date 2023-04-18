@@ -12,13 +12,13 @@ import project.reviewing.member.command.domain.MemberRepository;
 import project.reviewing.member.command.domain.Reviewer;
 import project.reviewing.member.query.dao.MyInformationDao;
 import project.reviewing.member.query.dao.ReviewerDao;
-import project.reviewing.review.domain.Review;
+import project.reviewing.review.command.domain.Review;
 import project.reviewing.tag.command.domain.Category;
 import project.reviewing.tag.command.domain.CategoryRepository;
 import project.reviewing.tag.command.domain.Tag;
 import project.reviewing.tag.command.domain.TagRepository;
 import project.reviewing.tag.query.dao.TagDao;
-import project.reviewing.review.domain.ReviewRepository;
+import project.reviewing.review.command.domain.ReviewRepository;
 
 @DataJpaTest(includeFilters = @Filter(type = FilterType.ANNOTATION, classes = Repository.class))
 public abstract class IntegrationTest {

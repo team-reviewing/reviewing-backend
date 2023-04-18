@@ -1,7 +1,7 @@
 package project.reviewing.review.presentation.request;
 
 import lombok.Getter;
-import project.reviewing.review.domain.Review;
+import project.reviewing.review.command.domain.Review;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;

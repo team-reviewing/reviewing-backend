@@ -4,21 +4,21 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import project.reviewing.auth.presentation.AuthenticatedMember;
-import project.reviewing.review.application.ReviewService;
-import project.reviewing.review.application.response.SingleReviewReadResponse;
+import project.reviewing.review.command.application.ReviewService;
+import project.reviewing.review.command.application.response.SingleReviewReadResponse;
 import project.reviewing.review.presentation.request.ReviewCreateRequest;
 import project.reviewing.review.presentation.request.ReviewUpdateRequest;
 
 import javax.validation.Valid;
 
-@RequestMapping("/reviewers/{reviewer-id}/reviews")
+@RequestMapping
 @RequiredArgsConstructor
 @RestController
 public class ReviewController {
 
     private final ReviewService reviewService;
 
-    @PostMapping
+    @PostMapping("/reviewers/{reviewer-id}/reviews")
     public void createReview(
             @AuthenticatedMember final Long memberId,
             @PathVariable("reviewer-id") final Long reviewerId,
@@ -27,13 +27,13 @@ public class ReviewController {
         reviewService.createReview(memberId, reviewerId, request);
     }
 
-    @GetMapping("/{review-id}")
+    @GetMapping("/reviewers/{reviewer-id}/reviews/{review-id}")
     public SingleReviewReadResponse readSingleReview(@PathVariable("review-id") final Long reviewId) {
         return reviewService.readSingleReview(reviewId);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PatchMapping("/{review-id}")
+    @PatchMapping("/reviewers/{reviewer-id}/reviews/{review-id}")
     public void updateReview(
             @AuthenticatedMember final Long memberId,
             @PathVariable("review-id") final Long reviewId,
@@ -43,7 +43,7 @@ public class ReviewController {
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PatchMapping("/{review-id}/status-accepted")
+    @PatchMapping("/reviewers/{reviewer-id}/reviews/{review-id}/status-accepted")
     public void acceptReview(
             @AuthenticatedMember final Long memberId,
             @PathVariable("review-id") final Long reviewId
@@ -52,7 +52,7 @@ public class ReviewController {
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @DeleteMapping("/{review-id}")
+    @DeleteMapping("/reviewers/{reviewer-id}/reviews/{review-id}")
     public void refuseReview(
             @AuthenticatedMember final Long memberId,
             @PathVariable("review-id") final Long reviewId
