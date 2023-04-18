@@ -36,6 +36,7 @@ public class ReviewService {
         reviewRepository.save(newReview);
     }
 
+    @Transactional(readOnly = true)
     public SingleReviewReadResponse readSingleReview(final Long reviewId) {
         final Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(ReviewNotFoundException::new);
