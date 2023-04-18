@@ -50,4 +50,12 @@ public class ReviewController {
     ) {
         reviewService.acceptReview(memberId, reviewId);
     }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @DeleteMapping("/{review-id}")
+    public void refuseReview(
+            @AuthenticatedMember final Long memberId,
+            @PathVariable("review-id") final Long reviewId
+    ) {
+    }
 }
