@@ -197,10 +197,22 @@ public class ReviewControllerTest extends ControllerTest {
     @Nested
     class ReviewAcceptTest {
 
-        @DisplayName("요청이 유효하면 200 반환한다.")
+        @DisplayName("요청이 유효하면 204 반환한다.")
         @Test
         void validAcceptReview() throws Exception {
             requestAboutReview(patch("/reviewers/1/reviews/1/status-accepted"), null)
+                    .andExpect(status().isNoContent());
+        }
+    }
+
+    @DisplayName("리뷰 거절 시")
+    @Nested
+    class ReviewRefuseTest {
+
+        @DisplayName("요청이 유효하면 204 반환한다.")
+        @Test
+        void validAcceptReview() throws Exception {
+            requestAboutReview(delete("/reviewers/1/reviews/1"), null)
                     .andExpect(status().isNoContent());
         }
     }
