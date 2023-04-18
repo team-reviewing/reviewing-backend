@@ -32,6 +32,10 @@ public class Review {
     @Column(nullable = false)
     private String prUrl;
 
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private ReviewStatus status;
+
     public static Review assign(
             final Long revieweeId, final Long reviewerId, final String title,
             final String content, final String prUrl, final Long reviewerMemberId, final boolean isReviewer
@@ -43,27 +47,35 @@ public class Review {
             throw new InvalidReviewException(ErrorType.DO_NOT_REGISTERED);
         }
 
-        return new Review(revieweeId, reviewerId, title, content, prUrl);
+        return new Review(revieweeId, reviewerId, title, content, prUrl, ReviewStatus.CREATED);
     }
 
     public void updateReview(final Long revieweeId, final String updatingContent) {
-        if (!isRevieweeOfReview(revieweeId)) {
+        if (!this.revieweeId.equals(revieweeId)) {
             throw new InvalidReviewException(ErrorType.NOT_REVIEWEE_OF_REVIEW);
         }
         this.content = updatingContent;
     }
 
-    public boolean isRevieweeOfReview(final Long revieweeId) {
-        return this.revieweeId.equals(revieweeId);
+    public void acceptReview(final Long reviewerId) {
+        if (!this.reviewerId.equals(reviewerId)) {
+            throw new InvalidReviewException(ErrorType.NOT_REVIEWER_OF_REVIEW);
+        }
+        if (!status.equals(ReviewStatus.CREATED)) {
+            throw new InvalidReviewException(ErrorType.NOT_PROPER_REVIEW_STATUS);
+        }
+        this.status = ReviewStatus.ACCEPTED;
     }
 
     private Review(
-            final Long revieweeId, final Long reviewerId, final String title, final String content, final String prUrl
+            final Long revieweeId, final Long reviewerId, final String title,
+            final String content, final String prUrl, final ReviewStatus status
     ) {
         this.revieweeId = revieweeId;
         this.reviewerId = reviewerId;
         this.title = title;
         this.content = content;
         this.prUrl = prUrl;
+        this.status = status;
     }
 }
