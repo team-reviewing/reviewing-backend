@@ -58,23 +58,27 @@ public class Review {
     }
 
     public void acceptReview(final Long reviewerId) {
-        if (!this.reviewerId.equals(reviewerId)) {
-            throw new InvalidReviewException(ErrorType.NOT_REVIEWER_OF_REVIEW);
-        }
-        if (!status.equals(ReviewStatus.CREATED)) {
-            throw new InvalidReviewException(ErrorType.NOT_PROPER_REVIEW_STATUS);
-        }
+        checkReviewer(reviewerId);
+        checkStatusCreated();
         status = ReviewStatus.ACCEPTED;
     }
 
     public boolean canRefuse(final Long reviewerId) {
+        checkReviewer(reviewerId);
+        checkStatusCreated();
+        return true;
+    }
+
+    private void checkReviewer(final Long reviewerId) {
         if (!this.reviewerId.equals(reviewerId)) {
             throw new InvalidReviewException(ErrorType.NOT_REVIEWER_OF_REVIEW);
         }
+    }
+
+    private void checkStatusCreated() {
         if (!status.equals(ReviewStatus.CREATED)) {
             throw new InvalidReviewException(ErrorType.NOT_PROPER_REVIEW_STATUS);
         }
-        return true;
     }
 
     private Review(
