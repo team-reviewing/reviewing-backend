@@ -93,4 +93,34 @@ public class ReviewTest {
                 .isInstanceOf(InvalidReviewException.class)
                 .hasMessage(ErrorType.NOT_PROPER_REVIEW_STATUS.getMessage());
     }
+
+    @DisplayName("리뷰를 거절할 수 있는지 조건을 확인할 수 있다.")
+    @Test
+    void validRefuseReview() {
+        final Review review = Review.assign(1L, 1L, "제목", "본문", "prUrl", 2L, true);
+
+        assertThat(review.canRefuse(1L)).isTrue();
+    }
+
+    @DisplayName("리뷰를 요청받은 리뷰어가 아니면 거절할 수 없다.")
+    @Test
+    void refuseWithNotReviewerOfReview() {
+        final Review review = Review.assign(1L, 1L, "제목", "본문", "prUrl", 2L, true);
+
+        assertThatThrownBy(() -> review.canRefuse(2L))
+                .isInstanceOf(InvalidReviewException.class)
+                .hasMessage(ErrorType.NOT_REVIEWER_OF_REVIEW.getMessage());
+    }
+
+    @DisplayName("리뷰의 상태가 CREATED(생성) 상태가 아니면 거절할 수 없다.")
+    @Test
+    void refuseWithNotProperStatus() {
+        final Review review = Review.assign(1L, 1L, "제목", "본문", "prUrl", 2L, true);
+
+        review.acceptReview(1L); // Accepted 상태로 변경
+
+        assertThatThrownBy(() -> review.canRefuse(1L))
+                .isInstanceOf(InvalidReviewException.class)
+                .hasMessage(ErrorType.NOT_PROPER_REVIEW_STATUS.getMessage());
+    }
 }
