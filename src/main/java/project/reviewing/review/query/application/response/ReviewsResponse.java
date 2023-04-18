@@ -1,4 +1,4 @@
-package project.reviewing.review.query.response;
+package project.reviewing.review.query.application.response;
 
 import lombok.Getter;
 

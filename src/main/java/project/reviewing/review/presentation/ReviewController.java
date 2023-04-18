@@ -8,7 +8,8 @@ import project.reviewing.review.command.application.ReviewService;
 import project.reviewing.review.command.application.response.SingleReviewReadResponse;
 import project.reviewing.review.presentation.request.ReviewCreateRequest;
 import project.reviewing.review.presentation.request.ReviewUpdateRequest;
-import project.reviewing.review.query.response.ReviewsResponse;
+import project.reviewing.review.query.application.ReviewQueryService;
+import project.reviewing.review.query.application.response.ReviewsResponse;
 
 import javax.validation.Valid;
 
@@ -18,6 +19,7 @@ import javax.validation.Valid;
 public class ReviewController {
 
     private final ReviewService reviewService;
+    private final ReviewQueryService reviewQueryService;
 
     @PostMapping("/reviewers/{reviewer-id}/reviews")
     public void createReview(
@@ -38,7 +40,7 @@ public class ReviewController {
             @AuthenticatedMember final Long memberId,
             @RequestParam(value = "role") final String role
     ) {
-        return new ReviewsResponse();
+        return reviewQueryService.findReviewsByRole(memberId, role);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
