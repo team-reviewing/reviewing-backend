@@ -48,7 +48,7 @@ public class ReviewService {
         final Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(ReviewNotFoundException::new);
 
-        review.updateReview(revieweeId, request.getContent());
+        review.update(revieweeId, request.getContent());
     }
 
     public void acceptReview(final Long memberId, final Long reviewId) {
@@ -57,7 +57,7 @@ public class ReviewService {
         final Member reviewerMember = memberRepository.findById(memberId)
                 .orElseThrow(MemberNotFoundException::new);
 
-        review.acceptReview(reviewerMember.getReviewer().getId());
+        review.accept(reviewerMember.getReviewer().getId());
     }
 
     public void refuseReview(final Long memberId, final Long reviewId) {
