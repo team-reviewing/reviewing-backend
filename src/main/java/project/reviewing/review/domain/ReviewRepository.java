@@ -10,4 +10,5 @@ public interface ReviewRepository extends Repository<Review, Long> {
     Optional<Review> findById(Long id);
     Optional<Review> findByRevieweeIdAndReviewerId(Long revieweeId, Long reviewerId);
     Boolean existsByRevieweeIdAndReviewerId(Long revieweeId, Long reviewerId);
+    void delete(Review entity);
 }

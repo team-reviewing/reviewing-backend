@@ -50,21 +50,35 @@ public class Review {
         return new Review(revieweeId, reviewerId, title, content, prUrl, ReviewStatus.CREATED);
     }
 
-    public void updateReview(final Long revieweeId, final String updatingContent) {
+    public void update(final Long revieweeId, final String updatingContent) {
         if (!this.revieweeId.equals(revieweeId)) {
             throw new InvalidReviewException(ErrorType.NOT_REVIEWEE_OF_REVIEW);
         }
         this.content = updatingContent;
     }
 
-    public void acceptReview(final Long reviewerId) {
+    public void accept(final Long reviewerId) {
+        checkReviewer(reviewerId);
+        checkStatusCreated();
+        status = ReviewStatus.ACCEPTED;
+    }
+
+    public boolean canRefuse(final Long reviewerId) {
+        checkReviewer(reviewerId);
+        checkStatusCreated();
+        return true;
+    }
+
+    private void checkReviewer(final Long reviewerId) {
         if (!this.reviewerId.equals(reviewerId)) {
             throw new InvalidReviewException(ErrorType.NOT_REVIEWER_OF_REVIEW);
         }
+    }
+
+    private void checkStatusCreated() {
         if (!status.equals(ReviewStatus.CREATED)) {
             throw new InvalidReviewException(ErrorType.NOT_PROPER_REVIEW_STATUS);
         }
-        this.status = ReviewStatus.ACCEPTED;
     }
 
     private Review(

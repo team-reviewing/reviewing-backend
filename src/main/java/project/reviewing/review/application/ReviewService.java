@@ -38,25 +38,40 @@ public class ReviewService {
 
     @Transactional(readOnly = true)
     public SingleReviewReadResponse readSingleReview(final Long reviewId) {
-        final Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(ReviewNotFoundException::new);
+        final Review review = findReviewById(reviewId);
 
         return SingleReviewReadResponse.from(review);
     }
 
     public void updateReview(final Long revieweeId, final Long reviewId, final ReviewUpdateRequest request) {
-        final Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(ReviewNotFoundException::new);
+        final Review review = findReviewById(reviewId);
 
-        review.updateReview(revieweeId, request.getContent());
+        review.update(revieweeId, request.getContent());
     }
 
     public void acceptReview(final Long memberId, final Long reviewId) {
-        final Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(ReviewNotFoundException::new);
-        final Member reviewerMember = memberRepository.findById(memberId)
-                .orElseThrow(MemberNotFoundException::new);
+        final Review review = findReviewById(reviewId);
+        final Member reviewerMember = findMemberById(memberId);
 
-        review.acceptReview(reviewerMember.getReviewer().getId());
+        review.accept(reviewerMember.getReviewer().getId());
+    }
+
+    public void refuseReview(final Long memberId, final Long reviewId) {
+        final Review review = findReviewById(reviewId);
+        final Member reviewerMember = findMemberById(memberId);
+
+        if (review.canRefuse(reviewerMember.getReviewer().getId())) {
+            reviewRepository.delete(review);
+        }
+    }
+
+    private Review findReviewById(final Long id) {
+        return reviewRepository.findById(id)
+                .orElseThrow(ReviewNotFoundException::new);
+    }
+
+    private Member findMemberById(final Long id) {
+        return memberRepository.findById(id)
+                .orElseThrow(MemberNotFoundException::new);
     }
 }
