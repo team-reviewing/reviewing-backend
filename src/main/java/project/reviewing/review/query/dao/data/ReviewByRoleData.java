@@ -23,16 +23,4 @@ public class ReviewByRoleData {
         this.username = username;
         this.imageUrl = imageUrl;
     }
-
-    @Override
-    public String toString() {
-        return "ReviewsByRoleData{" +
-                "reviewId=" + reviewId +
-                ", title='" + title + '\'' +
-                ", reviewerId=" + reviewerId +
-                ", memberId=" + memberId +
-                ", username='" + username + '\'' +
-                ", imageUrl='" + imageUrl + '\'' +
-                '}';
-    }
 }
