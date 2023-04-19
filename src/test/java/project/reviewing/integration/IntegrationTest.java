@@ -13,6 +13,7 @@ import project.reviewing.member.command.domain.Reviewer;
 import project.reviewing.member.query.dao.MyInformationDao;
 import project.reviewing.member.query.dao.ReviewerDao;
 import project.reviewing.review.command.domain.Review;
+import project.reviewing.review.query.dao.ReviewsDAO;
 import project.reviewing.tag.command.domain.Category;
 import project.reviewing.tag.command.domain.CategoryRepository;
 import project.reviewing.tag.command.domain.Tag;
@@ -46,6 +47,9 @@ public abstract class IntegrationTest {
 
     @Autowired
     protected TagDao tagDao;
+
+    @Autowired
+    protected ReviewsDAO reviewsDAO;
 
     @Autowired
     protected TestEntityManager entityManager;

@@ -17,6 +17,7 @@ import project.reviewing.auth.presentation.AuthInterceptor;
 import project.reviewing.auth.presentation.RefreshInterceptor;
 import project.reviewing.member.command.application.MemberService;
 import project.reviewing.member.query.application.MemberQueryService;
+import project.reviewing.review.query.application.ReviewQueryService;
 import project.reviewing.tag.query.application.TagQueryService;
 import project.reviewing.review.command.application.ReviewService;
 
@@ -46,6 +47,9 @@ public class ControllerTest {
 
     @MockBean
     protected ReviewService reviewService;
+
+    @MockBean
+    protected ReviewQueryService reviewQueryService;
 
     @MockBean
     protected RefreshTokenRepository refreshTokenRepository;
