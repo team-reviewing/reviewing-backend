@@ -27,6 +27,7 @@ public enum ErrorType {
     INVALID_TOKEN("유효하지 않은 토큰입니다."),
 
     PAGEABLE_INVALID_FORMAT("page 또는 size 형식이 유효하지 않습니다."),
+    QUERY_PARAM_INVALID_FORMAT("query param 형식이 유효하지 않습니다."),
 
     API_FAILED("API 요청에 실패했습니다."),
     ;
