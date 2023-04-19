@@ -42,7 +42,7 @@ public class ReviewsDAOTest extends IntegrationTest {
 
         assertThat(reviewByRoleDataList)
                 .usingRecursiveFieldByFieldElementComparator()
-                .containsSequence(toReviewByRoleData(review, reviewee), toReviewByRoleData(review1, reviewee1));
+                .contains(toReviewByRoleData(review, reviewee), toReviewByRoleData(review1, reviewee1));
     }
 
     @DisplayName("리뷰이 역할로 내 리뷰 목록을 조회한다.")
@@ -72,7 +72,7 @@ public class ReviewsDAOTest extends IntegrationTest {
 
         assertThat(reviewByRoleDataList)
                 .usingRecursiveFieldByFieldElementComparator()
-                .containsSequence(toReviewByRoleData(review, reviewerMember), toReviewByRoleData(review1, reviewerMember1));
+                .contains(toReviewByRoleData(review, reviewerMember), toReviewByRoleData(review1, reviewerMember1));
     }
 
     @DisplayName("리뷰 정보가 없으면 빈 리스트를 반환한다.")

@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 @Getter
 public class ReviewsResponse {
 
-    private List<ReviewSummary> reviews;
+    private final List<ReviewSummary> reviews;
 
     public static ReviewsResponse from(List<ReviewByRoleData> reviewByRoleDataList) {
         return new ReviewsResponse(
@@ -23,7 +23,8 @@ public class ReviewsResponse {
         this.reviews = reviews;
     }
 
-    static class ReviewSummary {
+    @Getter
+    public static class ReviewSummary {
         private final Long id;
         private final String title;
         private final Long reviewerId;
@@ -45,7 +46,8 @@ public class ReviewsResponse {
             this.member = member;
         }
 
-        static class MemberSummary {
+        @Getter
+        public static class MemberSummary {
             private final Long id;
             private final String username;
             private final String imageUrl;
