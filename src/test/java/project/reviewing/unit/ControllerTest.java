@@ -23,7 +23,7 @@ import project.reviewing.review.command.application.ReviewService;
 
 @WebMvcTest(includeFilters = @Filter(type = FilterType.ANNOTATION, classes = RestController.class))
 @Import({
-        AuthInterceptor.class, RefreshInterceptor.class, TokenProvider.class, AuthContext.class
+        TokenProvider.class, AuthContext.class
 })
 public class ControllerTest {
 
