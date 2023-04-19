@@ -18,9 +18,13 @@ public class ReviewRoleInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         final String role = request.getParameter("role");
 
-        if (!role.equals(ROLE_REVIEWER) && role.equals(ROLE_REVIEWEE)) {
+        if (role == null || !isValidRole(role)) {
             throw new BadRequestException(ErrorType.QUERY_PARAM_INVALID_FORMAT);
         }
         return true;
+    }
+
+    private boolean isValidRole(final String role) {
+        return role.equals(ROLE_REVIEWER) || role.equals(ROLE_REVIEWEE);
     }
 }
