@@ -219,6 +219,69 @@ public class ReviewServiceTest extends IntegrationTest {
         }
     }
 
+    @DisplayName("리뷰 완료 시")
+    @Nested
+    class ReviewApproveTest {
+
+        @DisplayName("정상적으로 완료된다.")
+        @Test
+        void validAcceptReview() {
+            final Member reviewee = createMember(new Member(1L, "Tom", "Tom@gmail.com", "imageUrl", "https://github.com/Tom"));
+            final Member reviewerMember = createMemberAndRegisterReviewer(
+                    new Member(2L, "bboor", "bboor@gmail.com", "imageUrl", "https://github.com/bboor"),
+                    new Reviewer(Job.BACKEND, Career.JUNIOR, Set.of(1L), "소개글")
+            );
+            final Review review = createReview(
+                    Review.assign(
+                            reviewee.getId(), reviewerMember.getReviewer().getId(),
+                            "제목", "본문", "prUrl", reviewerMember.getId(), reviewerMember.isReviewer()
+                    ));
+
+            reviewService.acceptReview(reviewerMember.getId(), review.getId());
+            entityManager.flush();
+            entityManager.clear();
+            reviewService.approveReview(reviewerMember.getId(), review.getId());
+            entityManager.flush();
+            entityManager.clear();
+
+            final Review approvedReview = reviewRepository.findById(review.getId())
+                    .orElseThrow(ReviewNotFoundException::new);
+            assertThat(approvedReview.getStatus()).isEqualTo(ReviewStatus.APPROVED);
+        }
+
+        @DisplayName("리뷰 정보가 없으면 예외 발생한다.")
+        @Test
+        void acceptWithNotExistReview() {
+            final Long invalidReviewId = -1L;
+            final Member reviewerMember = createMemberAndRegisterReviewer(
+                    new Member(2L, "bboor", "bboor@gmail.com", "imageUrl", "https://github.com/bboor"),
+                    new Reviewer(Job.BACKEND, Career.JUNIOR, Set.of(1L), "소개글")
+            );
+
+            assertThatThrownBy(() -> reviewService.approveReview(reviewerMember.getId(), invalidReviewId))
+                    .isInstanceOf(ReviewNotFoundException.class);
+        }
+
+        @DisplayName("요청한 회원 정보가 없으면 예외 발생한다.")
+        @Test
+        void acceptWithNotExistMember() {
+            final Long invalidMemberId = -1L;
+            final Member reviewee = createMember(new Member(1L, "Tom", "Tom@gmail.com", "imageUrl", "https://github.com/Tom"));
+            final Member reviewerMember = createMemberAndRegisterReviewer(
+                    new Member(2L, "bboor", "bboor@gmail.com", "imageUrl", "https://github.com/bboor"),
+                    new Reviewer(Job.BACKEND, Career.JUNIOR, Set.of(1L), "소개글")
+            );
+            final Review review = createReview(
+                    Review.assign(
+                            reviewee.getId(), reviewerMember.getReviewer().getId(),
+                            "제목", "본문", "prUrl", reviewerMember.getId(), reviewerMember.isReviewer()
+                    ));
+
+            assertThatThrownBy(() -> reviewService.approveReview(invalidMemberId, review.getId()))
+                    .isInstanceOf(MemberNotFoundException.class);
+        }
+    }
+
     @DisplayName("리뷰 거절 시")
     @Nested
     class ReviewRefuseTest {

@@ -56,6 +56,13 @@ public class ReviewService {
         review.accept(reviewerMember.getReviewer().getId());
     }
 
+    public void approveReview(final Long memberId, final Long reviewId) {
+        final Review review = findReviewById(reviewId);
+        final Member reviewerMember = findMemberById(memberId);
+
+        review.approve(reviewerMember.getReviewer().getId());
+    }
+
     public void refuseReview(final Long memberId, final Long reviewId) {
         final Review review = findReviewById(reviewId);
         final Member reviewerMember = findMemberById(memberId);
