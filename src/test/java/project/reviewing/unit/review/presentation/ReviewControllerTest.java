@@ -12,6 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import project.reviewing.common.exception.BadRequestException;
 import project.reviewing.common.exception.ErrorType;
 import project.reviewing.review.presentation.request.ReviewCreateRequest;
@@ -157,7 +158,7 @@ public class ReviewControllerTest extends ControllerTest {
     @Nested
     class ReadReviewsByRoleTest {
 
-        @DisplayName("요청이 유효하면 200 반환한다.")
+        @DisplayName("status를 포함하지 않은 요청이 유효하면 200 반환한다.")
         @ValueSource(strings = {"reviewee", "reviewer"})
         @ParameterizedTest
         void validReadReviewsByRole(final String role) throws Exception {
@@ -165,9 +166,20 @@ public class ReviewControllerTest extends ControllerTest {
                     .andExpect(status().isOk());
         }
 
+        @DisplayName("status를 포함한 요청이 유효하면 200 반환한다.")
+        @CsvSource(value = {
+                "reviewee,CREATED",
+                "reviewer,ACCEPTED",
+                "reviewer,APPROVED"
+        })
+        @ParameterizedTest
+        void validReadReviewsByRoleWithStatus(final String role, final String status) throws Exception {
+            requestAboutReview(get("/reviews?role=" + role + "&status=" + status), null)
+                    .andExpect(status().isOk());
+        }
+
         @DisplayName("role이 유효하지 않으면 400 반환한다.")
-        @ValueSource(strings = {"abc", " "})
-        @NullAndEmptySource
+        @ValueSource(strings = {"abc", "", " "})
         @ParameterizedTest
         void readWithInvalidRole(final String role) throws Exception {
             requestAboutReview(get("/reviews?role=" + role), null)
@@ -183,6 +195,18 @@ public class ReviewControllerTest extends ControllerTest {
         @Test
         void readWithNotExistRole() throws Exception {
             requestAboutReview(get("/reviews"), null)
+                    .andExpectAll(
+                            status().isBadRequest(),
+                            result -> assertThat(result.getResolvedException())
+                                    .isInstanceOf(MissingServletRequestParameterException.class)
+                    );
+        }
+
+        @DisplayName("status가 유효하지 않으면 400 반환한다.")
+        @ValueSource(strings = {"abc", "", " "})
+        @ParameterizedTest
+        void readWithInvalidStatus(final String status) throws Exception {
+            requestAboutReview(get("/reviews?role=reviewer&status=" + status), null)
                     .andExpectAll(
                             status().isBadRequest(),
                             result -> assertThat(result.getResolvedException())

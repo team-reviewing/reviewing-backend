@@ -10,6 +10,7 @@ import project.reviewing.member.command.domain.Job;
 import project.reviewing.member.command.domain.Member;
 import project.reviewing.member.command.domain.Reviewer;
 import project.reviewing.review.command.domain.Review;
+import project.reviewing.review.command.domain.ReviewStatus;
 import project.reviewing.review.presentation.data.RoleInReview;
 import project.reviewing.review.query.application.ReviewQueryService;
 import project.reviewing.review.query.application.response.ReviewsResponse;
@@ -35,7 +36,7 @@ public class ReviewQueryServiceTest extends IntegrationTest {
     @Nested
     class ReviewsByRoleFind {
 
-        @DisplayName("리뷰어 역할로 정상적으로 조회한다.")
+        @DisplayName("리뷰어 역할로 모든 상태의 리뷰 목록을 조회한다.")
         @Test
         void validFindByReviewer() {
             // given
@@ -61,7 +62,7 @@ public class ReviewQueryServiceTest extends IntegrationTest {
 
             // when
             final ReviewsResponse response = reviewQueryService.findReviewsByRole(
-                    reviewerMember.getId(), RoleInReview.ROLE_REVIEWER
+                    reviewerMember.getId(), RoleInReview.ROLE_REVIEWER, ReviewStatus.NONE
             );
 
             // then
@@ -73,7 +74,7 @@ public class ReviewQueryServiceTest extends IntegrationTest {
             );
         }
 
-        @DisplayName("리뷰이 역할로 정상적으로 조회한다.")
+        @DisplayName("리뷰이 역할로 모든 상태의 리뷰 목록을 조회한다.")
         @Test
         void validFindByReviewee() {
             final Member reviewee = createMember(new Member(1L, "Tom", "Tom@gmail.com", "imageUrl", "https://github.com/Tom"));
@@ -101,12 +102,56 @@ public class ReviewQueryServiceTest extends IntegrationTest {
 
             // when
             final ReviewsResponse response = reviewQueryService.findReviewsByRole(
-                    reviewee.getId(), RoleInReview.ROLE_REVIEWEE
+                    reviewee.getId(), RoleInReview.ROLE_REVIEWEE, ReviewStatus.NONE
             );
 
             // then
             assertAll(
                     () -> assertThat(response.getReviews()).hasSize(2),
+                    () -> assertThat(response.getReviews())
+                            .usingRecursiveFieldByFieldElementComparator()
+                            .containsAll(expectedResponse.getReviews())
+            );
+        }
+
+        @DisplayName("리뷰어 역할로 ACCEPTED 상태인 리뷰 목록을 조회한다.")
+        @Test
+        void validFindByReviewerWithAcceptedStatus() {
+            // given
+            final Member reviewee = createMember(new Member(1L, "Tom", "Tom@gmail.com", "imageUrl", "https://github.com/Tom"));
+            final Member reviewee1 = createMember(new Member(2L, "Alex", "Alex@gmail.com", "imageUrl", "https://github.com/Alex"));
+            final Member reviewerMember = createMemberAndRegisterReviewer(
+                    new Member(3L, "bboor", "bboor@gmail.com", "imageUrl", "https://github.com/bboor"),
+                    new Reviewer(Job.BACKEND, Career.JUNIOR, Set.of(1L), "소개글")
+            );
+            final Review review = createReview(
+                    Review.assign(
+                            reviewee.getId(), reviewerMember.getReviewer().getId(),
+                            "제목", "본문", "prUrl", reviewerMember.getId(), reviewerMember.isReviewer()
+                    ));
+            createReview(
+                    Review.assign(
+                            reviewee1.getId(), reviewerMember.getReviewer().getId(),
+                            "제목1", "본문1", "prUrl1", reviewerMember.getId(), reviewerMember.isReviewer()
+                    ));
+
+            review.accept(reviewerMember.getReviewer().getId());
+            entityManager.merge(review);
+            entityManager.flush();
+            entityManager.clear();
+
+            final ReviewsResponse expectedResponse = ReviewsResponse.from(
+                    List.of(toReviewByRoleData(review, reviewee))
+            );
+
+            // when
+            final ReviewsResponse response = reviewQueryService.findReviewsByRole(
+                    reviewerMember.getId(), RoleInReview.ROLE_REVIEWER, ReviewStatus.ACCEPTED
+            );
+
+            // then
+            assertAll(
+                    () -> assertThat(response.getReviews()).hasSize(1),
                     () -> assertThat(response.getReviews())
                             .usingRecursiveFieldByFieldElementComparator()
                             .containsAll(expectedResponse.getReviews())
