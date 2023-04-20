@@ -115,7 +115,8 @@ public class ReviewServiceTest extends IntegrationTest {
                     () -> assertThat(response.getReviewerId()).isEqualTo(review.getReviewerId()),
                     () -> assertThat(response.getTitle()).isEqualTo(review.getTitle()),
                     () -> assertThat(response.getContent()).isEqualTo(review.getContent()),
-                    () -> assertThat(response.getPrUrl()).isEqualTo(review.getPrUrl())
+                    () -> assertThat(response.getPrUrl()).isEqualTo(review.getPrUrl()),
+                    () -> assertThat(response.getStatus()).isEqualTo(review.getStatus().name())
             );
         }
 
