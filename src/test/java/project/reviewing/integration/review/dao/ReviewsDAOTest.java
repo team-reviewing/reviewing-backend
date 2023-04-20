@@ -8,6 +8,7 @@ import project.reviewing.member.command.domain.Job;
 import project.reviewing.member.command.domain.Member;
 import project.reviewing.member.command.domain.Reviewer;
 import project.reviewing.review.command.domain.Review;
+import project.reviewing.review.presentation.data.RoleInReview;
 import project.reviewing.review.query.dao.data.ReviewByRoleData;
 
 import java.util.List;
@@ -21,6 +22,7 @@ public class ReviewsDAOTest extends IntegrationTest {
     @DisplayName("리뷰어 역할로 내 리뷰 목록을 조회한다.")
     @Test
     void findReviewsByReviewer() {
+        // given
         final Member reviewee = createMember(new Member(1L, "Tom", "Tom@gmail.com", "imageUrl", "https://github.com/Tom"));
         final Member reviewee1 = createMember(new Member(2L, "Alex", "Alex@gmail.com", "imageUrl", "https://github.com/Alex"));
         final Member reviewerMember = createMemberAndRegisterReviewer(
@@ -38,8 +40,12 @@ public class ReviewsDAOTest extends IntegrationTest {
                         "제목1", "본문1", "prUrl1", reviewerMember.getId(), reviewerMember.isReviewer()
                 ));
 
-        List<ReviewByRoleData> reviewByRoleDataList = reviewsDAO.findReviewsByReviewer(reviewerMember.getId());
+        // when
+        List<ReviewByRoleData> reviewByRoleDataList = reviewsDAO.findReviewsByRole(
+                reviewerMember.getId(), RoleInReview.ROLE_REVIEWER
+        );
 
+        // then
         assertThat(reviewByRoleDataList)
                 .usingRecursiveFieldByFieldElementComparator()
                 .contains(toReviewByRoleData(review, reviewee), toReviewByRoleData(review1, reviewee1));
@@ -48,6 +54,7 @@ public class ReviewsDAOTest extends IntegrationTest {
     @DisplayName("리뷰이 역할로 내 리뷰 목록을 조회한다.")
     @Test
     void findReviewsByReviewee() {
+        // given
         final Member reviewee = createMember(new Member(1L, "Tom", "Tom@gmail.com", "imageUrl", "https://github.com/Tom"));
         final Member reviewerMember = createMemberAndRegisterReviewer(
                 new Member(2L, "Alex", "Alex@gmail.com", "imageUrl", "https://github.com/Alex"),
@@ -68,8 +75,12 @@ public class ReviewsDAOTest extends IntegrationTest {
                         "제목1", "본문1", "prUrl1", reviewerMember1.getId(), reviewerMember1.isReviewer()
                 ));
 
-        List<ReviewByRoleData> reviewByRoleDataList = reviewsDAO.findReviewsByReviewee(reviewee.getId());
+        // when
+        List<ReviewByRoleData> reviewByRoleDataList = reviewsDAO.findReviewsByRole(
+                reviewee.getId(), RoleInReview.ROLE_REVIEWEE
+        );
 
+        // then
         assertThat(reviewByRoleDataList)
                 .usingRecursiveFieldByFieldElementComparator()
                 .contains(toReviewByRoleData(review, reviewerMember), toReviewByRoleData(review1, reviewerMember1));
@@ -80,7 +91,7 @@ public class ReviewsDAOTest extends IntegrationTest {
     void findNotExistReviews() {
         final Member reviewee = createMember(new Member(1L, "Tom", "Tom@gmail.com", "imageUrl", "https://github.com/Tom"));
 
-        assertThat(reviewsDAO.findReviewsByReviewee(reviewee.getId()))
+        assertThat(reviewsDAO.findReviewsByRole(reviewee.getId(), RoleInReview.ROLE_REVIEWER))
                 .isEmpty();
     }
 

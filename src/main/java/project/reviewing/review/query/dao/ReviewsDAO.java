@@ -2,6 +2,7 @@ package project.reviewing.review.query.dao;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import project.reviewing.review.presentation.data.RoleInReview;
 import project.reviewing.review.query.dao.data.ReviewByRoleData;
 
 import javax.persistence.EntityManager;
@@ -17,31 +18,29 @@ public class ReviewsDAO {
     @PersistenceContext
     private final EntityManager em;
 
-    public List<ReviewByRoleData> findReviewsByReviewer(final Long memberId) {
-        final String sql = "SELECT rv.id, rv.title, rv.reviewerId, m.id, m.username, m.imageUrl "
-                + "FROM Member m1 "
-                + "JOIN m1.reviewer rr "
-                + "JOIN Review rv ON rv.reviewerId = rr.id "
-                + "JOIN Member m ON m.id = rv.revieweeId "
-                + "WHERE m1.id = :memberId";
-
-        Query query = em.createQuery(sql);
+    public List<ReviewByRoleData> findReviewsByRole(final Long memberId, final RoleInReview role) {
+        Query query = em.createQuery(makeJpqlByRole(memberId, role));
         query.setParameter("memberId", memberId);
 
         return mapToReviewByRoleDataList(query.getResultList());
+
     }
 
-    public List<ReviewByRoleData> findReviewsByReviewee(final Long memberId) {
-        final String sql = "SELECT rv.id, rv.title, rv.reviewerId, m.id, m.username, m.imageUrl "
-                + "FROM Member m "
-                + "JOIN m.reviewer rr "
-                + "JOIN Review rv ON rv.reviewerId = rr.id "
-                + "WHERE rv.revieweeId = :memberId";
-
-        Query query = em.createQuery(sql);
-        query.setParameter("memberId", memberId);
-
-        return mapToReviewByRoleDataList(query.getResultList());
+    private String makeJpqlByRole(final Long memberId, final RoleInReview role) {
+        if (role.isReviewer()) {
+            return "SELECT rv.id, rv.title, rv.reviewerId, m.id, m.username, m.imageUrl "
+                    + "FROM Member m1 "
+                    + "JOIN m1.reviewer rr "
+                    + "JOIN Review rv ON rv.reviewerId = rr.id "
+                    + "JOIN Member m ON m.id = rv.revieweeId "
+                    + "WHERE m1.id = :memberId";
+        } else {
+            return "SELECT rv.id, rv.title, rv.reviewerId, m.id, m.username, m.imageUrl "
+                    + "FROM Member m "
+                    + "JOIN m.reviewer rr "
+                    + "JOIN Review rv ON rv.reviewerId = rr.id "
+                    + "WHERE rv.revieweeId = :memberId";
+        }
     }
 
     private List<ReviewByRoleData> mapToReviewByRoleDataList(final List<Object[]> result) {

@@ -10,6 +10,7 @@ import project.reviewing.member.command.domain.Job;
 import project.reviewing.member.command.domain.Member;
 import project.reviewing.member.command.domain.Reviewer;
 import project.reviewing.review.command.domain.Review;
+import project.reviewing.review.presentation.data.RoleInReview;
 import project.reviewing.review.query.application.ReviewQueryService;
 import project.reviewing.review.query.application.response.ReviewsResponse;
 import project.reviewing.review.query.dao.data.ReviewByRoleData;
@@ -59,7 +60,9 @@ public class ReviewQueryServiceTest extends IntegrationTest {
             );
 
             // when
-            final ReviewsResponse response = reviewQueryService.findReviewsByRole(reviewerMember.getId(), "reviewer");
+            final ReviewsResponse response = reviewQueryService.findReviewsByRole(
+                    reviewerMember.getId(), RoleInReview.ROLE_REVIEWER
+            );
 
             // then
             assertAll(
@@ -97,7 +100,9 @@ public class ReviewQueryServiceTest extends IntegrationTest {
             );
 
             // when
-            final ReviewsResponse response = reviewQueryService.findReviewsByRole(reviewee.getId(), "reviewee");
+            final ReviewsResponse response = reviewQueryService.findReviewsByRole(
+                    reviewee.getId(), RoleInReview.ROLE_REVIEWEE
+            );
 
             // then
             assertAll(
