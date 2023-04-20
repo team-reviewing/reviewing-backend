@@ -2,11 +2,9 @@ package project.reviewing.unit.review.domain;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 import project.reviewing.common.exception.ErrorType;
-import project.reviewing.review.domain.Review;
-import project.reviewing.review.domain.ReviewStatus;
+import project.reviewing.review.command.domain.Review;
+import project.reviewing.review.command.domain.ReviewStatus;
 import project.reviewing.review.exception.InvalidReviewException;
 
 import static org.assertj.core.api.Assertions.assertThat;

@@ -1,4 +1,4 @@
-package project.reviewing.review.application;
+package project.reviewing.review.command.application;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -7,9 +7,9 @@ import project.reviewing.common.exception.ErrorType;
 import project.reviewing.member.command.domain.Member;
 import project.reviewing.member.command.domain.MemberRepository;
 import project.reviewing.member.exception.MemberNotFoundException;
-import project.reviewing.review.application.response.SingleReviewReadResponse;
-import project.reviewing.review.domain.Review;
-import project.reviewing.review.domain.ReviewRepository;
+import project.reviewing.review.command.application.response.SingleReviewReadResponse;
+import project.reviewing.review.command.domain.Review;
+import project.reviewing.review.command.domain.ReviewRepository;
 import project.reviewing.review.exception.InvalidReviewException;
 import project.reviewing.review.exception.ReviewNotFoundException;
 import project.reviewing.review.presentation.request.ReviewCreateRequest;
