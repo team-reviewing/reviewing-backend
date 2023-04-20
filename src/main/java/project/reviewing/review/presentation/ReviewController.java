@@ -39,7 +39,8 @@ public class ReviewController {
     @GetMapping("/reviews")
     public ReviewsResponse readReviewsByRole(
             @AuthenticatedMember final Long memberId,
-            @RequestParam(value = "role") final String role
+            @RequestParam final String role,
+            @RequestParam(required = false) final String status
     ) {
         return reviewQueryService.findReviewsByRole(memberId, RoleInReview.findValue(role));
     }

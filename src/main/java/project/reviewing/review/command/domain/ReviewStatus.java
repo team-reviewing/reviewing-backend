@@ -1,15 +1,16 @@
 package project.reviewing.review.command.domain;
 
+import java.util.Arrays;
+
 public enum ReviewStatus {
 
-    CREATED("생성"),
-    ACCEPTED("승인"),
-    APPROVED("완료"),
+    CREATED,
+    ACCEPTED,
+    APPROVED,
     ;
 
-    private final String value;
-
-    ReviewStatus(final String value) {
-        this.value = value;
+    public static boolean isContain(final String name) {
+        return Arrays.stream(values())
+                .anyMatch(status -> status.name().equals(name));
     }
 }
