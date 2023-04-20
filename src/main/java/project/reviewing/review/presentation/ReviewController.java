@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import project.reviewing.auth.presentation.AuthenticatedMember;
 import project.reviewing.review.command.application.ReviewService;
 import project.reviewing.review.command.application.response.SingleReviewReadResponse;
+import project.reviewing.review.command.domain.ReviewStatus;
 import project.reviewing.review.presentation.data.RoleInReview;
 import project.reviewing.review.presentation.request.ReviewCreateRequest;
 import project.reviewing.review.presentation.request.ReviewUpdateRequest;
@@ -42,7 +43,7 @@ public class ReviewController {
             @RequestParam final String role,
             @RequestParam(required = false) final String status
     ) {
-        return reviewQueryService.findReviewsByRole(memberId, RoleInReview.findValue(role));
+        return reviewQueryService.findReviewsByRole(memberId, RoleInReview.findValue(role), ReviewStatus.of(status));
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
