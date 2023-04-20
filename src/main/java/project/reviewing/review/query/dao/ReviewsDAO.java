@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 import project.reviewing.review.query.dao.data.ReviewByRoleData;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.List;
 @Repository
 public class ReviewsDAO {
 
+    @PersistenceContext
     private final EntityManager em;
 
     public List<ReviewByRoleData> findReviewsByReviewer(final Long memberId) {
