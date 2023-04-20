@@ -21,12 +21,14 @@ public enum ErrorType {
     NOT_REVIEWEE_OF_REVIEW("해당 리뷰의 리뷰이가 아닙니다."),
     NOT_REVIEWER_OF_REVIEW("해당 리뷰의 리뷰어가 아닙니다."),
     NOT_PROPER_REVIEW_STATUS("리뷰의 상태가 적절하지 않습니다."),
+    ROLE_IN_REVIEW_NOT_FOUND("해당 리뷰의 역할을 찾을 수 없습니다."),
 
     NOT_AUTHENTICATED("인증되지 않은 요청입니다."),
     ALREADY_AUTHENTICATED("이미 인증 되었습니다."),
     INVALID_TOKEN("유효하지 않은 토큰입니다."),
 
     PAGEABLE_INVALID_FORMAT("page 또는 size 형식이 유효하지 않습니다."),
+    QUERY_PARAM_INVALID_FORMAT("query param 형식이 유효하지 않습니다."),
 
     API_FAILED("API 요청에 실패했습니다."),
     ;

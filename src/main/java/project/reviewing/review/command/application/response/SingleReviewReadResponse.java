@@ -1,7 +1,7 @@
-package project.reviewing.review.application.response;
+package project.reviewing.review.command.application.response;
 
 import lombok.Getter;
-import project.reviewing.review.domain.Review;
+import project.reviewing.review.command.domain.Review;
 
 @Getter
 public class SingleReviewReadResponse {

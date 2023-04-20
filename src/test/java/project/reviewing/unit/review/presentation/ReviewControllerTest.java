@@ -4,6 +4,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.http.HttpHeaders;
@@ -11,6 +12,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import project.reviewing.common.exception.BadRequestException;
+import project.reviewing.common.exception.ErrorType;
 import project.reviewing.review.presentation.request.ReviewCreateRequest;
 import project.reviewing.review.presentation.request.ReviewUpdateRequest;
 import project.reviewing.unit.ControllerTest;
@@ -147,6 +150,45 @@ public class ReviewControllerTest extends ControllerTest {
         void validReadSingleReview() throws Exception {
             requestAboutReview(get("/reviewers/1/reviews/1"), null)
                     .andExpect(status().isOk());
+        }
+    }
+
+    @DisplayName("역할별 리뷰 목록 조회 시")
+    @Nested
+    class ReadReviewsByRoleTest {
+
+        @DisplayName("요청이 유효하면 200 반환한다.")
+        @ValueSource(strings = {"reviewee", "reviewer"})
+        @ParameterizedTest
+        void validReadReviewsByRole(final String role) throws Exception {
+            requestAboutReview(get("/reviews?role=" + role), null)
+                    .andExpect(status().isOk());
+        }
+
+        @DisplayName("role이 유효하지 않으면 400 반환한다.")
+        @ValueSource(strings = {"abc", " "})
+        @NullAndEmptySource
+        @ParameterizedTest
+        void readWithInvalidRole(final String role) throws Exception {
+            requestAboutReview(get("/reviews?role=" + role), null)
+                    .andExpectAll(
+                            status().isBadRequest(),
+                            result -> assertThat(result.getResolvedException())
+                                    .isInstanceOf(BadRequestException.class)
+                                    .hasMessage(ErrorType.QUERY_PARAM_INVALID_FORMAT.getMessage())
+                    );
+        }
+
+        @DisplayName("role이 포함되지 않으면 400 반환한다.")
+        @Test
+        void readWithNotExistRole() throws Exception {
+            requestAboutReview(get("/reviews"), null)
+                    .andExpectAll(
+                            status().isBadRequest(),
+                            result -> assertThat(result.getResolvedException())
+                                    .isInstanceOf(BadRequestException.class)
+                                    .hasMessage(ErrorType.QUERY_PARAM_INVALID_FORMAT.getMessage())
+                    );
         }
     }
 

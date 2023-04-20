@@ -1,4 +1,4 @@
-package project.reviewing.review.domain;
+package project.reviewing.review.command.domain;
 
 public enum ReviewStatus {
 
