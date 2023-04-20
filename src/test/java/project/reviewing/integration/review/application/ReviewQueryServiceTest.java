@@ -116,7 +116,7 @@ public class ReviewQueryServiceTest extends IntegrationTest {
 
     private ReviewByRoleData toReviewByRoleData(final Review review, final Member member) {
         return new ReviewByRoleData(
-                review.getId(), review.getTitle(), review.getReviewerId(),
+                review.getId(), review.getTitle(), review.getReviewerId(), review.getStatus(),
                 member.getId(), member.getUsername(), member.getImageUrl()
         );
     }

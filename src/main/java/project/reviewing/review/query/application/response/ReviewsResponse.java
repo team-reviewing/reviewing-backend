@@ -28,21 +28,27 @@ public class ReviewsResponse {
         private final Long id;
         private final String title;
         private final Long reviewerId;
+        private final String status;
         private final MemberSummary member;
 
         private static ReviewSummary from(final ReviewByRoleData reviewByRoleData) {
             return new ReviewSummary(
-                    reviewByRoleData.getReviewId(), reviewByRoleData.getTitle(), reviewByRoleData.getReviewerId(),
+                    reviewByRoleData.getReviewId(), reviewByRoleData.getTitle(),
+                    reviewByRoleData.getReviewerId(), reviewByRoleData.getStatus(),
                     new MemberSummary(
                             reviewByRoleData.getMemberId(), reviewByRoleData.getUsername(), reviewByRoleData.getImageUrl()
                     )
             );
         }
 
-        private ReviewSummary(final Long id, final String title, final Long reviewerId, final MemberSummary member) {
+        private ReviewSummary(
+                final Long id, final String title, final Long reviewerId,
+                final String status, final MemberSummary member
+        ) {
             this.id = id;
             this.title = title;
             this.reviewerId = reviewerId;
+            this.status = status;
             this.member = member;
         }
 

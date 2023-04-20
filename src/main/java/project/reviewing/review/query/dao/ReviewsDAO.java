@@ -2,6 +2,7 @@ package project.reviewing.review.query.dao;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import project.reviewing.review.command.domain.ReviewStatus;
 import project.reviewing.review.presentation.data.RoleInReview;
 import project.reviewing.review.query.dao.data.ReviewByRoleData;
 
@@ -28,14 +29,14 @@ public class ReviewsDAO {
 
     private String makeJpqlByRole(final Long memberId, final RoleInReview role) {
         if (role.isReviewer()) {
-            return "SELECT rv.id, rv.title, rv.reviewerId, m.id, m.username, m.imageUrl "
+            return "SELECT rv.id, rv.title, rv.reviewerId, rv.status, m.id, m.username, m.imageUrl "
                     + "FROM Member m1 "
                     + "JOIN m1.reviewer rr "
                     + "JOIN Review rv ON rv.reviewerId = rr.id "
                     + "JOIN Member m ON m.id = rv.revieweeId "
                     + "WHERE m1.id = :memberId";
         } else {
-            return "SELECT rv.id, rv.title, rv.reviewerId, m.id, m.username, m.imageUrl "
+            return "SELECT rv.id, rv.title, rv.reviewerId, rv.status, m.id, m.username, m.imageUrl "
                     + "FROM Member m "
                     + "JOIN m.reviewer rr "
                     + "JOIN Review rv ON rv.reviewerId = rr.id "
@@ -49,8 +50,8 @@ public class ReviewsDAO {
         for (Object[] data : result) {
             reviewsByRoleDataList.add(
                     new ReviewByRoleData(
-                            (Long) data[0], (String) data[1], (Long) data[2],
-                            (Long) data[3], (String) data[4], (String) data[5]
+                            (Long) data[0], (String) data[1], (Long) data[2], (ReviewStatus) data[3],
+                            (Long) data[4], (String) data[5], (String) data[6]
                     ));
         }
         return reviewsByRoleDataList;
