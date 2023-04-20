@@ -19,10 +19,16 @@ public class ReviewsDAO {
     @PersistenceContext
     private final EntityManager em;
 
-    public List<ReviewByRoleData> findReviewsByRole(final Long memberId, final RoleInReview role) {
-        Query query = em.createQuery(makeJpqlByRole(memberId, role));
-        query.setParameter("memberId", memberId);
+    public List<ReviewByRoleData> findReviewsByRole(
+            final Long memberId, final RoleInReview role, final ReviewStatus status
+    ) {
+        final String jpql = makeJpqlByRole(memberId, role) + makeWhereClauseForStatus(status);
+        final Query query = em.createQuery(jpql)
+                .setParameter("memberId", memberId);
 
+        if (!status.isNone()) {
+            query.setParameter("status", status);
+        }
         return mapToReviewByRoleDataList(query.getResultList());
 
     }
@@ -42,6 +48,13 @@ public class ReviewsDAO {
                     + "JOIN Review rv ON rv.reviewerId = rr.id "
                     + "WHERE rv.revieweeId = :memberId";
         }
+    }
+
+    private String makeWhereClauseForStatus(final ReviewStatus status) {
+        if (status.isNone()) {
+            return "";
+        }
+        return " AND rv.status = :status";
     }
 
     private List<ReviewByRoleData> mapToReviewByRoleDataList(final List<Object[]> result) {

@@ -241,9 +241,8 @@ public class ReviewServiceTest extends IntegrationTest {
             reviewService.acceptReview(reviewerMember.getId(), review.getId());
             entityManager.flush();
             entityManager.clear();
+
             reviewService.approveReview(reviewerMember.getId(), review.getId());
-            entityManager.flush();
-            entityManager.clear();
 
             final Review approvedReview = reviewRepository.findById(review.getId())
                     .orElseThrow(ReviewNotFoundException::new);
