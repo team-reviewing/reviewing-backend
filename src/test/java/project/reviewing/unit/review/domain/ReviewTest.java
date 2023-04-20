@@ -60,7 +60,7 @@ public class ReviewTest {
                 .hasMessage(ErrorType.NOT_REVIEWEE_OF_REVIEW.getMessage());
     }
 
-    @DisplayName("리뷰를 승인할 수 있다.")
+    @DisplayName("리뷰를 수락할 수 있다.")
     @Test
     void validAcceptReview() {
         final Review review = Review.assign(1L, 1L, "제목", "본문", "prUrl", 2L, true);
@@ -70,7 +70,7 @@ public class ReviewTest {
         assertThat(review.getStatus()).isEqualTo(ReviewStatus.ACCEPTED);
     }
 
-    @DisplayName("리뷰를 요청받은 리뷰어가 아니면 승인할 수 없다.")
+    @DisplayName("리뷰를 요청받은 리뷰어가 아니면 수락할 수 없다.")
     @Test
     void acceptWithNotReviewerOfReview() {
         final Review review = Review.assign(1L, 1L, "제목", "본문", "prUrl", 2L, true);
@@ -80,7 +80,7 @@ public class ReviewTest {
                 .hasMessage(ErrorType.NOT_REVIEWER_OF_REVIEW.getMessage());
     }
 
-    @DisplayName("리뷰의 상태가 CREATED(생성) 상태가 아니면 승인할 수 없다.")
+    @DisplayName("리뷰의 상태가 CREATED(생성) 상태가 아니면 수락할 수 없다.")
     @Test
     void acceptWithNotProperStatus() {
         final Review review = Review.assign(1L, 1L, "제목", "본문", "prUrl", 2L, true);
@@ -88,6 +88,39 @@ public class ReviewTest {
         review.accept(1L);
 
         assertThatThrownBy(() -> review.accept(1L))
+                .isInstanceOf(InvalidReviewException.class)
+                .hasMessage(ErrorType.NOT_PROPER_REVIEW_STATUS.getMessage());
+    }
+
+    @DisplayName("리뷰를 완료할 수 있다.")
+    @Test
+    void validApproveReview() {
+        final Review review = Review.assign(1L, 1L, "제목", "본문", "prUrl", 2L, true);
+
+        review.accept(1L);
+        review.approve(1L);
+
+        assertThat(review.getStatus()).isEqualTo(ReviewStatus.APPROVED);
+    }
+
+    @DisplayName("리뷰를 요청받은 리뷰어가 아니면 완료할 수 없다.")
+    @Test
+    void approveWithNotReviewerOfReview() {
+        final Review review = Review.assign(1L, 1L, "제목", "본문", "prUrl", 2L, true);
+
+        review.accept(1L);
+
+        assertThatThrownBy(() -> review.accept(2L))
+                .isInstanceOf(InvalidReviewException.class)
+                .hasMessage(ErrorType.NOT_REVIEWER_OF_REVIEW.getMessage());
+    }
+
+    @DisplayName("리뷰의 상태가 ACCEPTED(수락) 상태가 아니면 완료할 수 없다.")
+    @Test
+    void approveWithNotProperStatus() {
+        final Review review = Review.assign(1L, 1L, "제목", "본문", "prUrl", 2L, true);
+
+        assertThatThrownBy(() -> review.approve(1L))
                 .isInstanceOf(InvalidReviewException.class)
                 .hasMessage(ErrorType.NOT_PROPER_REVIEW_STATUS.getMessage());
     }
