@@ -259,6 +259,18 @@ public class ReviewControllerTest extends ControllerTest {
         }
     }
 
+    @DisplayName("리뷰 완료 시")
+    @Nested
+    class ReviewApproveTest {
+
+        @DisplayName("요청이 유효하면 204 반환한다.")
+        @Test
+        void validAcceptReview() throws Exception {
+            requestAboutReview(patch("/reviewers/1/reviews/1/status-approved"), null)
+                    .andExpect(status().isNoContent());
+        }
+    }
+
     private ResultActions requestAboutReview(
             final MockHttpServletRequestBuilder mockHttpServletRequestBuilder, final Object request
     ) throws Exception {

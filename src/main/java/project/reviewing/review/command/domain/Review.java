@@ -63,6 +63,12 @@ public class Review {
         status = ReviewStatus.ACCEPTED;
     }
 
+    public void approve(final Long reviewerId) {
+        checkReviewer(reviewerId);
+        checkStatusAccepted();
+        status = ReviewStatus.APPROVED;
+    }
+
     public boolean canRefuse(final Long reviewerId) {
         checkReviewer(reviewerId);
         checkStatusCreated();
@@ -77,6 +83,12 @@ public class Review {
 
     private void checkStatusCreated() {
         if (!status.equals(ReviewStatus.CREATED)) {
+            throw new InvalidReviewException(ErrorType.NOT_PROPER_REVIEW_STATUS);
+        }
+    }
+
+    private void checkStatusAccepted() {
+        if (!status.equals(ReviewStatus.ACCEPTED)) {
             throw new InvalidReviewException(ErrorType.NOT_PROPER_REVIEW_STATUS);
         }
     }
