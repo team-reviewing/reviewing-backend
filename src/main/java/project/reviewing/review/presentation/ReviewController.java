@@ -64,19 +64,19 @@ public class ReviewController {
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PatchMapping("/reviewers/{reviewer-id}/reviews/{review-id}/status-approved")
+    public void approveReview(
+            @AuthenticatedMember final Long memberId,
+            @PathVariable("review-id") final Long reviewId
+    ) {
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/reviewers/{reviewer-id}/reviews/{review-id}")
     public void refuseReview(
             @AuthenticatedMember final Long memberId,
             @PathVariable("review-id") final Long reviewId
     ) {
         reviewService.refuseReview(memberId, reviewId);
-    }
-
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @DeleteMapping("/reviewers/{reviewer-id}/reviews/{review-id}")
-    public void approveReview(
-            @AuthenticatedMember final Long memberId,
-            @PathVariable("review-id") final Long reviewId
-    ) {
     }
 }
