@@ -69,6 +69,7 @@ public class ReviewController {
             @AuthenticatedMember final Long memberId,
             @PathVariable("review-id") final Long reviewId
     ) {
+        reviewService.approveReview(memberId, reviewId);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
