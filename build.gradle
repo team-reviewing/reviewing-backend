@@ -45,3 +45,7 @@ tasks.named('test') {
 	useJUnitPlatform()
 	systemProperties = System.getProperties()
 }
+
+jar {
+	enabled = false
+}
