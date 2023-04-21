@@ -1,11 +1,9 @@
 name: Deploy
 
 on:
-  pull_request:
+  push:
     branches:
       - main
-    types:
-      - closed
 
 permissions:
   contents: read
@@ -18,8 +16,6 @@ env:
   CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: reviewing-codedeploy-deployment-group
 
 jobs:
-  if_merged:
-    if: github.event.pull_request.merged == true
   deploy:
     runs-on: ubuntu-latest
 
