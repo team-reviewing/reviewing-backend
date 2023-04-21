@@ -1,14 +1,11 @@
 name: Deploy
 
 on:
-  push:
-    branches:
-      - main
   pull_request:
     branches:
       - main
-      - develop
-    types: [ opened, synchronize ]
+    types:
+      - closed
 
 permissions:
   contents: read
@@ -21,8 +18,9 @@ env:
   CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: reviewing-codedeploy-deployment-group
 
 jobs:
-  build:
-
+  if_merged:
+    if: github.event.pull_request.merged == true
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
@@ -37,10 +35,9 @@ jobs:
           java-version: '11'
           distribution: 'temurin'
 
-      ## gitignore한 파일 생성해주기
-      ## create application-security.yml
+      # gitignore한 파일 생성해주기
+      # 보안 정보를 포함한 application-security.yml
       - name: make application-security.yml
-        if: true # branch가 develop일 때
         run: |
           # spring의 resources 경로로 이동
           cd ./src/main/resources

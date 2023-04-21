@@ -14,7 +14,7 @@ permissions:
   contents: read
 
 jobs:
-  build:
+  integration:
     runs-on: ubuntu-latest
     env:
       github-client-id: ${{secrets.CLIENT_ID_GITHUB}}
