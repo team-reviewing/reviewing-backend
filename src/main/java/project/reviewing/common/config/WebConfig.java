@@ -19,8 +19,11 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(final CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("*")
+                .allowedOrigins("http://localhost:3000")
                 .allowedMethods("GET", "POST", "DELETE", "PUT", "PATCH", "OPTIONS", "HEAD", "TRACE")
-                .exposedHeaders(HttpHeaders.LOCATION);
+                .allowedHeaders("*")
+                .exposedHeaders(HttpHeaders.LOCATION)
+                .allowCredentials(true)
+                .maxAge(3600); // 1시간
     }
 }
