@@ -28,7 +28,7 @@ public class Member {
     @Column(nullable = false, unique = true)
     private String username;
 
-    @Column(unique = true)
+    @Column(nullable = false)
     private String email;
 
     private String imageUrl;
@@ -44,7 +44,7 @@ public class Member {
     public Member(final Long githubId, final String username, final String email, final String imageUrl, final String profileUrl) {
         this.githubId = githubId;
         this.username = username;
-        this.email = email;
+        this.email = ((email == null) ? "" : email);
         this.imageUrl = imageUrl;
         this.profileUrl = profileUrl;
         this.isReviewer = false;

@@ -2,7 +2,7 @@ CREATE TABLE IF NOT EXISTS member (
     id              BIGINT          NOT NULL    AUTO_INCREMENT,
     github_id       VARCHAR(255)    NOT NULL    UNIQUE,
     username        VARCHAR(255)    NOT NULL    UNIQUE,
-    email           VARCHAR(255)    UNIQUE,
+    email           VARCHAR(255)    NOT NULL,
     image_url       VARCHAR(255),
     profile_url     VARCHAR(255)    NOT NULL    UNIQUE,
     is_reviewer     BOOLEAN         DEFAULT 0,
