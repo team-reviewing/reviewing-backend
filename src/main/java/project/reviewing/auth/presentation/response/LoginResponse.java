@@ -3,11 +3,11 @@ package project.reviewing.auth.presentation.response;
 import lombok.Getter;
 
 @Getter
-public class AccessTokenResponse {
+public class LoginResponse {
 
     private final String accessToken;
 
-    public AccessTokenResponse(final String accessToken) {
+    public LoginResponse(final String accessToken) {
         this.accessToken = accessToken;
     }
 }

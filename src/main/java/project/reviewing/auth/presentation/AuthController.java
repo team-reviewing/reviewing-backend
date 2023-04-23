@@ -8,7 +8,7 @@ import project.reviewing.auth.application.AuthService;
 import project.reviewing.auth.application.response.GithubLoginResponse;
 import project.reviewing.auth.application.response.RefreshResponse;
 import project.reviewing.auth.infrastructure.TokenProvider;
-import project.reviewing.auth.presentation.response.AccessTokenResponse;
+import project.reviewing.auth.presentation.response.LoginResponse;
 import project.reviewing.common.util.CookieProvider;
 
 import javax.servlet.http.HttpServletResponse;
@@ -25,7 +25,7 @@ public class AuthController {
 
     @ResponseStatus(HttpStatus.OK)
     @PostMapping(value = "/login/github")
-    public AccessTokenResponse loginGithub(
+    public LoginResponse loginGithub(
             @RequestBody @NotBlank final String authorizationCode, final HttpServletResponse response
     ) {
         GithubLoginResponse githubLoginResponse = authService.loginGithub(authorizationCode);
@@ -35,12 +35,12 @@ public class AuthController {
                         githubLoginResponse.getRefreshToken(), tokenProvider.getRefreshTokenValidTime()
                 )
         );
-        return new AccessTokenResponse(githubLoginResponse.getAccessToken());
+        return new LoginResponse(githubLoginResponse.getAccessToken());
     }
 
     @ResponseStatus(HttpStatus.OK)
     @PostMapping(value = "/refresh")
-    public AccessTokenResponse refreshTokens(
+    public LoginResponse refreshTokens(
             @AuthenticatedMember final Long memberId, final HttpServletResponse response
     ) {
         RefreshResponse refreshResponse = authService.refreshTokens(memberId);
@@ -50,7 +50,7 @@ public class AuthController {
                         refreshResponse.getRefreshToken(), tokenProvider.getRefreshTokenValidTime()
                 )
         );
-        return new AccessTokenResponse(refreshResponse.getAccessToken());
+        return new LoginResponse(refreshResponse.getAccessToken());
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
