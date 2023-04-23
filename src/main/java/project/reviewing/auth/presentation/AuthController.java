@@ -8,10 +8,12 @@ import project.reviewing.auth.application.AuthService;
 import project.reviewing.auth.application.response.GithubLoginResponse;
 import project.reviewing.auth.application.response.RefreshResponse;
 import project.reviewing.auth.infrastructure.TokenProvider;
+import project.reviewing.auth.presentation.request.GithubLoginRequest;
 import project.reviewing.auth.presentation.response.LoginResponse;
 import project.reviewing.common.util.CookieProvider;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
 @Validated
@@ -26,9 +28,9 @@ public class AuthController {
     @ResponseStatus(HttpStatus.OK)
     @PostMapping(value = "/login/github")
     public LoginResponse loginGithub(
-            @RequestBody @NotBlank final String authorizationCode, final HttpServletResponse response
+            @Valid @RequestBody final GithubLoginRequest githubLoginRequest, final HttpServletResponse response
     ) {
-        GithubLoginResponse githubLoginResponse = authService.loginGithub(authorizationCode);
+        GithubLoginResponse githubLoginResponse = authService.loginGithub(githubLoginRequest.getAuthorizationCode());
 
         response.addCookie(
                 CookieProvider.createRefreshTokenCookie(
