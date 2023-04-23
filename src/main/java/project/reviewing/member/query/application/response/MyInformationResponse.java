@@ -8,15 +8,10 @@ import project.reviewing.member.query.dao.data.MyInformationData;
 public class MyInformationResponse {
 
     private final String username;
-
     private final String email;
-
     private final String imageUrl;
-
     private final String profileUrl;
-
-    @JsonProperty(value = "isReviewer")
-    private final boolean isReviewer;
+    private final Boolean isReviewer;
 
     public static MyInformationResponse of(final MyInformationData myInformationData) {
         return new MyInformationResponse(
