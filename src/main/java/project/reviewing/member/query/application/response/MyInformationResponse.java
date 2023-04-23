@@ -1,5 +1,6 @@
 package project.reviewing.member.query.application.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import project.reviewing.member.query.dao.data.MyInformationData;
 
@@ -7,9 +8,14 @@ import project.reviewing.member.query.dao.data.MyInformationData;
 public class MyInformationResponse {
 
     private final String username;
+
     private final String email;
+
     private final String imageUrl;
+
     private final String profileUrl;
+
+    @JsonProperty(value = "isReviewer")
     private final boolean isReviewer;
 
     public static MyInformationResponse of(final MyInformationData myInformationData) {
