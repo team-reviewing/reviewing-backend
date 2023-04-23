@@ -34,8 +34,12 @@ public class MyReviewerInformationResponse {
         );
     }
 
-    public static MyReviewerInformationResponse empty() {
-        return new MyReviewerInformationResponse(null, null, List.of(), null, List.of(), List.of(), List.of());
+    public static MyReviewerInformationResponse empty(
+            final List<String> jobList,
+            final List<String> careerList,
+            final List<TagResponse> tagList
+    ) {
+        return new MyReviewerInformationResponse(null, null, List.of(), null, jobList, careerList, tagList);
     }
 
     private static List<TagResponse> mapTagResponse(final List<MyReviewerInformationData> myReviewerInformationData) {

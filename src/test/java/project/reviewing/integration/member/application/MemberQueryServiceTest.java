@@ -28,6 +28,7 @@ import project.reviewing.member.query.dao.data.MyInformationData;
 import project.reviewing.member.query.dao.data.ReviewerData;
 import project.reviewing.tag.command.domain.Category;
 import project.reviewing.tag.command.domain.Tag;
+import project.reviewing.tag.query.application.response.TagResponse;
 import project.reviewing.tag.query.dao.data.TagData;
 
 @DisplayName("MemberQueryService 는")
@@ -117,7 +118,11 @@ public class MemberQueryServiceTest extends IntegrationTest {
             final MyReviewerInformationResponse actual = sut.findReviewerWithChoiceList(memberId);
 
             assertThat(actual).usingRecursiveComparison()
-                    .isEqualTo(MyReviewerInformationResponse.empty());
+                    .isEqualTo(MyReviewerInformationResponse.empty(
+                            Arrays.stream(Job.values()).map(Job::getValue).collect(Collectors.toList()),
+                            Arrays.stream(Career.values()).map(Career::getCareer).collect(Collectors.toList()),
+                            tagRepository.findAll().stream().map(TagResponse::from).collect(Collectors.toList())
+                    ));
         }
     }
 
