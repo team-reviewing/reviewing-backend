@@ -47,7 +47,7 @@ public class AuthControllerTest extends ControllerTest {
         given(authService.loginGithub(authorizationCode)).willReturn(githubLoginResponse);
 
         mockMvc.perform(post("/auth/login/github")
-                        .content(authorizationCode)
+                        .content(objectMapper.writeValueAsString(new GithubLoginRequest(authorizationCode)))
                         .contentType(MediaType.APPLICATION_JSON)
                         .characterEncoding("UTF-8"))
                 .andExpect(status().isOk())
