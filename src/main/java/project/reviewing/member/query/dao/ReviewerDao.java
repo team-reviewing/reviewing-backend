@@ -47,7 +47,7 @@ public class ReviewerDao {
     }
 
     public Slice<ReviewerData> findByTag(final Pageable pageable, final Long categoryId, final List<Long> tagIds) {
-        final String sql = "SELECT r.job, r.career, r.introduction, m.id, m.username, m.image_url, m.profile_url, t.id tag_id, t.name tag_name "
+        final String sql = "SELECT r.job, r.career, r.introduction, r.id, m.username, m.image_url, m.profile_url, t.id tag_id, t.name tag_name "
                 + "FROM reviewer r "
                 + "JOIN member m ON r.member_id = m.id "
                 + "JOIN reviewer_tag rt ON r.id = rt.reviewer_id "
