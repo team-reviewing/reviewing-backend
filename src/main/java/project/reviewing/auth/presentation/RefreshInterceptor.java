@@ -33,17 +33,17 @@ public class RefreshInterceptor implements HandlerInterceptor {
         if (CorsUtils.isPreFlightRequest(request)) {
             return true;
         }
-
+        System.out.println("쿠키 추출 전 ");
         final String token = extractRefreshTokenString(request)
                 .orElseThrow(() -> new InvalidTokenException(ErrorType.INVALID_TOKEN));
-
+        System.out.println("쿠키 추출 후, 파싱 전 refresh token : " + token);
         final long id = tokenProvider.parseRefreshToken(token);
-
+        System.out.println("파싱 후, db 확인 전 ");
         if (isInvalidInDB(id, token)) {
             refreshTokenRepository.deleteById(id);
             throw new InvalidTokenException(ErrorType.INVALID_TOKEN);
         }
-
+        System.out.println("db 확인 후 ");
         authContext.setId(id);
         return true;
     }
