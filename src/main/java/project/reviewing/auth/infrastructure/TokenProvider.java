@@ -30,6 +30,7 @@ public class TokenProvider {
         this.refreshTokenSecretKey = Keys.hmacShaKeyFor(refreshTokenSecretKey.getBytes(StandardCharsets.UTF_8));
         this.accessTokenValidTime = accessTokenValidTime;
         this. refreshTokenValidTime = refreshTokenValidTime;
+        System.out.println("Access Token 유효 기간 : " + accessTokenValidTime);
     }
 
     public String createAccessToken(final Long memberId) {
