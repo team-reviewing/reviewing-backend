@@ -2,6 +2,7 @@ package project.reviewing.auth.presentation;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import project.reviewing.auth.application.AuthService;
@@ -32,26 +33,42 @@ public class AuthController {
     ) {
         GithubLoginResponse githubLoginResponse = authService.loginGithub(githubLoginRequest.getAuthorizationCode());
 
-        response.addCookie(
+        ResponseCookie cookie = ResponseCookie.from("refresh_token", githubLoginResponse.getRefreshToken())
+                .path("/")
+                .httpOnly(false)
+                .sameSite("")
+                .maxAge(tokenProvider.getRefreshTokenValidTime())
+                .build();
+        response.setHeader("Set-Cookie", cookie.toString());
+
+        /*response.addCookie(
                 CookieProvider.createRefreshTokenCookie(
                         githubLoginResponse.getRefreshToken(), tokenProvider.getRefreshTokenValidTime()
                 )
-        );
+        );*/
         return new LoginResponse(githubLoginResponse.getAccessToken());
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping(value = "/refresh")
+    @PostMapping(value = "/refresh")
     public LoginResponse refreshTokens(
             @AuthenticatedMember final Long memberId, final HttpServletResponse response
     ) {
         RefreshResponse refreshResponse = authService.refreshTokens(memberId);
 
-        response.addCookie(
+        ResponseCookie cookie = ResponseCookie.from("refresh_token", refreshResponse.getRefreshToken())
+                .path("/")
+                .httpOnly(false)
+                .sameSite("")
+                .maxAge(tokenProvider.getRefreshTokenValidTime())
+                .build();
+        response.setHeader("Set-Cookie", cookie.toString());
+
+        /*response.addCookie(
                 CookieProvider.createRefreshTokenCookie(
                         refreshResponse.getRefreshToken(), tokenProvider.getRefreshTokenValidTime()
                 )
-        );
+        );*/
         return new LoginResponse(refreshResponse.getAccessToken());
     }
 
