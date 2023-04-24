@@ -33,20 +33,12 @@ public class AuthController {
     ) {
         GithubLoginResponse githubLoginResponse = authService.loginGithub(githubLoginRequest.getAuthorizationCode());
 
-        ResponseCookie cookie = ResponseCookie.from("refresh_token", githubLoginResponse.getRefreshToken())
-                .path("/")
-                .httpOnly(false)
-                .sameSite("")
-                .maxAge(tokenProvider.getRefreshTokenValidTime())
-                .build();
-        response.setHeader("Set-Cookie", cookie.toString());
-
         /*response.addCookie(
                 CookieProvider.createRefreshTokenCookie(
                         githubLoginResponse.getRefreshToken(), tokenProvider.getRefreshTokenValidTime()
                 )
         );*/
-        return new LoginResponse(githubLoginResponse.getAccessToken());
+        return new LoginResponse(githubLoginResponse.getAccessToken(), githubLoginResponse.getRefreshToken());
     }
 
     @ResponseStatus(HttpStatus.OK)
@@ -56,20 +48,12 @@ public class AuthController {
     ) {
         RefreshResponse refreshResponse = authService.refreshTokens(memberId);
 
-        ResponseCookie cookie = ResponseCookie.from("refresh_token", refreshResponse.getRefreshToken())
-                .path("/")
-                .httpOnly(false)
-                .sameSite("")
-                .maxAge(tokenProvider.getRefreshTokenValidTime())
-                .build();
-        response.setHeader("Set-Cookie", cookie.toString());
-
         /*response.addCookie(
                 CookieProvider.createRefreshTokenCookie(
                         refreshResponse.getRefreshToken(), tokenProvider.getRefreshTokenValidTime()
                 )
         );*/
-        return new LoginResponse(refreshResponse.getAccessToken());
+        return new LoginResponse(refreshResponse.getAccessToken(), refreshResponse.getRefreshToken());
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)

@@ -12,6 +12,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import project.reviewing.auth.domain.RefreshToken;
 import project.reviewing.auth.domain.RefreshTokenRepository;
 import project.reviewing.auth.exception.InvalidTokenException;
+import project.reviewing.auth.infrastructure.AuthorizationExtractor;
 import project.reviewing.auth.infrastructure.TokenProvider;
 import project.reviewing.common.exception.ErrorType;
 
@@ -34,7 +35,7 @@ public class RefreshInterceptor implements HandlerInterceptor {
             return true;
         }
         System.out.println("쿠키 추출 전 ");
-        final String token = extractRefreshTokenString(request)
+        final String token = AuthorizationExtractor.extract(request)
                 .orElseThrow(() -> new InvalidTokenException(ErrorType.INVALID_TOKEN));
         System.out.println("쿠키 추출 후, 파싱 전 refresh token : " + token);
         final long id = tokenProvider.parseRefreshToken(token);

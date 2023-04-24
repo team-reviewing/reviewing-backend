@@ -51,9 +51,6 @@ public class AuthControllerTest extends ControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .characterEncoding("UTF-8"))
                 .andExpect(status().isOk())
-                .andExpect(cookie().value("refresh_token", "Refresh Token"))
-                .andExpect(cookie().httpOnly("refresh_token", true))
-                .andExpect(cookie().path("refresh_token", "/auth/refresh"))
                 .andDo(print());
     }
 
@@ -68,11 +65,8 @@ public class AuthControllerTest extends ControllerTest {
         given(refreshTokenRepository.findById(refreshToken.getId())).willReturn(Optional.of(refreshToken));
 
         mockMvc.perform(post("/auth/refresh")
-                        .cookie(new Cookie("refresh_token", refreshToken.getToken())))
+                        .header("Authorization", "Bearer " + refreshToken.getToken()))
                 .andExpect(status().isOk())
-                .andExpect(cookie().value("refresh_token", "New Refresh Token"))
-                .andExpect(cookie().httpOnly("refresh_token", true))
-                .andExpect(cookie().path("refresh_token", "/auth/refresh"))
                 .andDo(print());
     }
 
@@ -89,7 +83,7 @@ public class AuthControllerTest extends ControllerTest {
         given(refreshTokenRepository.findById(refreshToken.getId())).willReturn(Optional.of(refreshToken));
 
         mockMvc.perform(post("/auth/refresh")
-                        .cookie(new Cookie("refresh_token", refreshToken.getToken())))
+                        .header("Authorization", "Bearer " + refreshToken.getToken()))
                 .andExpect(status().isUnauthorized())
                 .andDo(print());
     }
@@ -105,7 +99,7 @@ public class AuthControllerTest extends ControllerTest {
         given(refreshTokenRepository.findById(refreshToken.getId())).willReturn(Optional.empty());
 
         mockMvc.perform(post("/auth/refresh")
-                        .cookie(new Cookie("refresh_token", refreshToken.getToken())))
+                        .header("Authorization", "Bearer " + refreshToken.getToken()))
                 .andExpect(status().isUnauthorized())
                 .andDo(print());
     }
