@@ -53,6 +53,7 @@ public class ReviewerDao {
                 + "JOIN reviewer_tag rt ON r.id = rt.reviewer_id "
                 + "JOIN tag t ON rt.tag_id = t.id "
                 + checkWhereClause(categoryId, tagIds)
+                + "AND m.is_reviewer = true "
                 + "LIMIT :limit OFFSET :offset";
         final SqlParameterSource params = new MapSqlParameterSource("limit", pageable.getPageSize() + 1)
                 .addValue("offset", pageable.getOffset())
