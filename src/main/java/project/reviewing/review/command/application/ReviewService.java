@@ -14,6 +14,7 @@ import project.reviewing.review.exception.InvalidReviewException;
 import project.reviewing.review.exception.ReviewNotFoundException;
 import project.reviewing.review.presentation.request.ReviewCreateRequest;
 import project.reviewing.review.presentation.request.ReviewUpdateRequest;
+import project.reviewing.review.query.dao.ReviewDAO;
 
 @RequiredArgsConstructor
 @Transactional
@@ -21,10 +22,11 @@ import project.reviewing.review.presentation.request.ReviewUpdateRequest;
 public class ReviewService {
 
     private final ReviewRepository reviewRepository;
+    private final ReviewDAO reviewDAO;
     private final MemberRepository memberRepository;
 
     public void createReview(final Long revieweeId, final Long reviewerId, final ReviewCreateRequest request) {
-        if (reviewRepository.existsByRevieweeIdAndReviewerId(revieweeId, reviewerId)) {
+        if (reviewDAO.existsByRevieweeIdAndReviewerIdWithNotApproved(revieweeId, reviewerId)) {
             throw new InvalidReviewException(ErrorType.ALREADY_REQUESTED);
         }
 
