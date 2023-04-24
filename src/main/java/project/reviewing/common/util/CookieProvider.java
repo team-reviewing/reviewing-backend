@@ -11,7 +11,7 @@ public class CookieProvider {
         final Cookie cookie = new Cookie(REFRESH_TOKEN, refreshToken);
         cookie.setMaxAge((int) validTime);
         cookie.setPath(PATH_REFRESH_TOKEN);
-        cookie.setHttpOnly(true);
+        cookie.setHttpOnly(false);
         return cookie;
     }
 }

@@ -41,7 +41,7 @@ public class AuthController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @PostMapping(value = "/refresh")
+    @GetMapping(value = "/refresh")
     public LoginResponse refreshTokens(
             @AuthenticatedMember final Long memberId, final HttpServletResponse response
     ) {
