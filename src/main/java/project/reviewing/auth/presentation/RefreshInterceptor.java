@@ -35,7 +35,7 @@ public class RefreshInterceptor implements HandlerInterceptor {
             return true;
         }
         System.out.println("쿠키 추출 전 ");
-        final String token = AuthorizationExtractor.extract(request)
+        final String token = extractRefreshTokenString(request)
                 .orElseThrow(() -> new InvalidTokenException(ErrorType.INVALID_TOKEN));
         System.out.println("쿠키 추출 후, 파싱 전 refresh token : " + token);
         final long id = tokenProvider.parseRefreshToken(token);
