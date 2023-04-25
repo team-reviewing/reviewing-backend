@@ -35,45 +35,21 @@ public class AuthController {
     ) {
         GithubLoginResponse githubLoginResponse = authService.loginGithub(githubLoginRequest.getAuthorizationCode());
 
-        ResponseCookie cookie = ResponseCookie.from("refresh_token", githubLoginResponse.getRefreshToken())
+        /*ResponseCookie cookie = ResponseCookie.from("refresh_token", githubLoginResponse.getRefreshToken())
                 .path("/")
                 .httpOnly(false)
-                .sameSite("None")
+                .sameSite("")
                 .secure(false)
                 .maxAge(tokenProvider.getRefreshTokenValidTime())
                 .build();
-        response.setHeader("Set-Cookie", cookie.toString());
+        response.setHeader("Set-Cookie", cookie.toString());*/
 
         /*response.addCookie(
                 CookieProvider.createRefreshTokenCookie(
                         githubLoginResponse.getRefreshToken(), tokenProvider.getRefreshTokenValidTime()
                 )
         );*/
-        return new LoginResponse(githubLoginResponse.getAccessToken());
-    }
-
-    @ResponseStatus(HttpStatus.OK)
-    @GetMapping(value = "/login/github")
-    public LoginResponse loginGithub2(
-            @RequestParam final String code, final HttpServletResponse response
-    ) {
-        GithubLoginResponse githubLoginResponse = authService.loginGithub(code);
-
-        ResponseCookie cookie = ResponseCookie.from("refresh_token", githubLoginResponse.getRefreshToken())
-                .path("/auth/refresh")
-                .httpOnly(false)
-                .sameSite("None")
-                .secure(true)
-                .maxAge(tokenProvider.getRefreshTokenValidTime())
-                .build();
-        response.setHeader("Set-Cookie", cookie.toString());
-
-        /*response.addCookie(
-                CookieProvider.createRefreshTokenCookie(
-                        githubLoginResponse.getRefreshToken(), tokenProvider.getRefreshTokenValidTime()
-                )
-        );*/
-        return new LoginResponse(githubLoginResponse.getAccessToken());
+        return new LoginResponse(githubLoginResponse.getAccessToken(), githubLoginResponse.getRefreshToken());
     }
 
     @ResponseStatus(HttpStatus.OK)
@@ -83,14 +59,15 @@ public class AuthController {
     ) {
 
         ResponseCookie cookie = ResponseCookie.from("refresh_token", "refreshToken")
-                .path("/")
+                //.domain("localhost")
+                .path("/auth/cookietestresponse")
                 .httpOnly(false)
-                .sameSite("None")
-                .secure(true)
+                .sameSite("")
+                .secure(false)
                 .maxAge(tokenProvider.getRefreshTokenValidTime())
                 .build();
         response.setHeader("Set-Cookie", cookie.toString());
-        System.out.println(response.getHeader("Set-Cookie"));
+        //System.out.println(response.getHeader("Set-Cookie"));
     }
 
     @ResponseStatus(HttpStatus.OK)
@@ -98,34 +75,34 @@ public class AuthController {
     public String cookietestresponse(
             final HttpServletRequest request
     ) {
-        if (request.getCookies().length == 0) {
+        if (request.getCookies() == null) {
             return "empty";
         }
         return request.getCookies()[0].getName() + "=" + request.getCookies()[0].getValue();
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping(value = "/refresh")
+    @PostMapping(value = "/refresh")
     public LoginResponse refreshTokens(
             @AuthenticatedMember final Long memberId, final HttpServletResponse response
     ) {
         RefreshResponse refreshResponse = authService.refreshTokens(memberId);
 
-        ResponseCookie cookie = ResponseCookie.from("refresh_token", refreshResponse.getRefreshToken())
+        /*ResponseCookie cookie = ResponseCookie.from("refresh_token", refreshResponse.getRefreshToken())
                 .path("/auth/refresh")
                 .httpOnly(false)
                 .sameSite("None")
                 .secure(true)
                 .maxAge(tokenProvider.getRefreshTokenValidTime())
                 .build();
-        response.setHeader("Set-Cookie", cookie.toString());
+        response.setHeader("Set-Cookie", cookie.toString());*/
 
         /*response.addCookie(
                 CookieProvider.createRefreshTokenCookie(
                         refreshResponse.getRefreshToken(), tokenProvider.getRefreshTokenValidTime()
                 )
         );*/
-        return new LoginResponse(refreshResponse.getAccessToken());
+        return new LoginResponse(refreshResponse.getAccessToken(), refreshResponse.getRefreshToken());
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
