@@ -54,7 +54,9 @@ public class ReviewerDao {
                 + "JOIN tag t ON rt.tag_id = t.id "
                 + checkWhereClause(categoryId, tagIds)
                 + "AND m.is_reviewer = true "
-                + "LIMIT :limit OFFSET :offset";
+                + "ORDER BY r.id "
+                + "LIMIT :limit OFFSET :offset;";
+
         final SqlParameterSource params = new MapSqlParameterSource("limit", pageable.getPageSize() + 1)
                 .addValue("offset", pageable.getOffset())
                 .addValue("categoryId", categoryId)
@@ -74,13 +76,10 @@ public class ReviewerDao {
 
     private String checkTagIdsAreIn(final List<Long> tagIds) {
         if (tagIds == null) {
+            System.out.println("tagid는 null");
             return "";
         }
-        return "WHERE r.id IN ( "
-                + "SELECT rt.reviewer_id "
-                + "FROM reviewer_tag rt "
-                + "WHERE rt.tag_id IN (:tagIds) "
-                + ") ";
+        return "WHERE rt.tag_id IN (:tagIds) ";
     }
 
     private String checkCategoryIdIsEqual(final List<Long> tagIds) {
@@ -92,7 +91,7 @@ public class ReviewerDao {
 
     private List<ReviewerData> getCurrentPageReviewers(final List<ReviewerData> reviewerData, final Pageable pageable) {
         if (hasNext(reviewerData, pageable)) {
-            return reviewerData.subList(0, reviewerData.size() - 1);
+            return reviewerData.subList(0, pageable.getPageSize());
         }
         return reviewerData;
     }
