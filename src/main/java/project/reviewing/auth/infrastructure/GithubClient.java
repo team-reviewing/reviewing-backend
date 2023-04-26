@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
-import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import project.reviewing.auth.application.OauthClient;
 import project.reviewing.auth.infrastructure.response.Profile;
@@ -86,7 +85,6 @@ public class GithubClient implements OauthClient {
                     .bodyToMono(GithubProfileResponse.class)
                     .block();
         } catch (RuntimeException e) {
-            System.out.println(e.getMessage());
             throw new GithubClientException(ErrorType.API_FAILED);
         }
     }

@@ -76,7 +76,6 @@ public class ReviewerDao {
 
     private String checkTagIdsAreIn(final List<Long> tagIds) {
         if (tagIds == null) {
-            System.out.println("tagid는 null");
             return "";
         }
         return "WHERE rt.tag_id IN (:tagIds) ";

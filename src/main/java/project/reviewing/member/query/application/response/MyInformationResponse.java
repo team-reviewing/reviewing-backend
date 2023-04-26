@@ -1,6 +1,5 @@
 package project.reviewing.member.query.application.response;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import project.reviewing.member.query.dao.data.MyInformationData;
 

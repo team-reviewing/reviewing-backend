@@ -9,8 +9,7 @@ public enum Job {
 
     BACKEND("백엔드"),
     FRONTEND("프론트엔드"),
-    MOBILE("모바일"),
-    //ETC("기타") 임시로 제거
+    MOBILE("모바일")
     ;
 
     private final String value;

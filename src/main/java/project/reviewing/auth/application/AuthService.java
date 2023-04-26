@@ -26,12 +26,8 @@ public class AuthService {
     public GithubLoginResponse loginGithub(final String authorizationCode) {
         final Profile profile = oauthClient.getProfileByAuthorizationCode(authorizationCode);
         final Member loginMember = convertProfileToMember(profile);
-        System.out.println("github id : |" + profile.getId() + "| |" + loginMember.getGithubId() + "| ");
         final Member member = memberRepository.findByGithubId(profile.getId())
-                .orElseGet(() -> {
-                    System.out.println("유저 정보 없음 github id : |" + profile.getId() + "| |" + loginMember.getGithubId() + "| ");
-                    return memberRepository.save(loginMember);
-                });
+                .orElseGet(() -> memberRepository.save(loginMember));
 
         member.updateLoginInformation(loginMember);
 
