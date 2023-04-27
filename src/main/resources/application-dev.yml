@@ -1,0 +1,25 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${db.dev.url}
+    username: ${db.dev.username}
+    password: ${db.dev.password}
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+        show_sql: true
+        format_sql: true
+
+  flyway:
+    enabled: false
+
+logging:
+  level:
+    org.hibernate.type.descriptor.sql: trace
