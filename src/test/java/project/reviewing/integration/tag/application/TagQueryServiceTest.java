@@ -19,19 +19,30 @@ import project.reviewing.tag.query.dao.data.TagData;
 @DisplayName("TagQueryService 는")
 public class TagQueryServiceTest extends IntegrationTest {
 
-    @DisplayName("정상적인 경우 태그 목록을 반환한다.")
+    @DisplayName("정상적인 경우 카테고리 id 기준으로 정렬 된 태그 목록을 반환한다.")
     @Test
     void findTagWithCategory() {
         final TagQueryService sut = new TagQueryService(tagDao);
         final Category backend = createCategory(new Category("백엔드"));
         final Tag spring = createTag(new Tag("Spring", backend));
         final Tag java = createTag(new Tag("Java", backend));
+        final Category frontend = createCategory(new Category("프론트엔드"));
+        final Tag react = createTag(new Tag("React", frontend));
+        final Tag javaScript = createTag(new Tag("JavaScript", frontend));
+        final Tag typeScript = createTag(new Tag("TypeScript", frontend));
+        final Category mobile = createCategory(new Category("모바일"));
+        final Tag android = createTag(new Tag("Android", mobile));
+        final Tag ios = createTag(new Tag("iOS", mobile));
 
         final CategoriesResponse actual = sut.findTags();
 
-        assertThat(actual.getCategories()).hasSize(1)
+        assertThat(actual.getCategories()).hasSize(3)
                 .usingRecursiveComparison()
-                .isEqualTo(List.of(toCategoryResponse(backend, spring, java)));
+                .isEqualTo(List.of(
+                        toCategoryResponse(backend, spring, java),
+                        toCategoryResponse(frontend, react, javaScript, typeScript),
+                        toCategoryResponse(mobile, android, ios))
+                );
     }
 
     private CategoryResponse toCategoryResponse(final Category category, final Tag... tag) {
