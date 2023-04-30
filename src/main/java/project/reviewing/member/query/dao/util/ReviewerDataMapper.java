@@ -1,9 +1,6 @@
 package project.reviewing.member.query.dao.util;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import project.reviewing.member.query.dao.data.ReviewerData;
 import project.reviewing.member.query.dao.data.ReviewerWithTagData;
@@ -14,7 +11,7 @@ public class ReviewerDataMapper {
     public static List<ReviewerData> map(final List<ReviewerWithTagData> reviewerWithTagData) {
         final Set<Long> reviewerIds = reviewerWithTagData.stream()
                 .map(ReviewerWithTagData::getId)
-                .collect(Collectors.toSet());
+                .collect(Collectors.toCollection(TreeSet::new));
 
         final List<ReviewerData> reviewerData = new ArrayList<>();
 
