@@ -28,7 +28,7 @@ public class Member {
     @Column(nullable = false, unique = true)
     private String username;
 
-    @Column(unique = true)
+    @Column(nullable = false)
     private String email;
 
     private String imageUrl;
@@ -44,7 +44,7 @@ public class Member {
     public Member(final Long githubId, final String username, final String email, final String imageUrl, final String profileUrl) {
         this.githubId = githubId;
         this.username = username;
-        this.email = email;
+        this.email = ((email == null) ? "" : email);
         this.imageUrl = imageUrl;
         this.profileUrl = profileUrl;
         this.isReviewer = false;
@@ -55,8 +55,8 @@ public class Member {
     }
 
     public void update(final Member member) {
-        updateUsername(member.getUsername());
-        updateEmail(member.getEmail());
+        this.username = member.getUsername();
+        this.email = member.getEmail();
     }
 
     public void register(final Reviewer reviewer) {
@@ -79,19 +79,5 @@ public class Member {
             throw new InvalidMemberException(ErrorType.DO_NOT_REGISTERED);
         }
         this.isReviewer = !isReviewer;
-    }
-
-    private void updateUsername(final String username) {
-        if (this.username.equals(username)) {
-            throw new InvalidMemberException(ErrorType.SAME_USERNAME_AS_BEFORE);
-        }
-        this.username = username;
-    }
-
-    private void updateEmail(final String email) {
-        if (this.email.equals(email)) {
-            throw new InvalidMemberException(ErrorType.SAME_EMAIL_AS_BEFORE);
-        }
-        this.email = email;
     }
 }

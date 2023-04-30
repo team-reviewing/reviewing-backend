@@ -30,7 +30,7 @@ public class ReviewServiceTest extends IntegrationTest {
 
     @BeforeEach
     void setUp() {
-        reviewService = new ReviewService(reviewRepository, memberRepository);
+        reviewService = new ReviewService(reviewRepository, reviewDAO, memberRepository);
     }
 
     @DisplayName("리뷰 생성 시 ")
@@ -62,7 +62,34 @@ public class ReviewServiceTest extends IntegrationTest {
             );
         }
 
-        @DisplayName("동일 리뷰어에게 요청한 리뷰가 이미 존재한다면 예외 발생한다.")
+        @DisplayName("동일 리뷰어에게 요청한 완료된 리뷰가 존재할 때 정상적으로 새 리뷰가 생성된다.")
+        @Test
+        void createAlreadyExistReviewToSameReviewerWithApproved() {
+            final Member reviewee = createMember(new Member(1L, "Tom", "Tom@gmail.com", "imageUrl", "https://github.com/Tom"));
+            final Member reviewerMember = createMemberAndRegisterReviewer(
+                    new Member(2L, "bboor", "bboor@gmail.com", "imageUrl", "https://github.com/bboor"),
+                    new Reviewer(Job.BACKEND, Career.JUNIOR, Set.of(1L), "소개글")
+            );
+            final ReviewCreateRequest reviewCreateRequest = new ReviewCreateRequest(
+                    "리뷰 요청합니다.", "본문", "https://github.com/Tom/myproject/pull/1"
+            );
+
+            final Review review = createReview(reviewCreateRequest.toEntity(
+                    reviewee.getId(), reviewerMember.getReviewer().getId(),
+                    reviewerMember.getId(), reviewerMember.isReviewer())
+            );
+
+            reviewService.acceptReview(reviewerMember.getId(), review.getId());
+            reviewService.approveReview(reviewerMember.getId(), review.getId());
+            entityManager.flush();
+            entityManager.clear();
+
+            assertDoesNotThrow(() -> reviewService.createReview(
+                    reviewee.getId(), reviewerMember.getReviewer().getId(), reviewCreateRequest
+            ));
+        }
+
+        @DisplayName("동일 리뷰어에게 요청한 완료되지 않은 리뷰가 이미 존재한다면 예외 발생한다.")
         @Test
         void createAlreadyExistReviewToSameReviewer() {
             final Member reviewee = createMember(new Member(1L, "Tom", "Tom@gmail.com", "imageUrl", "https://github.com/Tom"));

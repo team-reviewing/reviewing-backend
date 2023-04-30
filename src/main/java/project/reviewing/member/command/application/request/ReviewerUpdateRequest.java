@@ -38,6 +38,8 @@ public class ReviewerUpdateRequest {
     }
 
     public Reviewer toEntity() {
-        return new Reviewer(Job.findValue(job), Career.findValue(career), new HashSet<>(techStack), introduction);
+        return new Reviewer(
+                Job.findValue(job), Career.findByValueAndYear(career), new HashSet<>(techStack), introduction
+        );
     }
 }

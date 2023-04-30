@@ -31,28 +31,6 @@ public class MemberTest {
         );
     }
 
-    @DisplayName("기존과 동일한 username으로 수정할 수 없다.")
-    @Test
-    void updateSameUsername() {
-        final Member sut = new Member(1L, "username", "email@gmail.com", "image.png", "github.com/profile");
-        final Member updatedMember = new Member(1L, "username", "newEmail@gmail.com", "image.png", "github.com/profile");
-
-        assertThatThrownBy(() -> sut.update(updatedMember))
-                .isInstanceOf(InvalidMemberException.class)
-                .hasMessage(ErrorType.SAME_USERNAME_AS_BEFORE.getMessage());
-    }
-
-    @DisplayName("기존과 동일한 email로 수정할 수 없다.")
-    @Test
-    void updateSameEmail() {
-        final Member sut = new Member(1L, "username", "email@gmail.com", "image.png", "github.com/profile");
-        final Member updatedMember = new Member(1L, "newUsername", "email@gmail.com", "image.png", "github.com/profile");
-
-        assertThatThrownBy(() -> sut.update(updatedMember))
-                .isInstanceOf(InvalidMemberException.class)
-                .hasMessage(ErrorType.SAME_EMAIL_AS_BEFORE.getMessage());
-    }
-
     @DisplayName("리뷰어를 등록하면 리뷰어 상태가 활성화된다.")
     @Test
     void onReviewer() {

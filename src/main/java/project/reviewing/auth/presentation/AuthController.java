@@ -7,12 +7,11 @@ import org.springframework.web.bind.annotation.*;
 import project.reviewing.auth.application.AuthService;
 import project.reviewing.auth.application.response.GithubLoginResponse;
 import project.reviewing.auth.application.response.RefreshResponse;
-import project.reviewing.auth.infrastructure.TokenProvider;
-import project.reviewing.auth.presentation.response.AccessTokenResponse;
-import project.reviewing.common.util.CookieProvider;
+import project.reviewing.auth.presentation.request.GithubLoginRequest;
+import project.reviewing.auth.presentation.response.LoginResponse;
 
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotBlank;
+import javax.validation.Valid;
 
 @Validated
 @RequiredArgsConstructor
@@ -21,36 +20,23 @@ import javax.validation.constraints.NotBlank;
 public class AuthController {
 
     private final AuthService authService;
-    private final TokenProvider tokenProvider;
 
     @ResponseStatus(HttpStatus.OK)
     @PostMapping(value = "/login/github")
-    public AccessTokenResponse loginGithub(
-            @RequestBody @NotBlank final String authorizationCode, final HttpServletResponse response
+    public LoginResponse loginGithub(
+            @Valid @RequestBody final GithubLoginRequest githubLoginRequest, final HttpServletResponse response
     ) {
-        GithubLoginResponse githubLoginResponse = authService.loginGithub(authorizationCode);
+        GithubLoginResponse githubLoginResponse = authService.loginGithub(githubLoginRequest.getAuthorizationCode());
 
-        response.addCookie(
-                CookieProvider.createRefreshTokenCookie(
-                        githubLoginResponse.getRefreshToken(), tokenProvider.getRefreshTokenValidTime()
-                )
-        );
-        return new AccessTokenResponse(githubLoginResponse.getAccessToken());
+        return new LoginResponse(githubLoginResponse.getAccessToken(), githubLoginResponse.getRefreshToken());
     }
 
     @ResponseStatus(HttpStatus.OK)
     @PostMapping(value = "/refresh")
-    public AccessTokenResponse refreshTokens(
-            @AuthenticatedMember final Long memberId, final HttpServletResponse response
-    ) {
-        RefreshResponse refreshResponse = authService.refreshTokens(memberId);
+    public LoginResponse refreshTokens(@AuthenticatedMember final Long memberId, final HttpServletResponse response) {
+        final RefreshResponse refreshResponse = authService.refreshTokens(memberId);
 
-        response.addCookie(
-                CookieProvider.createRefreshTokenCookie(
-                        refreshResponse.getRefreshToken(), tokenProvider.getRefreshTokenValidTime()
-                )
-        );
-        return new AccessTokenResponse(refreshResponse.getAccessToken());
+        return new LoginResponse(refreshResponse.getAccessToken(), refreshResponse.getRefreshToken());
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)

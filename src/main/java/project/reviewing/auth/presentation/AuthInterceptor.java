@@ -1,6 +1,5 @@
 package project.reviewing.auth.presentation;
 
-import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.cors.CorsUtils;
