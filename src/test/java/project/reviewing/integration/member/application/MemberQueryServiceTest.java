@@ -214,7 +214,7 @@ public class MemberQueryServiceTest extends IntegrationTest {
             assertAll(
                     () -> assertThat(actual.getReviewers()).hasSize(1)
                             .usingRecursiveComparison()
-                            .isEqualTo(List.of(toReviewerResponse(savedMember1, java))),
+                            .isEqualTo(List.of(toReviewerResponse(savedMember1, java, spring))),
                     () -> assertThat(actual.isHasNext()).isFalse()
             );
         }

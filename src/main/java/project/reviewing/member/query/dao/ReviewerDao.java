@@ -52,11 +52,9 @@ public class ReviewerDao {
                 + "JOIN member m ON r.member_id = m.id "
                 + "JOIN reviewer_tag rt ON r.id = rt.reviewer_id "
                 + "JOIN tag t ON rt.tag_id = t.id "
-                + checkWhereClause(categoryId, tagIds)
-                + "AND m.is_reviewer = true "
+                + makeWhereClause(categoryId, tagIds)
                 + "ORDER BY r.id "
                 + "LIMIT :limit OFFSET :offset;";
-
         final SqlParameterSource params = new MapSqlParameterSource("limit", pageable.getPageSize() + 1)
                 .addValue("offset", pageable.getOffset())
                 .addValue("categoryId", categoryId)
@@ -66,26 +64,22 @@ public class ReviewerDao {
         return new SliceImpl<>(getCurrentPageReviewers(reviewerData, pageable), pageable, hasNext(reviewerData, pageable));
     }
 
-    private String checkWhereClause(final Long categoryId, final List<Long> tagIds) {
-        final String whereClause = checkTagIdsAreIn(tagIds);
+    private String makeWhereClause(final Long categoryId, final List<Long> tagIds) {
+        String whereClause = "WHERE ";
+
         if (categoryId != null) {
-            return whereClause.concat(checkCategoryIdIsEqual(tagIds));
+            whereClause = whereClause.concat("t.category_id = :categoryId AND ");
         }
-        return whereClause;
-    }
-
-    private String checkTagIdsAreIn(final List<Long> tagIds) {
-        if (tagIds == null) {
-            return "";
+        if (tagIds != null) {
+            whereClause = whereClause.concat(
+                    "r.id IN ( "
+                            + "SELECT rt.reviewer_id "
+                            + "FROM reviewer_tag rt "
+                            + "WHERE rt.tag_id IN (:tagIds) "
+                            + ") AND "
+            );
         }
-        return "WHERE rt.tag_id IN (:tagIds) ";
-    }
-
-    private String checkCategoryIdIsEqual(final List<Long> tagIds) {
-        if (tagIds == null) {
-            return "WHERE t.category_id = :categoryId ";
-        }
-        return "AND t.category_id = :categoryId ";
+        return whereClause.concat("m.is_reviewer = true ");
     }
 
     private List<ReviewerData> getCurrentPageReviewers(final List<ReviewerData> reviewerData, final Pageable pageable) {
