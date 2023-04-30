@@ -52,9 +52,18 @@ public class ReviewerDao {
                 + "JOIN member m ON r.member_id = m.id "
                 + "JOIN reviewer_tag rt ON r.id = rt.reviewer_id "
                 + "JOIN tag t ON rt.tag_id = t.id "
+                + "WHERE r.id IN "
+                + "( "
+                + "SELECT DISTINCT r.id "
+                + "FROM reviewer r "
+                + "JOIN member m ON r.member_id = m.id "
+                + "JOIN reviewer_tag rt ON r.id = rt.reviewer_id "
+                + "JOIN tag t ON rt.tag_id = t.id "
+                + "WHERE m.is_reviewer = true "
                 + makeWhereClause(categoryId, tagIds)
                 + "ORDER BY r.id "
-                + "LIMIT :limit OFFSET :offset;";
+                + "LIMIT :limit OFFSET :offset "
+                + ")";
         final SqlParameterSource params = new MapSqlParameterSource("limit", pageable.getPageSize() + 1)
                 .addValue("offset", pageable.getOffset())
                 .addValue("categoryId", categoryId)
@@ -65,21 +74,19 @@ public class ReviewerDao {
     }
 
     private String makeWhereClause(final Long categoryId, final List<Long> tagIds) {
-        String whereClause = "WHERE ";
+        final String categoryIdCond = "t.category_id = :categoryId ";
+        final String tagIdsCond = "rt.tag_id IN (:tagIds) ";
 
-        if (categoryId != null) {
-            whereClause = whereClause.concat("t.category_id = :categoryId AND ");
+        if (categoryId == null && tagIds == null) {
+            return "";
         }
-        if (tagIds != null) {
-            whereClause = whereClause.concat(
-                    "r.id IN ( "
-                            + "SELECT rt.reviewer_id "
-                            + "FROM reviewer_tag rt "
-                            + "WHERE rt.tag_id IN (:tagIds) "
-                            + ") AND "
-            );
+        if (categoryId == null) {
+            return "AND " + tagIdsCond;
         }
-        return whereClause.concat("m.is_reviewer = true ");
+        if (tagIds == null) {
+            return "AND " + categoryIdCond;
+        }
+        return "AND " + categoryIdCond + "AND " + tagIdsCond;
     }
 
     private List<ReviewerData> getCurrentPageReviewers(final List<ReviewerData> reviewerData, final Pageable pageable) {
