@@ -239,7 +239,7 @@ public class MemberQueryServiceTest extends IntegrationTest {
 
         return ReviewerResponse.from(
                 new ReviewerData(
-                        member.getId(), member.getReviewer().getJob().getValue(),
+                        member.getReviewer().getId(), member.getReviewer().getJob().getValue(),
                         member.getReviewer().getCareer().getCareer(), member.getReviewer().getIntroduction(),
                         member.getUsername(), member.getImageUrl(),
                         member.getProfileUrl(), techStack
