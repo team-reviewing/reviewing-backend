@@ -11,21 +11,27 @@ import java.util.Optional;
 import javax.servlet.http.Cookie;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.http.MediaType;
 import project.reviewing.auth.application.response.GithubLoginResponse;
 import project.reviewing.auth.application.response.RefreshResponse;
 import project.reviewing.auth.domain.RefreshToken;
+import project.reviewing.auth.presentation.request.GithubLoginRequest;
 import project.reviewing.unit.ControllerTest;
 
 public class AuthControllerTest extends ControllerTest {
 
-    @DisplayName("authorization code의 공백 여부를 검증한다.")
-    @Test
-    void validationTest() throws Exception {
-        final String authorizationCode = " ";
+    @DisplayName("authorizationCode 값이 null, empty, blank이면 400 반환한다.")
+    @ValueSource(strings = " ")
+    @NullAndEmptySource
+    @ParameterizedTest
+    void validationTest(final String authorizationCode) throws Exception {
+        final GithubLoginRequest request = new GithubLoginRequest(authorizationCode);
 
         mockMvc.perform(post("/auth/login/github")
-                        .content(authorizationCode)
+                        .content(objectMapper.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON)
                         .characterEncoding("UTF-8"))
                 .andExpect(status().isBadRequest())
@@ -41,13 +47,10 @@ public class AuthControllerTest extends ControllerTest {
         given(authService.loginGithub(authorizationCode)).willReturn(githubLoginResponse);
 
         mockMvc.perform(post("/auth/login/github")
-                        .content(authorizationCode)
+                        .content(objectMapper.writeValueAsString(new GithubLoginRequest(authorizationCode)))
                         .contentType(MediaType.APPLICATION_JSON)
                         .characterEncoding("UTF-8"))
                 .andExpect(status().isOk())
-                .andExpect(cookie().value("refresh_token", "Refresh Token"))
-                .andExpect(cookie().httpOnly("refresh_token", true))
-                .andExpect(cookie().path("refresh_token", "/auth/refresh"))
                 .andDo(print());
     }
 
@@ -62,11 +65,8 @@ public class AuthControllerTest extends ControllerTest {
         given(refreshTokenRepository.findById(refreshToken.getId())).willReturn(Optional.of(refreshToken));
 
         mockMvc.perform(post("/auth/refresh")
-                        .cookie(new Cookie("refresh_token", refreshToken.getToken())))
+                        .header("Authorization", "Bearer " + refreshToken.getToken()))
                 .andExpect(status().isOk())
-                .andExpect(cookie().value("refresh_token", "New Refresh Token"))
-                .andExpect(cookie().httpOnly("refresh_token", true))
-                .andExpect(cookie().path("refresh_token", "/auth/refresh"))
                 .andDo(print());
     }
 
@@ -83,7 +83,7 @@ public class AuthControllerTest extends ControllerTest {
         given(refreshTokenRepository.findById(refreshToken.getId())).willReturn(Optional.of(refreshToken));
 
         mockMvc.perform(post("/auth/refresh")
-                        .cookie(new Cookie("refresh_token", refreshToken.getToken())))
+                        .header("Authorization", "Bearer " + refreshToken.getToken()))
                 .andExpect(status().isUnauthorized())
                 .andDo(print());
     }
@@ -99,7 +99,7 @@ public class AuthControllerTest extends ControllerTest {
         given(refreshTokenRepository.findById(refreshToken.getId())).willReturn(Optional.empty());
 
         mockMvc.perform(post("/auth/refresh")
-                        .cookie(new Cookie("refresh_token", refreshToken.getToken())))
+                        .header("Authorization", "Bearer " + refreshToken.getToken()))
                 .andExpect(status().isUnauthorized())
                 .andDo(print());
     }

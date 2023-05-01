@@ -1,6 +1,9 @@
 package project.reviewing.auth.infrastructure;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -25,13 +28,17 @@ public class GithubClient implements OauthClient {
     private final WebClient authWebClient;
     private final WebClient profileWebClient;
 
+    private final ObjectMapper objectMapper;
+
     public GithubClient(
             @Value("${github.api.client-id}") final String clientId,
             @Value("${github.api.client-secrets}") final String clientSecrets,
-            WebClient.Builder builder
+            final ObjectMapper objectMapper,
+            final WebClient.Builder builder
     ) {
         this.CLIENT_ID = clientId;
         this.CLLIENT_SECRETS = clientSecrets;
+        this.objectMapper = objectMapper;
         authWebClient = builder.baseUrl(GITHUB_BASE_URI).build();
         profileWebClient = builder.baseUrl(API_GITHUB_BASE_URI).build();
     }
@@ -53,11 +60,16 @@ public class GithubClient implements OauthClient {
             return authWebClient.post()
                     .uri(AUTH_URI)
                     .accept(MediaType.APPLICATION_JSON)
-                    .bodyValue(new GithubAuthRequest(CLIENT_ID, CLLIENT_SECRETS, authorizationCode))
+                    .bodyValue(
+                            objectMapper.writeValueAsString(
+                                    new GithubAuthRequest(CLIENT_ID, CLLIENT_SECRETS, authorizationCode)
+                            )
+                    )
+                    .header(HttpHeaders.CONTENT_TYPE, String.valueOf(MediaType.APPLICATION_JSON))
                     .retrieve()
                     .bodyToMono(GithubAuthResponse.class)
                     .block();
-        } catch (RuntimeException e) {
+        } catch (RuntimeException | JsonProcessingException e) {
             throw new GithubClientException(ErrorType.API_FAILED);
         }
     }

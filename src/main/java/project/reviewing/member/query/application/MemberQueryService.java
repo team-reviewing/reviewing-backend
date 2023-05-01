@@ -42,7 +42,11 @@ public class MemberQueryService {
         memberRepository.findById(memberId)
                 .orElseThrow(MemberNotFoundException::new);
         if (!reviewerDao.existByMemberId(memberId)) {
-            return MyReviewerInformationResponse.empty();
+            return MyReviewerInformationResponse.empty(
+                    Arrays.stream(Job.values()).map(Job::getValue).collect(Collectors.toList()),
+                    Arrays.stream(Career.values()).map(Career::getCareer).collect(Collectors.toList()),
+                    tagRepository.findAll().stream().map(TagResponse::from).collect(Collectors.toList())
+            );
         }
         final List<MyReviewerInformationData> myReviewerInformationData = reviewerDao.findByMemberId(memberId);
 

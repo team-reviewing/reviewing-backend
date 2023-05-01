@@ -28,6 +28,13 @@ public enum Career {
                 .orElseThrow(CareerNotFoundException::new);
     }
 
+    public static Career findByValueAndYear(final String valueAndYear) {
+        return Arrays.stream(values())
+                .filter(career -> career.getCareer().equals(valueAndYear))
+                .findFirst()
+                .orElseThrow(CareerNotFoundException::new);
+    }
+
     public String getCareer() {
         return value + year;
     }

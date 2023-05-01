@@ -28,6 +28,7 @@ import project.reviewing.member.query.dao.data.MyInformationData;
 import project.reviewing.member.query.dao.data.ReviewerData;
 import project.reviewing.tag.command.domain.Category;
 import project.reviewing.tag.command.domain.Tag;
+import project.reviewing.tag.query.application.response.TagResponse;
 import project.reviewing.tag.query.dao.data.TagData;
 
 @DisplayName("MemberQueryService 는")
@@ -117,7 +118,11 @@ public class MemberQueryServiceTest extends IntegrationTest {
             final MyReviewerInformationResponse actual = sut.findReviewerWithChoiceList(memberId);
 
             assertThat(actual).usingRecursiveComparison()
-                    .isEqualTo(MyReviewerInformationResponse.empty());
+                    .isEqualTo(MyReviewerInformationResponse.empty(
+                            Arrays.stream(Job.values()).map(Job::getValue).collect(Collectors.toList()),
+                            Arrays.stream(Career.values()).map(Career::getCareer).collect(Collectors.toList()),
+                            tagRepository.findAll().stream().map(TagResponse::from).collect(Collectors.toList())
+                    ));
         }
     }
 
@@ -213,6 +218,34 @@ public class MemberQueryServiceTest extends IntegrationTest {
                     () -> assertThat(actual.isHasNext()).isFalse()
             );
         }
+
+        @DisplayName("연속된 두 페이지를 조회할 때 중복되지 않은 리뷰어 목록을 반환한다.")
+        @Test
+        void findReviewersByTagsj() {
+            final MemberQueryService sut = new MemberQueryService(myInformationDao, reviewerDao, memberRepository, tagRepository);
+            final Category backend = createCategory(new Category("백엔드"));
+            final Tag java = createTag(new Tag("Java", backend));
+            final Tag spring = createTag(new Tag("Spring", backend));
+            createMemberAndRegisterReviewer(
+                    new Member(1L, "username1", "email@gmail.com", "image", "profile1"),
+                    new Reviewer(Job.BACKEND, Career.SENIOR, Set.of(java.getId(), spring.getId()), "안녕하세요")
+            );
+            createMemberAndRegisterReviewer(
+                    new Member(2L, "username2", "email@daum.com", "image", "profile2"),
+                    new Reviewer(Job.BACKEND, Career.JUNIOR, Set.of(java.getId()), "안녕하세요")
+            );
+            createMemberAndRegisterReviewer(
+                    new Member(3L, "username3", "email@daum.com", "image", "profile3"),
+                    new Reviewer(Job.BACKEND, Career.JUNIOR, Set.of(java.getId()), "안녕하세요")
+            );
+
+            final ReviewersResponse response1 = sut.findReviewers(PageRequest.of(0, 2), backend.getId(), null);
+            final ReviewersResponse response2 = sut.findReviewers(PageRequest.of(1, 2), backend.getId(), null);
+
+            assertThat(response1.getReviewers()).hasSize(2)
+                    .usingRecursiveFieldByFieldElementComparator()
+                    .doesNotContainAnyElementsOf(response2.getReviewers());
+        }
     }
 
     private MyInformationResponse toMyInformationResponse(final Member member) {
@@ -234,7 +267,7 @@ public class MemberQueryServiceTest extends IntegrationTest {
 
         return ReviewerResponse.from(
                 new ReviewerData(
-                        member.getId(), member.getReviewer().getJob().getValue(),
+                        member.getReviewer().getId(), member.getReviewer().getJob().getValue(),
                         member.getReviewer().getCareer().getCareer(), member.getReviewer().getIntroduction(),
                         member.getUsername(), member.getImageUrl(),
                         member.getProfileUrl(), techStack

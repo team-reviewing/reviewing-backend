@@ -1,7 +1,9 @@
 package project.reviewing.auth.infrastructure.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
 
+@Getter
 public class GithubAuthRequest {
 
     @JsonProperty(value = "client_id")

@@ -68,7 +68,7 @@ public class MemberServiceTest extends IntegrationTest {
             final MemberService sut = new MemberService(memberRepository);
             final Member member = createMember(new Member(1L, "username12", "email@gmail.com", "image.png", "github.com/profile"));
             final ReviewerRegistrationRequest reviewerRegistrationRequest = new ReviewerRegistrationRequest(
-                    "백엔드", "신입", List.of(1L, 2L), "자기 소개입니다."
+                    "백엔드", "신입(1년 이하)", List.of(1L, 2L), "자기 소개입니다."
             );
 
             sut.registerReviewer(member.getId(), reviewerRegistrationRequest);
@@ -111,11 +111,11 @@ public class MemberServiceTest extends IntegrationTest {
             final MemberService sut = new MemberService(memberRepository);
             final Member member = createMember(new Member(1L, "username", "email@gmail.com", "image.png", "github.com/profile"));
             final ReviewerRegistrationRequest reviewerRegistrationRequest = new ReviewerRegistrationRequest(
-                    "백엔드", "신입", List.of(1L, 2L), "자기 소개입니다."
+                    "백엔드", "신입(1년 이하)", List.of(1L, 2L), "자기 소개입니다."
             );
             registerReviewer(sut, member.getId(), reviewerRegistrationRequest);
             final ReviewerUpdateRequest reviewerUpdateRequest = new ReviewerUpdateRequest(
-                    "프론트엔드", "주니어", List.of(1L, 2L, 3L), "자기 소개입니다."
+                    "프론트엔드", "주니어(1 ~ 3년)", List.of(1L, 2L, 3L), "자기 소개입니다."
             );
 
             sut.updateReviewer(member.getId(), reviewerUpdateRequest);
@@ -134,12 +134,12 @@ public class MemberServiceTest extends IntegrationTest {
             final MemberService sut = new MemberService(memberRepository);
             final Member member = createMember(new Member(1L, "username", "email@gmail.com", "image.png", "github.com/profile"));
             final ReviewerRegistrationRequest reviewerRegistrationRequest = new ReviewerRegistrationRequest(
-                    "백엔드", "신입", List.of(1L, 2L), "자기 소개입니다."
+                    "백엔드", "신입(1년 이하)", List.of(1L, 2L), "자기 소개입니다."
             );
             registerReviewer(sut, member.getId(), reviewerRegistrationRequest);
             final Long wrongMemberId = -1L;
             final ReviewerUpdateRequest reviewerUpdateRequest = new ReviewerUpdateRequest(
-                    "프론트엔드", "주니어", List.of(1L, 2L, 3L), "자기 소개입니다."
+                    "프론트엔드", "주니어(1 ~ 3년)", List.of(1L, 2L, 3L), "자기 소개입니다."
             );
 
             assertThatThrownBy(() -> sut.updateReviewer(wrongMemberId, reviewerUpdateRequest))
@@ -158,7 +158,7 @@ public class MemberServiceTest extends IntegrationTest {
             final MemberService sut = new MemberService(memberRepository);
             final Member member = createMember(new Member(1L, "username", "email@gmail.com", "image.png", "github.com/profile"));
             final ReviewerRegistrationRequest reviewerRegistrationRequest = new ReviewerRegistrationRequest(
-                    "백엔드", "신입", List.of(1L, 2L), "자기 소개입니다."
+                    "백엔드", "신입(1년 이하)", List.of(1L, 2L), "자기 소개입니다."
             );
             registerReviewer(sut, member.getId(), reviewerRegistrationRequest);
 
