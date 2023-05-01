@@ -54,15 +54,18 @@ public class ReviewerDao {
                 + "JOIN tag t ON rt.tag_id = t.id "
                 + "WHERE r.id IN "
                 + "( "
-                + "SELECT DISTINCT r.id "
-                + "FROM reviewer r "
-                + "JOIN member m ON r.member_id = m.id "
-                + "JOIN reviewer_tag rt ON r.id = rt.reviewer_id "
-                + "JOIN tag t ON rt.tag_id = t.id "
-                + "WHERE m.is_reviewer = true "
-                + makeWhereClause(categoryId, tagIds)
-                + "ORDER BY r.id "
-                + "LIMIT :limit OFFSET :offset "
+                + "SELECT DISTINCT subquery.sub_rid "
+                + "FROM ("
+                    + "SELECT DISTINCT r.id sub_rid "
+                    + "FROM reviewer r "
+                    + "JOIN member m ON r.member_id = m.id "
+                    + "JOIN reviewer_tag rt ON r.id = rt.reviewer_id "
+                    + "JOIN tag t ON rt.tag_id = t.id "
+                    + "WHERE m.is_reviewer = true "
+                    + makeWhereClause(categoryId, tagIds)
+                    + "ORDER BY r.id "
+                    + "LIMIT :limit OFFSET :offset "
+                    + ") subquery"
                 + ")";
         final SqlParameterSource params = new MapSqlParameterSource("limit", pageable.getPageSize() + 1)
                 .addValue("offset", pageable.getOffset())
