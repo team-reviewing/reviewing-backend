@@ -81,6 +81,10 @@ public class Review {
         return true;
     }
 
+    public boolean isApproved() {
+        return status == ReviewStatus.APPROVED;
+    }
+
     private void checkReviewer(final Long reviewerId) {
         if (!this.reviewerId.equals(reviewerId)) {
             throw new InvalidReviewException(ErrorType.NOT_REVIEWER_OF_REVIEW);
