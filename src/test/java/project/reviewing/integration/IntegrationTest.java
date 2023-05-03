@@ -5,13 +5,17 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.FilterType;
+import org.springframework.context.annotation.Import;
 import org.springframework.stereotype.Repository;
 import project.reviewing.auth.domain.RefreshTokenRepository;
+import project.reviewing.common.util.ReviewingTime;
+import project.reviewing.common.util.Time;
 import project.reviewing.member.command.domain.Member;
 import project.reviewing.member.command.domain.MemberRepository;
 import project.reviewing.member.command.domain.Reviewer;
 import project.reviewing.member.query.dao.MyInformationDao;
 import project.reviewing.member.query.dao.ReviewerDao;
+import project.reviewing.review.scheduler.ReviewScheduler;
 import project.reviewing.review.command.domain.Review;
 import project.reviewing.review.query.dao.ReviewDAO;
 import project.reviewing.review.query.dao.ReviewsDAO;
@@ -23,6 +27,7 @@ import project.reviewing.tag.query.dao.TagDao;
 import project.reviewing.review.command.domain.ReviewRepository;
 
 @DataJpaTest(includeFilters = @Filter(type = FilterType.ANNOTATION, classes = Repository.class))
+@Import({ReviewScheduler.class, ReviewingTime.class})
 public abstract class IntegrationTest {
 
     @Autowired
@@ -39,6 +44,9 @@ public abstract class IntegrationTest {
 
     @Autowired
     protected ReviewRepository reviewRepository;
+
+    @Autowired
+    protected Time time;
 
     @Autowired
     protected MyInformationDao myInformationDao;

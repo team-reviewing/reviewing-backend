@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import project.reviewing.common.exception.ErrorType;
+import project.reviewing.common.util.Time;
 import project.reviewing.review.exception.InvalidReviewException;
 
 import javax.persistence.*;
@@ -41,8 +42,8 @@ public class Review {
     private LocalDateTime statusSetAt;
 
     public static Review assign(
-            final Long revieweeId, final Long reviewerId, final String title,
-            final String content, final String prUrl, final Long reviewerMemberId, final boolean isReviewer
+            final Long revieweeId, final Long reviewerId, final String title, final String content,
+            final String prUrl, final Long reviewerMemberId, final boolean isReviewer, Time time
     ) {
         if (revieweeId.equals(reviewerMemberId)) {
             throw new InvalidReviewException(ErrorType.SAME_REVIEWER_AS_REVIEWEE);
@@ -51,7 +52,7 @@ public class Review {
             throw new InvalidReviewException(ErrorType.DO_NOT_REGISTERED);
         }
 
-        return new Review(revieweeId, reviewerId, title, content, prUrl, ReviewStatus.CREATED, LocalDateTime.now());
+        return new Review(revieweeId, reviewerId, title, content, prUrl, ReviewStatus.CREATED, time.now());
     }
 
     public void update(final Long revieweeId, final String updatingContent) {
@@ -61,18 +62,18 @@ public class Review {
         this.content = updatingContent;
     }
 
-    public void accept(final Long reviewerId) {
+    public void accept(final Long reviewerId, Time time) {
         checkReviewer(reviewerId);
         checkStatusCreated();
         status = ReviewStatus.ACCEPTED;
-        statusSetAt = LocalDateTime.now();
+        statusSetAt = time.now();
     }
 
-    public void approve(final Long reviewerId) {
+    public void approve(final Long reviewerId, Time time) {
         checkReviewer(reviewerId);
         checkStatusAccepted();
         status = ReviewStatus.APPROVED;
-        statusSetAt = LocalDateTime.now();
+        statusSetAt = time.now();
     }
 
     public boolean canRefuse(final Long reviewerId) {
@@ -81,8 +82,10 @@ public class Review {
         return true;
     }
 
-    public boolean isApproved() {
-        return status == ReviewStatus.APPROVED;
+    public boolean isExpiredInApprovedStatus() {
+        return (status == ReviewStatus.APPROVED) &&
+                (statusSetAt.plusDays(3).isBefore(LocalDateTime.now()) ||
+                        (statusSetAt.plusDays(3).isEqual(LocalDateTime.now())));
     }
 
     private void checkReviewer(final Long reviewerId) {

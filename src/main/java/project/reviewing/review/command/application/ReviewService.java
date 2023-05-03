@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.reviewing.common.exception.ErrorType;
+import project.reviewing.common.util.Time;
 import project.reviewing.member.command.domain.Member;
 import project.reviewing.member.command.domain.MemberRepository;
 import project.reviewing.member.exception.MemberNotFoundException;
@@ -25,6 +26,8 @@ public class ReviewService {
     private final ReviewDAO reviewDAO;
     private final MemberRepository memberRepository;
 
+    private final Time time;
+
     public void createReview(final Long revieweeId, final Long reviewerId, final ReviewCreateRequest request) {
         if (reviewDAO.existsByRevieweeIdAndReviewerIdWithNotApproved(revieweeId, reviewerId)) {
             throw new InvalidReviewException(ErrorType.ALREADY_REQUESTED);
@@ -33,7 +36,7 @@ public class ReviewService {
         final Member reviewerMember = memberRepository.findByReviewerId(reviewerId)
                 .orElseThrow(MemberNotFoundException::new);
         final Review newReview = request.toEntity(
-                revieweeId, reviewerId, reviewerMember.getId(), reviewerMember.isReviewer()
+                revieweeId, reviewerId, reviewerMember.getId(), reviewerMember.isReviewer(), time
         );
         reviewRepository.save(newReview);
     }
@@ -55,14 +58,14 @@ public class ReviewService {
         final Review review = findReviewById(reviewId);
         final Member reviewerMember = findMemberById(memberId);
 
-        review.accept(reviewerMember.getReviewer().getId());
+        review.accept(reviewerMember.getReviewer().getId(), time);
     }
 
     public void approveReview(final Long memberId, final Long reviewId) {
         final Review review = findReviewById(reviewId);
         final Member reviewerMember = findMemberById(memberId);
 
-        review.approve(reviewerMember.getReviewer().getId());
+        review.approve(reviewerMember.getReviewer().getId(), time);
     }
 
     public void refuseReview(final Long memberId, final Long reviewId) {

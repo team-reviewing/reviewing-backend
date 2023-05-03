@@ -1,14 +1,12 @@
-package project.reviewing.review.command.application;
+package project.reviewing.review.scheduler;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import project.reviewing.review.command.domain.Review;
 import project.reviewing.review.command.domain.ReviewRepository;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @RequiredArgsConstructor
