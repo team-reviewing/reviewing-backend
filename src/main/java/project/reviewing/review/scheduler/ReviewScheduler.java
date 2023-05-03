@@ -20,7 +20,6 @@ public class ReviewScheduler {
     public void checkExpirationForAllReview() {
         final List<Review> reviews = reviewRepository.findAll();
 
-        System.out.println("스케쥴러 안 " + Thread.currentThread().getId() + " 리뷰 개수 : " + reviews.size());
         for (Review review : reviews) {
             if (review.isExpiredInApprovedStatus()) {
                 reviewRepository.delete(review);
