@@ -8,6 +8,9 @@ spring:
       "dev": "dev, security"
       "prod": "prod, security"
 
+schedule:
+  cron: 0/30 * * * * *
+
 ---
 
 spring:

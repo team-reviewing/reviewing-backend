@@ -49,12 +49,12 @@ public class ReviewQueryServiceTest extends IntegrationTest {
             final Review review = createReview(
                     Review.assign(
                             reviewee.getId(), reviewerMember.getReviewer().getId(),
-                            "제목", "본문", "prUrl", reviewerMember.getId(), reviewerMember.isReviewer()
+                            "제목", "본문", "prUrl", reviewerMember.getId(), reviewerMember.isReviewer(), time
                     ));
             final Review review1 = createReview(
                     Review.assign(
                             reviewee1.getId(), reviewerMember.getReviewer().getId(),
-                            "제목1", "본문1", "prUrl1", reviewerMember.getId(), reviewerMember.isReviewer()
+                            "제목1", "본문1", "prUrl1", reviewerMember.getId(), reviewerMember.isReviewer(), time
                     ));
             final ReviewsResponse expectedResponse = ReviewsResponse.from(
                     List.of(toReviewByRoleData(review, reviewee), toReviewByRoleData(review1, reviewee1))
@@ -89,12 +89,12 @@ public class ReviewQueryServiceTest extends IntegrationTest {
             final Review review = createReview(
                     Review.assign(
                             reviewee.getId(), reviewerMember.getReviewer().getId(),
-                            "제목", "본문", "prUrl", reviewerMember.getId(), reviewerMember.isReviewer()
+                            "제목", "본문", "prUrl", reviewerMember.getId(), reviewerMember.isReviewer(), time
                     ));
             final Review review1 = createReview(
                     Review.assign(
                             reviewee.getId(), reviewerMember1.getReviewer().getId(),
-                            "제목1", "본문1", "prUrl1", reviewerMember1.getId(), reviewerMember1.isReviewer()
+                            "제목1", "본문1", "prUrl1", reviewerMember1.getId(), reviewerMember1.isReviewer(), time
                     ));
             final ReviewsResponse expectedResponse = ReviewsResponse.from(
                     List.of(toReviewByRoleData(review, reviewerMember), toReviewByRoleData(review1, reviewerMember1))
@@ -127,15 +127,15 @@ public class ReviewQueryServiceTest extends IntegrationTest {
             final Review review = createReview(
                     Review.assign(
                             reviewee.getId(), reviewerMember.getReviewer().getId(),
-                            "제목", "본문", "prUrl", reviewerMember.getId(), reviewerMember.isReviewer()
+                            "제목", "본문", "prUrl", reviewerMember.getId(), reviewerMember.isReviewer(), time
                     ));
             createReview(
                     Review.assign(
                             reviewee1.getId(), reviewerMember.getReviewer().getId(),
-                            "제목1", "본문1", "prUrl1", reviewerMember.getId(), reviewerMember.isReviewer()
+                            "제목1", "본문1", "prUrl1", reviewerMember.getId(), reviewerMember.isReviewer(), time
                     ));
 
-            review.accept(reviewerMember.getReviewer().getId());
+            review.accept(reviewerMember.getReviewer().getId(), time);
             entityManager.merge(review);
             entityManager.flush();
             entityManager.clear();

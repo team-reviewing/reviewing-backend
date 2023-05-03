@@ -1,6 +1,7 @@
 package project.reviewing.review.presentation.request;
 
 import lombok.Getter;
+import project.reviewing.common.util.Time;
 import project.reviewing.review.command.domain.Review;
 
 import javax.validation.constraints.NotBlank;
@@ -29,8 +30,8 @@ public class ReviewCreateRequest {
     }
 
     public Review toEntity(
-            final Long revieweeId, final Long reviewerId, final Long reviewerMemberId, final boolean isReviewer
+            final Long revieweeId, final Long reviewerId, final Long reviewerMemberId, final boolean isReviewer, Time time
     ) {
-        return Review.assign(revieweeId, reviewerId, title, content, prUrl, reviewerMemberId, isReviewer);
+        return Review.assign(revieweeId, reviewerId, title, content, prUrl, reviewerMemberId, isReviewer, time);
     }
 }

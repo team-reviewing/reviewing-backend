@@ -30,7 +30,7 @@ public class ReviewServiceTest extends IntegrationTest {
 
     @BeforeEach
     void setUp() {
-        reviewService = new ReviewService(reviewRepository, reviewDAO, memberRepository);
+        reviewService = new ReviewService(reviewRepository, reviewDAO, memberRepository, time);
     }
 
     @DisplayName("리뷰 생성 시 ")
@@ -76,7 +76,7 @@ public class ReviewServiceTest extends IntegrationTest {
 
             final Review review = createReview(reviewCreateRequest.toEntity(
                     reviewee.getId(), reviewerMember.getReviewer().getId(),
-                    reviewerMember.getId(), reviewerMember.isReviewer())
+                    reviewerMember.getId(), reviewerMember.isReviewer(), time)
             );
 
             reviewService.acceptReview(reviewerMember.getId(), review.getId());
@@ -103,7 +103,7 @@ public class ReviewServiceTest extends IntegrationTest {
 
             createReview(reviewCreateRequest.toEntity(
                             reviewee.getId(), reviewerMember.getReviewer().getId(),
-                            reviewerMember.getId(), reviewerMember.isReviewer())
+                            reviewerMember.getId(), reviewerMember.isReviewer(), time)
             );
 
             assertThatThrownBy(() -> reviewService.createReview(
@@ -134,7 +134,7 @@ public class ReviewServiceTest extends IntegrationTest {
         @DisplayName("정상적으로 단일 리뷰 상세 정보를 조회한다.")
         @Test
         void validReadSingleReview() {
-            final Review review = createReview(Review.assign(1L, 1L, "제목", "본문", "prUrl", 2L, true));
+            final Review review = createReview(Review.assign(1L, 1L, "제목", "본문", "prUrl", 2L, true, time));
 
             final SingleReviewReadResponse response = reviewService.readSingleReview(review.getId());
 
@@ -164,7 +164,7 @@ public class ReviewServiceTest extends IntegrationTest {
         @DisplayName("정상적으로 리뷰가 수정된다.")
         @Test
         void validUpdateReview() {
-            final Review review = createReview(Review.assign(1L, 1L, "제목", "본문", "prUrl", 2L, true));
+            final Review review = createReview(Review.assign(1L, 1L, "제목", "본문", "prUrl", 2L, true, time));
             final ReviewUpdateRequest reviewUpdateRequest = new ReviewUpdateRequest("새 본문");
 
             reviewService.updateReview(review.getRevieweeId(), review.getId(), reviewUpdateRequest);
@@ -202,7 +202,7 @@ public class ReviewServiceTest extends IntegrationTest {
             final Review review = createReview(
                     Review.assign(
                             reviewee.getId(), reviewerMember.getReviewer().getId(),
-                            "제목", "본문", "prUrl", reviewerMember.getId(), reviewerMember.isReviewer()
+                            "제목", "본문", "prUrl", reviewerMember.getId(), reviewerMember.isReviewer(), time
                     ));
 
             reviewService.acceptReview(reviewerMember.getId(), review.getId());
@@ -239,7 +239,7 @@ public class ReviewServiceTest extends IntegrationTest {
             final Review review = createReview(
                     Review.assign(
                             reviewee.getId(), reviewerMember.getReviewer().getId(),
-                            "제목", "본문", "prUrl", reviewerMember.getId(), reviewerMember.isReviewer()
+                            "제목", "본문", "prUrl", reviewerMember.getId(), reviewerMember.isReviewer(), time
                     ));
 
             assertThatThrownBy(() -> reviewService.acceptReview(invalidMemberId, review.getId()))
@@ -262,7 +262,7 @@ public class ReviewServiceTest extends IntegrationTest {
             final Review review = createReview(
                     Review.assign(
                             reviewee.getId(), reviewerMember.getReviewer().getId(),
-                            "제목", "본문", "prUrl", reviewerMember.getId(), reviewerMember.isReviewer()
+                            "제목", "본문", "prUrl", reviewerMember.getId(), reviewerMember.isReviewer(), time
                     ));
 
             reviewService.acceptReview(reviewerMember.getId(), review.getId());
@@ -301,7 +301,7 @@ public class ReviewServiceTest extends IntegrationTest {
             final Review review = createReview(
                     Review.assign(
                             reviewee.getId(), reviewerMember.getReviewer().getId(),
-                            "제목", "본문", "prUrl", reviewerMember.getId(), reviewerMember.isReviewer()
+                            "제목", "본문", "prUrl", reviewerMember.getId(), reviewerMember.isReviewer(), time
                     ));
 
             assertThatThrownBy(() -> reviewService.approveReview(invalidMemberId, review.getId()))
@@ -324,7 +324,7 @@ public class ReviewServiceTest extends IntegrationTest {
             final Review review = createReview(
                     Review.assign(
                             reviewee.getId(), reviewerMember.getReviewer().getId(),
-                            "제목", "본문", "prUrl", reviewerMember.getId(), reviewerMember.isReviewer()
+                            "제목", "본문", "prUrl", reviewerMember.getId(), reviewerMember.isReviewer(), time
                     ));
 
             reviewService.refuseReview(reviewerMember.getId(), review.getId());
@@ -359,7 +359,7 @@ public class ReviewServiceTest extends IntegrationTest {
             final Review review = createReview(
                     Review.assign(
                             reviewee.getId(), reviewerMember.getReviewer().getId(),
-                            "제목", "본문", "prUrl", reviewerMember.getId(), reviewerMember.isReviewer()
+                            "제목", "본문", "prUrl", reviewerMember.getId(), reviewerMember.isReviewer(), time
                     ));
 
             assertThatThrownBy(() -> reviewService.refuseReview(invalidMemberId, review.getId()))
