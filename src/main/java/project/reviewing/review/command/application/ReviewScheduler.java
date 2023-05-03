@@ -1,6 +1,7 @@
 package project.reviewing.review.command.application;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,10 +18,10 @@ public class ReviewScheduler {
     private final ReviewRepository reviewRepository;
 
     @Transactional
-    @Scheduled(initialDelay = 0, fixedRate = 5000)
-    void checkExpirationForAllReview() {
-        List<Review> reviews = reviewRepository.findAll();
-        LocalDateTime now = LocalDateTime.now();
+    @Scheduled(cron = "${schedule.cron}")
+    public void checkExpirationForAllReview() {
+        final List<Review> reviews = reviewRepository.findAll();
+        final LocalDateTime now = LocalDateTime.now();
 
         for (Review review : reviews) {
             if (review.isApproved() && review.getStatusSetAt().plusDays(3).isBefore(now)) {
