@@ -21,10 +21,10 @@ public class ReviewScheduler {
     @Scheduled(cron = "${schedule.cron}")
     public void checkExpirationForAllReview() {
         final List<Review> reviews = reviewRepository.findAll();
-        final LocalDateTime now = LocalDateTime.now();
 
+        System.out.println("스케쥴러 안 " + Thread.currentThread().getId() + " 리뷰 개수 : " + reviews.size());
         for (Review review : reviews) {
-            if (review.isApproved() && review.getStatusSetAt().plusDays(3).isBefore(now)) {
+            if (review.isExpiredInApprovedStatus()) {
                 reviewRepository.delete(review);
             }
         }
