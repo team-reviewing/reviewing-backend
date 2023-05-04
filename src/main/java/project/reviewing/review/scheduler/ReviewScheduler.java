@@ -21,7 +21,7 @@ public class ReviewScheduler {
         final List<Review> reviews = reviewRepository.findAll();
 
         for (Review review : reviews) {
-            if (review.isExpiredInApprovedStatus()) {
+            if (review.isExpiredInRefusedStatus() || review.isExpiredInApprovedStatus()) {
                 reviewRepository.delete(review);
             }
         }

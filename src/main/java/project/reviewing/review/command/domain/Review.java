@@ -69,6 +69,13 @@ public class Review {
         statusSetAt = time.now();
     }
 
+    public void refuse(final Long reviewerId, Time time) {
+        checkReviewer(reviewerId);
+        checkStatusCreated();
+        status = ReviewStatus.REFUSED;
+        statusSetAt = time.now();
+    }
+
     public void approve(final Long reviewerId, Time time) {
         checkReviewer(reviewerId);
         checkStatusAccepted();
@@ -76,10 +83,18 @@ public class Review {
         statusSetAt = time.now();
     }
 
-    public boolean canRefuse(final Long reviewerId) {
+    public boolean canFinish(final Long reviewerId) {
         checkReviewer(reviewerId);
-        checkStatusCreated();
+        if (status != ReviewStatus.REFUSED) {
+            throw new InvalidReviewException(ErrorType.NOT_PROPER_REVIEW_STATUS);
+        }
         return true;
+    }
+
+    public boolean isExpiredInRefusedStatus() {
+        return (status == ReviewStatus.REFUSED) &&
+                (statusSetAt.plusDays(3).isBefore(LocalDateTime.now()) ||
+                        (statusSetAt.plusDays(3).isEqual(LocalDateTime.now())));
     }
 
     public boolean isExpiredInApprovedStatus() {

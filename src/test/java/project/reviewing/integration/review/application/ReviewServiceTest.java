@@ -247,6 +247,66 @@ public class ReviewServiceTest extends IntegrationTest {
         }
     }
 
+    @DisplayName("리뷰 거절 시")
+    @Nested
+    class ReviewRefuseTest {
+
+        @DisplayName("정상적으로 거절된다.")
+        @Test
+        void validRefuseReview() {
+            final Member reviewee = createMember(new Member(1L, "Tom", "Tom@gmail.com", "imageUrl", "https://github.com/Tom"));
+            final Member reviewerMember = createMemberAndRegisterReviewer(
+                    new Member(2L, "bboor", "bboor@gmail.com", "imageUrl", "https://github.com/bboor"),
+                    new Reviewer(Job.BACKEND, Career.JUNIOR, Set.of(1L), "소개글")
+            );
+            final Review review = createReview(
+                    Review.assign(
+                            reviewee.getId(), reviewerMember.getReviewer().getId(),
+                            "제목", "본문", "prUrl", reviewerMember.getId(), reviewerMember.isReviewer(), time
+                    ));
+
+            reviewService.refuseReview(reviewerMember.getId(), review.getId());
+            entityManager.flush();
+            entityManager.clear();
+
+            final Review refusedReview = reviewRepository.findById(review.getId())
+                    .orElseThrow(ReviewNotFoundException::new);
+            assertThat(refusedReview.getStatus()).isEqualTo(ReviewStatus.REFUSED);
+        }
+
+        @DisplayName("리뷰 정보가 없으면 예외 발생한다.")
+        @Test
+        void refuseWithNotExistReview() {
+            final Long invalidReviewId = -1L;
+            final Member reviewerMember = createMemberAndRegisterReviewer(
+                    new Member(2L, "bboor", "bboor@gmail.com", "imageUrl", "https://github.com/bboor"),
+                    new Reviewer(Job.BACKEND, Career.JUNIOR, Set.of(1L), "소개글")
+            );
+
+            assertThatThrownBy(() -> reviewService.refuseReview(reviewerMember.getId(), invalidReviewId))
+                    .isInstanceOf(ReviewNotFoundException.class);
+        }
+
+        @DisplayName("요청한 회원 정보가 없으면 예외 발생한다.")
+        @Test
+        void refuseWithNotExistMember() {
+            final Long invalidMemberId = -1L;
+            final Member reviewee = createMember(new Member(1L, "Tom", "Tom@gmail.com", "imageUrl", "https://github.com/Tom"));
+            final Member reviewerMember = createMemberAndRegisterReviewer(
+                    new Member(2L, "bboor", "bboor@gmail.com", "imageUrl", "https://github.com/bboor"),
+                    new Reviewer(Job.BACKEND, Career.JUNIOR, Set.of(1L), "소개글")
+            );
+            final Review review = createReview(
+                    Review.assign(
+                            reviewee.getId(), reviewerMember.getReviewer().getId(),
+                            "제목", "본문", "prUrl", reviewerMember.getId(), reviewerMember.isReviewer(), time
+                    ));
+
+            assertThatThrownBy(() -> reviewService.refuseReview(invalidMemberId, review.getId()))
+                    .isInstanceOf(MemberNotFoundException.class);
+        }
+    }
+
     @DisplayName("리뷰 완료 시")
     @Nested
     class ReviewApproveTest {
@@ -309,13 +369,13 @@ public class ReviewServiceTest extends IntegrationTest {
         }
     }
 
-    @DisplayName("리뷰 거절 시")
+    @DisplayName("리뷰 종료 시")
     @Nested
-    class ReviewRefuseTest {
+    class ReviewFinishTest {
 
-        @DisplayName("정상적으로 거절된다.")
+        @DisplayName("정상적으로 종료된다.")
         @Test
-        void validRefuseReview() {
+        void validFinishReview() {
             final Member reviewee = createMember(new Member(1L, "Tom", "Tom@gmail.com", "imageUrl", "https://github.com/Tom"));
             final Member reviewerMember = createMemberAndRegisterReviewer(
                     new Member(2L, "bboor", "bboor@gmail.com", "imageUrl", "https://github.com/bboor"),
@@ -328,6 +388,9 @@ public class ReviewServiceTest extends IntegrationTest {
                     ));
 
             reviewService.refuseReview(reviewerMember.getId(), review.getId());
+            entityManager.flush();
+            entityManager.clear();
+            reviewService.finishReview(reviewerMember.getId(), review.getId());
             entityManager.flush();
             entityManager.clear();
 
@@ -343,7 +406,7 @@ public class ReviewServiceTest extends IntegrationTest {
                     new Reviewer(Job.BACKEND, Career.JUNIOR, Set.of(1L), "소개글")
             );
 
-            assertThatThrownBy(() -> reviewService.refuseReview(reviewerMember.getId(), invalidReviewId))
+            assertThatThrownBy(() -> reviewService.finishReview(reviewerMember.getId(), invalidReviewId))
                     .isInstanceOf(ReviewNotFoundException.class);
         }
 
@@ -362,7 +425,7 @@ public class ReviewServiceTest extends IntegrationTest {
                             "제목", "본문", "prUrl", reviewerMember.getId(), reviewerMember.isReviewer(), time
                     ));
 
-            assertThatThrownBy(() -> reviewService.refuseReview(invalidMemberId, review.getId()))
+            assertThatThrownBy(() -> reviewService.finishReview(invalidMemberId, review.getId()))
                     .isInstanceOf(MemberNotFoundException.class);
         }
     }

@@ -7,6 +7,7 @@ public enum ReviewStatus {
     NONE,
     CREATED,
     ACCEPTED,
+    REFUSED,
     APPROVED,
     ;
 
