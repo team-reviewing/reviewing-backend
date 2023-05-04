@@ -19,7 +19,7 @@ public class SingleReviewReadResponse {
     public static SingleReviewReadResponse from(final Review review) {
         return new SingleReviewReadResponse(
                 review.getId(), review.getReviewerId(), review.getTitle(), review.getContent(), review.getPrUrl(),
-                review.getStatus().name(), review.getStatusSetAt().format(DateTimeFormatter.ofPattern("YYYY-MM-dd HH시"))
+                review.getStatus().name(), review.getStatusSetAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH시"))
         );
     }
 
