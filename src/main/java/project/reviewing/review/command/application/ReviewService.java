@@ -68,11 +68,11 @@ public class ReviewService {
         review.approve(reviewerMember.getReviewer().getId(), time);
     }
 
-    public void refuseReview(final Long memberId, final Long reviewId) {
+    public void finishReview(final Long memberId, final Long reviewId) {
         final Review review = findReviewById(reviewId);
         final Member reviewerMember = findMemberById(memberId);
 
-        if (review.canRefuse(reviewerMember.getReviewer().getId())) {
+        if (review.canFinish(reviewerMember.getReviewer().getId())) {
             reviewRepository.delete(review);
         }
     }

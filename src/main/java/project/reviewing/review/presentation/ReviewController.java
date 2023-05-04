@@ -76,10 +76,10 @@ public class ReviewController {
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/reviewers/{reviewer-id}/reviews/{review-id}")
-    public void refuseReview(
+    public void finishReview(
             @AuthenticatedMember final Long memberId,
             @PathVariable("review-id") final Long reviewId
     ) {
-        reviewService.refuseReview(memberId, reviewId);
+        reviewService.finishReview(memberId, reviewId);
     }
 }

@@ -76,9 +76,11 @@ public class Review {
         statusSetAt = time.now();
     }
 
-    public boolean canRefuse(final Long reviewerId) {
+    public boolean canFinish(final Long reviewerId) {
         checkReviewer(reviewerId);
-        checkStatusCreated();
+        if (status != ReviewStatus.REFUSED) {
+            throw new InvalidReviewException(ErrorType.NOT_PROPER_REVIEW_STATUS);
+        }
         return true;
     }
 
