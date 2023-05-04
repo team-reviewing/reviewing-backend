@@ -135,32 +135,32 @@ public class ReviewTest {
                 .hasMessage(ErrorType.NOT_PROPER_REVIEW_STATUS.getMessage());
     }
 
-    @DisplayName("리뷰를 거절할 수 있는지 조건을 확인할 수 있다.")
+    @DisplayName("리뷰를 종료할 수 있는지 조건을 확인할 수 있다.")
     @Test
     void validRefuseReview() {
         final Review review = Review.assign(1L, 1L, "제목", "본문", "prUrl", 2L, true, time);
 
-        assertThat(review.canRefuse(1L)).isTrue();
+        review.refuse(1L, time);
+
+        assertThat(review.canFinish(1L)).isTrue();
     }
 
-    @DisplayName("리뷰를 요청받은 리뷰어가 아니면 거절할 수 없다.")
+    @DisplayName("리뷰를 요청받은 리뷰어가 아니면 종료할 수 없다.")
     @Test
     void refuseWithNotReviewerOfReview() {
         final Review review = Review.assign(1L, 1L, "제목", "본문", "prUrl", 2L, true, time);
 
-        assertThatThrownBy(() -> review.canRefuse(2L))
+        assertThatThrownBy(() -> review.canFinish(2L))
                 .isInstanceOf(InvalidReviewException.class)
                 .hasMessage(ErrorType.NOT_REVIEWER_OF_REVIEW.getMessage());
     }
 
-    @DisplayName("리뷰의 상태가 CREATED(생성) 상태가 아니면 거절할 수 없다.")
+    @DisplayName("리뷰의 상태가 REFUSED(거절) 상태가 아니면 종료할 수 없다.")
     @Test
     void refuseWithNotProperStatus() {
         final Review review = Review.assign(1L, 1L, "제목", "본문", "prUrl", 2L, true, time);
 
-        review.accept(1L, time); // Accepted 상태로 변경
-
-        assertThatThrownBy(() -> review.canRefuse(1L))
+        assertThatThrownBy(() -> review.canFinish(1L))
                 .isInstanceOf(InvalidReviewException.class)
                 .hasMessage(ErrorType.NOT_PROPER_REVIEW_STATUS.getMessage());
     }
