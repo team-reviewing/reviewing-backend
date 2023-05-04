@@ -91,6 +91,12 @@ public class Review {
         return true;
     }
 
+    public boolean isExpiredInRefusedStatus() {
+        return (status == ReviewStatus.REFUSED) &&
+                (statusSetAt.plusDays(3).isBefore(LocalDateTime.now()) ||
+                        (statusSetAt.plusDays(3).isEqual(LocalDateTime.now())));
+    }
+
     public boolean isExpiredInApprovedStatus() {
         return (status == ReviewStatus.APPROVED) &&
                 (statusSetAt.plusDays(3).isBefore(LocalDateTime.now()) ||
