@@ -102,6 +102,38 @@ public class ReviewTest {
                 .hasMessage(ErrorType.NOT_PROPER_REVIEW_STATUS.getMessage());
     }
 
+    @DisplayName("리뷰를 거절할 수 있다.")
+    @Test
+    void validRefuseReview() {
+        final Review review = Review.assign(1L, 1L, "제목", "본문", "prUrl", 2L, true, time);
+
+        review.refuse(1L, time);
+
+        assertThat(review.getStatus()).isEqualTo(ReviewStatus.REFUSED);
+    }
+
+    @DisplayName("리뷰를 요청받은 리뷰어가 아니면 거절할 수 없다.")
+    @Test
+    void refuseWithNotReviewerOfReview() {
+        final Review review = Review.assign(1L, 1L, "제목", "본문", "prUrl", 2L, true, time);
+
+        assertThatThrownBy(() -> review.refuse(2L, time))
+                .isInstanceOf(InvalidReviewException.class)
+                .hasMessage(ErrorType.NOT_REVIEWER_OF_REVIEW.getMessage());
+    }
+
+    @DisplayName("리뷰의 상태가 CREATED(생성) 상태가 아니면 거절할 수 없다.")
+    @Test
+    void refuseWithNotProperStatus() {
+        final Review review = Review.assign(1L, 1L, "제목", "본문", "prUrl", 2L, true, time);
+
+        review.accept(1L, time);
+
+        assertThatThrownBy(() -> review.refuse(1L, time))
+                .isInstanceOf(InvalidReviewException.class)
+                .hasMessage(ErrorType.NOT_PROPER_REVIEW_STATUS.getMessage());
+    }
+
     @DisplayName("리뷰를 완료할 수 있다.")
     @Test
     void validApproveReview() {
@@ -137,7 +169,7 @@ public class ReviewTest {
 
     @DisplayName("리뷰를 종료할 수 있는지 조건을 확인할 수 있다.")
     @Test
-    void validRefuseReview() {
+    void validFinishReview() {
         final Review review = Review.assign(1L, 1L, "제목", "본문", "prUrl", 2L, true, time);
 
         review.refuse(1L, time);
@@ -147,7 +179,7 @@ public class ReviewTest {
 
     @DisplayName("리뷰를 요청받은 리뷰어가 아니면 종료할 수 없다.")
     @Test
-    void refuseWithNotReviewerOfReview() {
+    void finishWithNotReviewerOfReview() {
         final Review review = Review.assign(1L, 1L, "제목", "본문", "prUrl", 2L, true, time);
 
         assertThatThrownBy(() -> review.canFinish(2L))
@@ -157,7 +189,7 @@ public class ReviewTest {
 
     @DisplayName("리뷰의 상태가 REFUSED(거절) 상태가 아니면 종료할 수 없다.")
     @Test
-    void refuseWithNotProperStatus() {
+    void finishWithNotProperStatus() {
         final Review review = Review.assign(1L, 1L, "제목", "본문", "prUrl", 2L, true, time);
 
         assertThatThrownBy(() -> review.canFinish(1L))
