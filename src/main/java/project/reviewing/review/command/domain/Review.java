@@ -69,6 +69,13 @@ public class Review {
         statusSetAt = time.now();
     }
 
+    public void refuse(final Long reviewerId, Time time) {
+        checkReviewer(reviewerId);
+        checkStatusCreated();
+        status = ReviewStatus.REFUSED;
+        statusSetAt = time.now();
+    }
+
     public void approve(final Long reviewerId, Time time) {
         checkReviewer(reviewerId);
         checkStatusAccepted();
