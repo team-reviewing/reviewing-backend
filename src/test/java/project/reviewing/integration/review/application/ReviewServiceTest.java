@@ -309,13 +309,13 @@ public class ReviewServiceTest extends IntegrationTest {
         }
     }
 
-    @DisplayName("리뷰 거절 시")
+    @DisplayName("리뷰 종료 시")
     @Nested
-    class ReviewRefuseTest {
+    class ReviewFinishTest {
 
-        @DisplayName("정상적으로 거절된다.")
+        @DisplayName("정상적으로 종료된다.")
         @Test
-        void validRefuseReview() {
+        void validFinishReview() {
             final Member reviewee = createMember(new Member(1L, "Tom", "Tom@gmail.com", "imageUrl", "https://github.com/Tom"));
             final Member reviewerMember = createMemberAndRegisterReviewer(
                     new Member(2L, "bboor", "bboor@gmail.com", "imageUrl", "https://github.com/bboor"),
@@ -328,6 +328,9 @@ public class ReviewServiceTest extends IntegrationTest {
                     ));
 
             reviewService.refuseReview(reviewerMember.getId(), review.getId());
+            entityManager.flush();
+            entityManager.clear();
+            reviewService.finishReview(reviewerMember.getId(), review.getId());
             entityManager.flush();
             entityManager.clear();
 
@@ -343,7 +346,7 @@ public class ReviewServiceTest extends IntegrationTest {
                     new Reviewer(Job.BACKEND, Career.JUNIOR, Set.of(1L), "소개글")
             );
 
-            assertThatThrownBy(() -> reviewService.refuseReview(reviewerMember.getId(), invalidReviewId))
+            assertThatThrownBy(() -> reviewService.finishReview(reviewerMember.getId(), invalidReviewId))
                     .isInstanceOf(ReviewNotFoundException.class);
         }
 
@@ -362,7 +365,7 @@ public class ReviewServiceTest extends IntegrationTest {
                             "제목", "본문", "prUrl", reviewerMember.getId(), reviewerMember.isReviewer(), time
                     ));
 
-            assertThatThrownBy(() -> reviewService.refuseReview(invalidMemberId, review.getId()))
+            assertThatThrownBy(() -> reviewService.finishReview(invalidMemberId, review.getId()))
                     .isInstanceOf(MemberNotFoundException.class);
         }
     }
