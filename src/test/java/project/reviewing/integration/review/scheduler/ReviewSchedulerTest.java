@@ -45,8 +45,8 @@ public class ReviewSchedulerTest extends IntegrationTest {
         createReview(Review.assign(1L, 1L, "제목", "본문", "prUrl", 2L, true, time));
         createReview(Review.assign(1L, 1L, "제목", "본문", "prUrl", 2L, true, time));
 
-        review.accept(1L, time);
-        review.approve(1L, time);
+        review.accept(time);
+        review.approve(time);
         entityManager.merge(review);
         entityManager.flush();
         entityManager.clear();
@@ -67,7 +67,7 @@ public class ReviewSchedulerTest extends IntegrationTest {
         final Review review = createReview(Review.assign(1L, 1L, "제목", "본문", "prUrl", 2L, true, time));
         createReview(Review.assign(1L, 1L, "제목", "본문", "prUrl", 2L, true, time));
 
-        review.refuse(1L, time);
+        review.refuse(time);
         entityManager.merge(review);
         entityManager.flush();
         entityManager.clear();

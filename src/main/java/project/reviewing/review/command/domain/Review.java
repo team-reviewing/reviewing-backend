@@ -59,48 +59,54 @@ public class Review {
         if (!this.revieweeId.equals(revieweeId)) {
             throw new InvalidReviewException(ErrorType.NOT_REVIEWEE_OF_REVIEW);
         }
-        this.content = updatingContent;
+        content = updatingContent;
     }
 
-    public void accept(final Long reviewerId, Time time) {
-        checkReviewer(reviewerId);
-        checkStatusCreated();
+    public void accept(Time time) {
         status = ReviewStatus.ACCEPTED;
         statusSetAt = time.now();
     }
 
-    public void refuse(final Long reviewerId, Time time) {
-        checkReviewer(reviewerId);
-        checkStatusCreated();
+    public void refuse(Time time) {
         status = ReviewStatus.REFUSED;
         statusSetAt = time.now();
     }
 
-    public void approve(final Long reviewerId, Time time) {
-        checkReviewer(reviewerId);
-        checkStatusAccepted();
+    public void approve(Time time) {
         status = ReviewStatus.APPROVED;
         statusSetAt = time.now();
     }
 
+    public boolean canAccept(final Long reviewerId) {
+        checkReviewer(reviewerId);
+        checkStatusCreated();
+        return true;
+    }
+
+    public boolean canRefuse(final Long reviewerId) {
+        checkReviewer(reviewerId);
+        checkStatusCreated();
+        return true;
+    }
+
+    public boolean canApprove(final Long reviewerId) {
+        checkReviewer(reviewerId);
+        checkStatusAccepted();
+        return true;
+    }
+
     public boolean canFinish(final Long reviewerId) {
         checkReviewer(reviewerId);
-        if (status != ReviewStatus.REFUSED) {
-            throw new InvalidReviewException(ErrorType.NOT_PROPER_REVIEW_STATUS);
-        }
+        checkStatusRefused();
         return true;
     }
 
     public boolean isExpiredInRefusedStatus() {
-        return (status == ReviewStatus.REFUSED) &&
-                (statusSetAt.plusDays(3).isBefore(LocalDateTime.now()) ||
-                        (statusSetAt.plusDays(3).isEqual(LocalDateTime.now())));
+        return (status == ReviewStatus.REFUSED) && isExpiredInDays(3);
     }
 
     public boolean isExpiredInApprovedStatus() {
-        return (status == ReviewStatus.APPROVED) &&
-                (statusSetAt.plusDays(3).isBefore(LocalDateTime.now()) ||
-                        (statusSetAt.plusDays(3).isEqual(LocalDateTime.now())));
+        return (status == ReviewStatus.APPROVED) && isExpiredInDays(3);
     }
 
     private void checkReviewer(final Long reviewerId) {
@@ -110,15 +116,26 @@ public class Review {
     }
 
     private void checkStatusCreated() {
-        if (!status.equals(ReviewStatus.CREATED)) {
+        if (status != ReviewStatus.CREATED) {
             throw new InvalidReviewException(ErrorType.NOT_PROPER_REVIEW_STATUS);
         }
     }
 
     private void checkStatusAccepted() {
-        if (!status.equals(ReviewStatus.ACCEPTED)) {
+        if (status != ReviewStatus.ACCEPTED) {
             throw new InvalidReviewException(ErrorType.NOT_PROPER_REVIEW_STATUS);
         }
+    }
+
+    private void checkStatusRefused() {
+        if (status != ReviewStatus.REFUSED) {
+            throw new InvalidReviewException(ErrorType.NOT_PROPER_REVIEW_STATUS);
+        }
+    }
+
+    private boolean isExpiredInDays(final int days) {
+        return statusSetAt.plusDays(3).isBefore(LocalDateTime.now())
+                || statusSetAt.plusDays(3).isEqual(LocalDateTime.now());
     }
 
     private Review(

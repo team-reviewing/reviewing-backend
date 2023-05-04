@@ -108,7 +108,7 @@ public class ReviewsDAOTest extends IntegrationTest {
                         "제목1", "본문1", "prUrl1", reviewerMember.getId(), reviewerMember.isReviewer(), time
                 ));
 
-        review.accept(reviewerMember.getReviewer().getId(), time);
+        review.accept(time);
         entityManager.merge(review);
         entityManager.flush();
         entityManager.clear();
