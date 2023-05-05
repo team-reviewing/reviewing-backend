@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import project.reviewing.common.util.Time;
 import project.reviewing.review.command.domain.Review;
 import project.reviewing.review.command.domain.ReviewRepository;
 
@@ -14,6 +15,7 @@ import java.util.List;
 public class ReviewScheduler {
 
     private final ReviewRepository reviewRepository;
+    private final Time time;
 
     @Transactional
     @Scheduled(cron = "${schedule.cron}")
@@ -21,7 +23,9 @@ public class ReviewScheduler {
         final List<Review> reviews = reviewRepository.findAll();
 
         for (Review review : reviews) {
-            if (review.isExpiredInRefusedStatus() || review.isExpiredInApprovedStatus()) {
+            if (review.isExpiredInCreatedStatus() || review.isExpiredInAcceptedStatus()) {
+                review.refuse(time);
+            } else if (review.isExpiredInRefusedStatus() || review.isExpiredInApprovedStatus()) {
                 reviewRepository.delete(review);
             }
         }

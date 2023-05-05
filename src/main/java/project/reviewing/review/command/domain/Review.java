@@ -101,6 +101,14 @@ public class Review {
         return true;
     }
 
+    public boolean isExpiredInCreatedStatus() {
+        return (status == ReviewStatus.CREATED) && isExpiredInDays(3);
+    }
+
+    public boolean isExpiredInAcceptedStatus() {
+        return (status == ReviewStatus.ACCEPTED) && isExpiredInDays(3);
+    }
+
     public boolean isExpiredInRefusedStatus() {
         return (status == ReviewStatus.REFUSED) && isExpiredInDays(3);
     }
