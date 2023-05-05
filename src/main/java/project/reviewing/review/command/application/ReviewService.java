@@ -58,21 +58,27 @@ public class ReviewService {
         final Review review = findReviewById(reviewId);
         final Member reviewerMember = findMemberById(memberId);
 
-        review.accept(reviewerMember.getReviewer().getId(), time);
+        if (review.canAccept(reviewerMember.getReviewer().getId())) {
+            review.accept(time);
+        }
     }
 
     public void refuseReview(final Long memberId, final Long reviewId) {
         final Review review = findReviewById(reviewId);
         final Member reviewerMember = findMemberById(memberId);
 
-        review.refuse(reviewerMember.getReviewer().getId(), time);
+        if (review.canRefuse(reviewerMember.getReviewer().getId())) {
+            review.refuse(time);
+        }
     }
 
     public void approveReview(final Long memberId, final Long reviewId) {
         final Review review = findReviewById(reviewId);
         final Member reviewerMember = findMemberById(memberId);
 
-        review.approve(reviewerMember.getReviewer().getId(), time);
+        if (review.canApprove(reviewerMember.getReviewer().getId())) {
+            review.approve(time);
+        }
     }
 
     public void finishReview(final Long memberId, final Long reviewId) {

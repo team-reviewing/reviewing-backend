@@ -75,9 +75,17 @@ public class ReviewTest {
     void validAcceptReview() {
         final Review review = Review.assign(1L, 1L, "제목", "본문", "prUrl", 2L, true, time);
 
-        review.accept(1L, time);
+        review.accept(time);
 
         assertThat(review.getStatus()).isEqualTo(ReviewStatus.ACCEPTED);
+    }
+
+    @DisplayName("리뷰를 수락할 수 있는지 조건을 확인할 수 있다.")
+    @Test
+    void validCheckAcceptReview() {
+        final Review review = Review.assign(1L, 1L, "제목", "본문", "prUrl", 2L, true, time);
+
+        assertThat(review.canAccept(1L)).isTrue();
     }
 
     @DisplayName("리뷰를 요청받은 리뷰어가 아니면 수락할 수 없다.")
@@ -85,7 +93,7 @@ public class ReviewTest {
     void acceptWithNotReviewerOfReview() {
         final Review review = Review.assign(1L, 1L, "제목", "본문", "prUrl", 2L, true, time);
 
-        assertThatThrownBy(() -> review.accept(2L, time))
+        assertThatThrownBy(() -> review.canAccept(2L))
                 .isInstanceOf(InvalidReviewException.class)
                 .hasMessage(ErrorType.NOT_REVIEWER_OF_REVIEW.getMessage());
     }
@@ -95,9 +103,9 @@ public class ReviewTest {
     void acceptWithNotProperStatus() {
         final Review review = Review.assign(1L, 1L, "제목", "본문", "prUrl", 2L, true, time);
 
-        review.accept(1L, time);
+        review.accept(time);
 
-        assertThatThrownBy(() -> review.accept(1L, time))
+        assertThatThrownBy(() -> review.canAccept(1L))
                 .isInstanceOf(InvalidReviewException.class)
                 .hasMessage(ErrorType.NOT_PROPER_REVIEW_STATUS.getMessage());
     }
@@ -107,9 +115,17 @@ public class ReviewTest {
     void validRefuseReview() {
         final Review review = Review.assign(1L, 1L, "제목", "본문", "prUrl", 2L, true, time);
 
-        review.refuse(1L, time);
+        review.refuse(time);
 
         assertThat(review.getStatus()).isEqualTo(ReviewStatus.REFUSED);
+    }
+
+    @DisplayName("리뷰를 거절할 수 있는지 조건을 확인할 수 있다.")
+    @Test
+    void validCheckRefuseReview() {
+        final Review review = Review.assign(1L, 1L, "제목", "본문", "prUrl", 2L, true, time);
+
+        assertThat(review.canRefuse(1L)).isTrue();
     }
 
     @DisplayName("리뷰를 요청받은 리뷰어가 아니면 거절할 수 없다.")
@@ -117,7 +133,7 @@ public class ReviewTest {
     void refuseWithNotReviewerOfReview() {
         final Review review = Review.assign(1L, 1L, "제목", "본문", "prUrl", 2L, true, time);
 
-        assertThatThrownBy(() -> review.refuse(2L, time))
+        assertThatThrownBy(() -> review.canRefuse(2L))
                 .isInstanceOf(InvalidReviewException.class)
                 .hasMessage(ErrorType.NOT_REVIEWER_OF_REVIEW.getMessage());
     }
@@ -127,9 +143,9 @@ public class ReviewTest {
     void refuseWithNotProperStatus() {
         final Review review = Review.assign(1L, 1L, "제목", "본문", "prUrl", 2L, true, time);
 
-        review.accept(1L, time);
+        review.accept(time);
 
-        assertThatThrownBy(() -> review.refuse(1L, time))
+        assertThatThrownBy(() -> review.canRefuse(1L))
                 .isInstanceOf(InvalidReviewException.class)
                 .hasMessage(ErrorType.NOT_PROPER_REVIEW_STATUS.getMessage());
     }
@@ -139,10 +155,19 @@ public class ReviewTest {
     void validApproveReview() {
         final Review review = Review.assign(1L, 1L, "제목", "본문", "prUrl", 2L, true, time);
 
-        review.accept(1L, time);
-        review.approve(1L, time);
+        review.approve(time);
 
         assertThat(review.getStatus()).isEqualTo(ReviewStatus.APPROVED);
+    }
+
+    @DisplayName("리뷰를 완료할 수 있는지 조건을 확인할 수 있다.")
+    @Test
+    void validCheckApproveReview() {
+        final Review review = Review.assign(1L, 1L, "제목", "본문", "prUrl", 2L, true, time);
+
+        review.accept(time);
+
+        assertThat(review.canApprove(1L)).isTrue();
     }
 
     @DisplayName("리뷰를 요청받은 리뷰어가 아니면 완료할 수 없다.")
@@ -150,9 +175,7 @@ public class ReviewTest {
     void approveWithNotReviewerOfReview() {
         final Review review = Review.assign(1L, 1L, "제목", "본문", "prUrl", 2L, true, time);
 
-        review.accept(1L, time);
-
-        assertThatThrownBy(() -> review.accept(2L, time))
+        assertThatThrownBy(() -> review.canAccept(2L))
                 .isInstanceOf(InvalidReviewException.class)
                 .hasMessage(ErrorType.NOT_REVIEWER_OF_REVIEW.getMessage());
     }
@@ -162,7 +185,7 @@ public class ReviewTest {
     void approveWithNotProperStatus() {
         final Review review = Review.assign(1L, 1L, "제목", "본문", "prUrl", 2L, true, time);
 
-        assertThatThrownBy(() -> review.approve(1L, time))
+        assertThatThrownBy(() -> review.canApprove(1L))
                 .isInstanceOf(InvalidReviewException.class)
                 .hasMessage(ErrorType.NOT_PROPER_REVIEW_STATUS.getMessage());
     }
@@ -172,7 +195,7 @@ public class ReviewTest {
     void validFinishReview() {
         final Review review = Review.assign(1L, 1L, "제목", "본문", "prUrl", 2L, true, time);
 
-        review.refuse(1L, time);
+        review.refuse(time);
 
         assertThat(review.canFinish(1L)).isTrue();
     }
