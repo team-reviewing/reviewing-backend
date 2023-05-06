@@ -102,19 +102,23 @@ public class Review {
     }
 
     public boolean isExpiredInCreatedStatus() {
-        return (status == ReviewStatus.CREATED) && isExpiredInDays(3);
+        return (status == ReviewStatus.CREATED) && isExpired();
     }
 
     public boolean isExpiredInAcceptedStatus() {
-        return (status == ReviewStatus.ACCEPTED) && isExpiredInDays(3);
+        return (status == ReviewStatus.ACCEPTED) && isExpired();
     }
 
     public boolean isExpiredInRefusedStatus() {
-        return (status == ReviewStatus.REFUSED) && isExpiredInDays(3);
+        return (status == ReviewStatus.REFUSED) && isExpired();
     }
 
     public boolean isExpiredInApprovedStatus() {
-        return (status == ReviewStatus.APPROVED) && isExpiredInDays(3);
+        return (status == ReviewStatus.APPROVED) && isExpired();
+    }
+
+    public LocalDateTime findExpireDate() {
+        return statusSetAt.plusDays(3);
     }
 
     private void checkReviewer(final Long reviewerId) {
@@ -141,9 +145,9 @@ public class Review {
         }
     }
 
-    private boolean isExpiredInDays(final int days) {
-        return statusSetAt.plusDays(3).isBefore(LocalDateTime.now())
-                || statusSetAt.plusDays(3).isEqual(LocalDateTime.now());
+    private boolean isExpired() {
+        LocalDateTime expireDate = findExpireDate();
+        return expireDate.isBefore(LocalDateTime.now()) || expireDate.isEqual(LocalDateTime.now());
     }
 
     private Review(

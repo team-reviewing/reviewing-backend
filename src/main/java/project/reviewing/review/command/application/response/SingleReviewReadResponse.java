@@ -14,18 +14,18 @@ public class SingleReviewReadResponse {
     private final String content;
     private final String prUrl;
     private final String status;
-    private final String statusSetAt;
+    private final String expireDate;
 
     public static SingleReviewReadResponse from(final Review review) {
         return new SingleReviewReadResponse(
                 review.getId(), review.getReviewerId(), review.getTitle(), review.getContent(), review.getPrUrl(),
-                review.getStatus().name(), review.getStatusSetAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH시"))
+                review.getStatus().name(), review.findExpireDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH시"))
         );
     }
 
     private SingleReviewReadResponse(
             final Long id, final Long reviewerId, final String title, final String content,
-            final String prUrl, final String status, final String statusSetAt
+            final String prUrl, final String status, final String expireDate
     ) {
         this.id = id;
         this.reviewerId = reviewerId;
@@ -33,6 +33,6 @@ public class SingleReviewReadResponse {
         this.content = content;
         this.prUrl = prUrl;
         this.status = status;
-        this.statusSetAt = statusSetAt;
+        this.expireDate = expireDate;
     }
 }
