@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum ErrorType {
 
-    INTERNAL_ERROR("COMMON-001", ""),
+    ERROR("COMMON-001", "구체적으로 정의되지 않은 내부 오류입니다."),
     INVALID_FORMAT("COMMON-002", "요청 형식이 유효하지 않습니다."),
     API_FAILED("COMMON-004", "API 요청에 실패했습니다."),
 
