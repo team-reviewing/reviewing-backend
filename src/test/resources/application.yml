@@ -20,6 +20,9 @@ spring:
   flyway:
     enabled: false
 
+schedule:
+  cron: 0/1 * * * * *
+
 logging:
   level:
     org.hibernate.type.descriptor.sql: trace

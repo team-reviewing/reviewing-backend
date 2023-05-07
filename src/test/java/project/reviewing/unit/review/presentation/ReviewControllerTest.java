@@ -187,7 +187,7 @@ public class ReviewControllerTest extends ControllerTest {
                             status().isBadRequest(),
                             result -> assertThat(result.getResolvedException())
                                     .isInstanceOf(BadRequestException.class)
-                                    .hasMessage(ErrorType.QUERY_PARAM_INVALID_FORMAT.getMessage())
+                                    .hasMessage(ErrorType.INVALID_FORMAT.getMessage())
                     );
         }
 
@@ -211,7 +211,7 @@ public class ReviewControllerTest extends ControllerTest {
                             status().isBadRequest(),
                             result -> assertThat(result.getResolvedException())
                                     .isInstanceOf(BadRequestException.class)
-                                    .hasMessage(ErrorType.QUERY_PARAM_INVALID_FORMAT.getMessage())
+                                    .hasMessage(ErrorType.INVALID_FORMAT.getMessage())
                     );
         }
     }
@@ -278,7 +278,7 @@ public class ReviewControllerTest extends ControllerTest {
         @DisplayName("요청이 유효하면 204 반환한다.")
         @Test
         void validAcceptReview() throws Exception {
-            requestAboutReview(delete("/reviewers/1/reviews/1"), null)
+            requestAboutReview(patch("/reviewers/1/reviews/1/status-refused"), null)
                     .andExpect(status().isNoContent());
         }
     }
@@ -291,6 +291,18 @@ public class ReviewControllerTest extends ControllerTest {
         @Test
         void validAcceptReview() throws Exception {
             requestAboutReview(patch("/reviewers/1/reviews/1/status-approved"), null)
+                    .andExpect(status().isNoContent());
+        }
+    }
+
+    @DisplayName("리뷰 종료 시")
+    @Nested
+    class ReviewFinishTest {
+
+        @DisplayName("요청이 유효하면 204 반환한다.")
+        @Test
+        void validAcceptReview() throws Exception {
+            requestAboutReview(delete("/reviewers/1/reviews/1"), null)
                     .andExpect(status().isNoContent());
         }
     }

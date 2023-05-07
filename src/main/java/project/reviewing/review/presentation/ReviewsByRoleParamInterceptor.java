@@ -19,10 +19,10 @@ public class ReviewsByRoleParamInterceptor implements HandlerInterceptor {
         final String status = request.getParameter("status");
 
         if (role != null && !RoleInReview.isContain(role)) {
-            throw new BadRequestException(ErrorType.QUERY_PARAM_INVALID_FORMAT);
+            throw new BadRequestException(ErrorType.INVALID_FORMAT);
         }
         if (status != null && !ReviewStatus.isContain(status)) {
-            throw new BadRequestException(ErrorType.QUERY_PARAM_INVALID_FORMAT);
+            throw new BadRequestException(ErrorType.INVALID_FORMAT);
         }
         return true;
     }

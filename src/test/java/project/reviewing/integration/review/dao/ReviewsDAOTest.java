@@ -33,12 +33,12 @@ public class ReviewsDAOTest extends IntegrationTest {
         final Review review = createReview(
                 Review.assign(
                         reviewee.getId(), reviewerMember.getReviewer().getId(),
-                        "제목", "본문", "prUrl", reviewerMember.getId(), reviewerMember.isReviewer()
+                        "제목", "본문", "prUrl", reviewerMember.getId(), reviewerMember.isReviewer(), time
                 ));
         final Review review1 = createReview(
                 Review.assign(
                         reviewee1.getId(), reviewerMember.getReviewer().getId(),
-                        "제목1", "본문1", "prUrl1", reviewerMember.getId(), reviewerMember.isReviewer()
+                        "제목1", "본문1", "prUrl1", reviewerMember.getId(), reviewerMember.isReviewer(), time
                 ));
 
         // when
@@ -68,12 +68,12 @@ public class ReviewsDAOTest extends IntegrationTest {
         final Review review = createReview(
                 Review.assign(
                         reviewee.getId(), reviewerMember.getReviewer().getId(),
-                        "제목", "본문", "prUrl", reviewerMember.getId(), reviewerMember.isReviewer()
+                        "제목", "본문", "prUrl", reviewerMember.getId(), reviewerMember.isReviewer(), time
                 ));
         final Review review1 = createReview(
                 Review.assign(
                         reviewee.getId(), reviewerMember1.getReviewer().getId(),
-                        "제목1", "본문1", "prUrl1", reviewerMember1.getId(), reviewerMember1.isReviewer()
+                        "제목1", "본문1", "prUrl1", reviewerMember1.getId(), reviewerMember1.isReviewer(), time
                 ));
 
         // when
@@ -100,15 +100,15 @@ public class ReviewsDAOTest extends IntegrationTest {
         final Review review = createReview(
                 Review.assign(
                         reviewee.getId(), reviewerMember.getReviewer().getId(),
-                        "제목", "본문", "prUrl", reviewerMember.getId(), reviewerMember.isReviewer()
+                        "제목", "본문", "prUrl", reviewerMember.getId(), reviewerMember.isReviewer(), time
                 ));
         createReview(
                 Review.assign(
                         reviewee1.getId(), reviewerMember.getReviewer().getId(),
-                        "제목1", "본문1", "prUrl1", reviewerMember.getId(), reviewerMember.isReviewer()
+                        "제목1", "본문1", "prUrl1", reviewerMember.getId(), reviewerMember.isReviewer(), time
                 ));
 
-        review.accept(reviewerMember.getReviewer().getId());
+        review.accept(time);
         entityManager.merge(review);
         entityManager.flush();
         entityManager.clear();
