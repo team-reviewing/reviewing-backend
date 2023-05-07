@@ -23,7 +23,7 @@ public class PageableVerificationArgumentResolver extends PageableHandlerMethodA
         final String size = webRequest.getParameter("size");
 
         if (isInvalidPageAndSize(page, size)) {
-            throw new BadRequestException(ErrorType.PAGEABLE_INVALID_FORMAT);
+            throw new BadRequestException(ErrorType.INVALID_FORMAT);
         }
 
         return super.resolveArgument(methodParameter, mavContainer, webRequest, binderFactory);

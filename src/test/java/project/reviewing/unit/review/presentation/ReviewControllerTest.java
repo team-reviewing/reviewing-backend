@@ -187,7 +187,7 @@ public class ReviewControllerTest extends ControllerTest {
                             status().isBadRequest(),
                             result -> assertThat(result.getResolvedException())
                                     .isInstanceOf(BadRequestException.class)
-                                    .hasMessage(ErrorType.QUERY_PARAM_INVALID_FORMAT.getMessage())
+                                    .hasMessage(ErrorType.INVALID_FORMAT.getMessage())
                     );
         }
 
@@ -211,7 +211,7 @@ public class ReviewControllerTest extends ControllerTest {
                             status().isBadRequest(),
                             result -> assertThat(result.getResolvedException())
                                     .isInstanceOf(BadRequestException.class)
-                                    .hasMessage(ErrorType.QUERY_PARAM_INVALID_FORMAT.getMessage())
+                                    .hasMessage(ErrorType.INVALID_FORMAT.getMessage())
                     );
         }
     }
