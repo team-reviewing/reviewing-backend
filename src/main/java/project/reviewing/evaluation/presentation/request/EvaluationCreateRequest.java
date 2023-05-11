@@ -1,6 +1,7 @@
 package project.reviewing.evaluation.presentation.request;
 
 import lombok.Getter;
+import project.reviewing.evaluation.domain.Evaluation;
 
 import javax.validation.constraints.*;
 
@@ -22,5 +23,9 @@ public class EvaluationCreateRequest {
         this.reviewId = reviewId;
         this.score = score;
         this.content = content;
+    }
+
+    public Evaluation toEntity(final Long reviewerId, final Long revieweeId) {
+        return new Evaluation(reviewerId, revieweeId, reviewId, score, content);
     }
 }
