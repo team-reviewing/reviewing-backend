@@ -84,4 +84,8 @@ public class Member {
     public void updateReviewerScore(final Float evaluationScore) {
         reviewer.updateScore(evaluationScore);
     }
+
+    public boolean isNotRegisterReviewer() {
+        return reviewer == null;
+    }
 }
