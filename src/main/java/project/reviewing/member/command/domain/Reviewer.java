@@ -39,6 +39,12 @@ public class Reviewer {
 
     private String introduction;
 
+    @Column(nullable = false)
+    private Float score;
+
+    @Column(nullable = false)
+    private Long evaluationCnt;
+
     @OneToOne
     @JoinColumn(name = "member_id")
     private Member member;
@@ -48,6 +54,8 @@ public class Reviewer {
         this.career = career;
         this.techStack = techStack;
         this.introduction = introduction;
+        score = 0.0F;
+        evaluationCnt = 0L;
     }
 
     public void addMember(final Member member) {
