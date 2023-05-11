@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RestController;
 import project.reviewing.auth.presentation.AuthenticatedMember;
 import project.reviewing.evaluation.presentation.request.EvaluationCreateRequest;
 
+import javax.validation.Valid;
+
 @RequiredArgsConstructor
 @RestController
 public class EvaluationController {
@@ -16,7 +18,7 @@ public class EvaluationController {
     public void createEvaluation(
             @AuthenticatedMember final Long memberId,
             @PathVariable("reviewer-id") final Long reviewerId,
-            @RequestBody final EvaluationCreateRequest evaluationCreateRequest
+            @Valid @RequestBody final EvaluationCreateRequest evaluationCreateRequest
     ) {
 
     }

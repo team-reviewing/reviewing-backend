@@ -7,19 +7,23 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.web.bind.annotation.RestController;
 import project.reviewing.auth.application.AuthService;
 import project.reviewing.auth.domain.RefreshTokenRepository;
 import project.reviewing.auth.infrastructure.TokenProvider;
 import project.reviewing.auth.presentation.AuthContext;
-import project.reviewing.auth.presentation.AuthInterceptor;
-import project.reviewing.auth.presentation.RefreshInterceptor;
 import project.reviewing.member.command.application.MemberService;
 import project.reviewing.member.query.application.MemberQueryService;
 import project.reviewing.review.query.application.ReviewQueryService;
 import project.reviewing.tag.query.application.TagQueryService;
 import project.reviewing.review.command.application.ReviewService;
+
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 @WebMvcTest(includeFilters = @Filter(type = FilterType.ANNOTATION, classes = RestController.class))
 @Import({
@@ -56,4 +60,20 @@ public class ControllerTest {
 
     @MockBean
     protected TagQueryService tagQueryService;
+
+    protected ResultActions requestHttp(
+            final MockHttpServletRequestBuilder mockHttpServletRequestBuilder, final Object request
+    ) throws Exception {
+        final String accessToken = tokenProvider.createAccessToken(1L);
+        return mockMvc.perform(mockHttpServletRequestBuilder
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding("UTF-8")
+                        .content(objectMapper.writeValueAsString(request)))
+                .andDo(print());
+    }
+
+    protected String makeStringByLength(final int length) {
+        return "A".repeat(length);
+    }
 }

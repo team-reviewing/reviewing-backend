@@ -38,7 +38,7 @@ public class ReviewControllerTest extends ControllerTest {
                     "리뷰 요청합니다.", "본문", "https://github.com/Tom/myproject/pull/1"
             );
 
-            requestAboutReview(post("/reviewers/1/reviews"), request)
+            requestHttp(post("/reviewers/1/reviews"), request)
                     .andExpect(status().isOk());
         }
 
@@ -51,7 +51,7 @@ public class ReviewControllerTest extends ControllerTest {
                     title, "본문", "https://github.com/Tom/myproject/pull/1"
             );
 
-            requestAboutReview(post("/reviewers/1/reviews"), request)
+            requestHttp(post("/reviewers/1/reviews"), request)
                     .andExpectAll(
                             status().isBadRequest(),
                             result -> assertThat(result.getResolvedException())
@@ -67,7 +67,7 @@ public class ReviewControllerTest extends ControllerTest {
                     title, "본문", "https://github.com/Tom/myproject/pull/1"
             );
 
-            requestAboutReview(post("/reviewers/1/reviews"), request)
+            requestHttp(post("/reviewers/1/reviews"), request)
                     .andExpectAll(
                             status().isBadRequest(),
                             result -> assertThat(result.getResolvedException())
@@ -84,7 +84,7 @@ public class ReviewControllerTest extends ControllerTest {
                     "리뷰 요청합니다.", content, "https://github.com/Tom/myproject/pull/1"
             );
 
-            requestAboutReview(post("/reviewers/1/reviews"), request)
+            requestHttp(post("/reviewers/1/reviews"), request)
                     .andExpectAll(
                             status().isBadRequest(),
                             result -> assertThat(result.getResolvedException())
@@ -100,7 +100,7 @@ public class ReviewControllerTest extends ControllerTest {
                     "리뷰 요청합니다.", content, "https://github.com/Tom/myproject/pull/1"
             );
 
-            requestAboutReview(post("/reviewers/1/reviews"), request)
+            requestHttp(post("/reviewers/1/reviews"), request)
                     .andExpectAll(
                             status().isBadRequest(),
                             result -> assertThat(result.getResolvedException())
@@ -115,7 +115,7 @@ public class ReviewControllerTest extends ControllerTest {
         void createWithPrUrlNullAndEmpty(final String prUrl) throws Exception {
             final ReviewCreateRequest request = new ReviewCreateRequest("리뷰 요청합니다.", "본문", prUrl);
 
-            requestAboutReview(post("/reviewers/1/reviews"), request)
+            requestHttp(post("/reviewers/1/reviews"), request)
                     .andExpectAll(
                             status().isBadRequest(),
                             result -> assertThat(result.getResolvedException())
@@ -133,7 +133,7 @@ public class ReviewControllerTest extends ControllerTest {
         void createWithInvalidPrUrl(final String prUrl) throws Exception {
             final ReviewCreateRequest request = new ReviewCreateRequest("리뷰 요청합니다.", "본문", prUrl);
 
-            requestAboutReview(post("/reviewers/1/reviews"), request)
+            requestHttp(post("/reviewers/1/reviews"), request)
                     .andExpectAll(
                             status().isBadRequest(),
                             result -> assertThat(result.getResolvedException())
@@ -149,7 +149,7 @@ public class ReviewControllerTest extends ControllerTest {
         @DisplayName("요청이 유효하면 200 반환한다.")
         @Test
         void validReadSingleReview() throws Exception {
-            requestAboutReview(get("/reviewers/1/reviews/1"), null)
+            requestHttp(get("/reviewers/1/reviews/1"), null)
                     .andExpect(status().isOk());
         }
     }
@@ -162,7 +162,7 @@ public class ReviewControllerTest extends ControllerTest {
         @ValueSource(strings = {"reviewee", "reviewer"})
         @ParameterizedTest
         void validReadReviewsByRole(final String role) throws Exception {
-            requestAboutReview(get("/reviews?role=" + role), null)
+            requestHttp(get("/reviews?role=" + role), null)
                     .andExpect(status().isOk());
         }
 
@@ -174,7 +174,7 @@ public class ReviewControllerTest extends ControllerTest {
         })
         @ParameterizedTest
         void validReadReviewsByRoleWithStatus(final String role, final String status) throws Exception {
-            requestAboutReview(get("/reviews?role=" + role + "&status=" + status), null)
+            requestHttp(get("/reviews?role=" + role + "&status=" + status), null)
                     .andExpect(status().isOk());
         }
 
@@ -182,7 +182,7 @@ public class ReviewControllerTest extends ControllerTest {
         @ValueSource(strings = {"abc", "", " "})
         @ParameterizedTest
         void readWithInvalidRole(final String role) throws Exception {
-            requestAboutReview(get("/reviews?role=" + role), null)
+            requestHttp(get("/reviews?role=" + role), null)
                     .andExpectAll(
                             status().isBadRequest(),
                             result -> assertThat(result.getResolvedException())
@@ -194,7 +194,7 @@ public class ReviewControllerTest extends ControllerTest {
         @DisplayName("role이 포함되지 않으면 400 반환한다.")
         @Test
         void readWithNotExistRole() throws Exception {
-            requestAboutReview(get("/reviews"), null)
+            requestHttp(get("/reviews"), null)
                     .andExpectAll(
                             status().isBadRequest(),
                             result -> assertThat(result.getResolvedException())
@@ -206,7 +206,7 @@ public class ReviewControllerTest extends ControllerTest {
         @ValueSource(strings = {"abc", "", " "})
         @ParameterizedTest
         void readWithInvalidStatus(final String status) throws Exception {
-            requestAboutReview(get("/reviews?role=reviewer&status=" + status), null)
+            requestHttp(get("/reviews?role=reviewer&status=" + status), null)
                     .andExpectAll(
                             status().isBadRequest(),
                             result -> assertThat(result.getResolvedException())
@@ -225,7 +225,7 @@ public class ReviewControllerTest extends ControllerTest {
         void validUpdateReview() throws Exception {
             final ReviewUpdateRequest request = new ReviewUpdateRequest("본문");
 
-            requestAboutReview(patch("/reviewers/1/reviews/1"), request)
+            requestHttp(patch("/reviewers/1/reviews/1"), request)
                     .andExpect(status().isNoContent());
         }
 
@@ -236,7 +236,7 @@ public class ReviewControllerTest extends ControllerTest {
         void updateWithContentNullAndEmpty(final String content) throws Exception {
             final ReviewUpdateRequest request = new ReviewUpdateRequest(content);
 
-            requestAboutReview(patch("/reviewers/1/reviews/1"), request)
+            requestHttp(patch("/reviewers/1/reviews/1"), request)
                     .andExpectAll(
                             status().isBadRequest(),
                             result -> assertThat(result.getResolvedException())
@@ -250,7 +250,7 @@ public class ReviewControllerTest extends ControllerTest {
             final String content = makeStringByLength(1501);
             final ReviewUpdateRequest request = new ReviewUpdateRequest(content);
 
-            requestAboutReview(patch("/reviewers/1/reviews/1"), request)
+            requestHttp(patch("/reviewers/1/reviews/1"), request)
                     .andExpectAll(
                             status().isBadRequest(),
                             result -> assertThat(result.getResolvedException())
@@ -266,7 +266,7 @@ public class ReviewControllerTest extends ControllerTest {
         @DisplayName("요청이 유효하면 204 반환한다.")
         @Test
         void validAcceptReview() throws Exception {
-            requestAboutReview(patch("/reviewers/1/reviews/1/status-accepted"), null)
+            requestHttp(patch("/reviewers/1/reviews/1/status-accepted"), null)
                     .andExpect(status().isNoContent());
         }
     }
@@ -278,7 +278,7 @@ public class ReviewControllerTest extends ControllerTest {
         @DisplayName("요청이 유효하면 204 반환한다.")
         @Test
         void validAcceptReview() throws Exception {
-            requestAboutReview(patch("/reviewers/1/reviews/1/status-refused"), null)
+            requestHttp(patch("/reviewers/1/reviews/1/status-refused"), null)
                     .andExpect(status().isNoContent());
         }
     }
@@ -290,7 +290,7 @@ public class ReviewControllerTest extends ControllerTest {
         @DisplayName("요청이 유효하면 204 반환한다.")
         @Test
         void validAcceptReview() throws Exception {
-            requestAboutReview(patch("/reviewers/1/reviews/1/status-approved"), null)
+            requestHttp(patch("/reviewers/1/reviews/1/status-approved"), null)
                     .andExpect(status().isNoContent());
         }
     }
@@ -302,24 +302,8 @@ public class ReviewControllerTest extends ControllerTest {
         @DisplayName("요청이 유효하면 204 반환한다.")
         @Test
         void validAcceptReview() throws Exception {
-            requestAboutReview(delete("/reviewers/1/reviews/1"), null)
+            requestHttp(delete("/reviewers/1/reviews/1"), null)
                     .andExpect(status().isNoContent());
         }
-    }
-
-    private ResultActions requestAboutReview(
-            final MockHttpServletRequestBuilder mockHttpServletRequestBuilder, final Object request
-    ) throws Exception {
-        final String accessToken = tokenProvider.createAccessToken(1L);
-        return mockMvc.perform(mockHttpServletRequestBuilder
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-                .contentType(MediaType.APPLICATION_JSON)
-                .characterEncoding("UTF-8")
-                .content(objectMapper.writeValueAsString(request)))
-                .andDo(print());
-    }
-
-    private String makeStringByLength(final int length) {
-        return "A".repeat(length);
     }
 }
