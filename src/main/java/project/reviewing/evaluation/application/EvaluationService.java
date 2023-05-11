@@ -44,6 +44,8 @@ public class EvaluationService {
             throw new InvalidEvaluationException(ErrorType.NOT_REVIEWER_OF_REVIEW);
         }
 
+        reviewerMember.updateReviewerScore(evaluationCreateRequest.getScore());
+
         Evaluation evaluation = evaluationCreateRequest.toEntity(reviewerId, memberId);
         evaluationRepository.save(evaluation);
     }

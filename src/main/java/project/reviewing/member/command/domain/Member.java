@@ -80,4 +80,8 @@ public class Member {
         }
         this.isReviewer = !isReviewer;
     }
+
+    public void updateReviewerScore(final Float evaluationScore) {
+        reviewer.updateScore(evaluationScore);
+    }
 }

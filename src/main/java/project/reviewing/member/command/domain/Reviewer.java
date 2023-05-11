@@ -68,4 +68,11 @@ public class Reviewer {
         this.techStack = reviewer.getTechStack();
         this.introduction = reviewer.getIntroduction();
     }
+
+    void updateScore(final Float evaluationScore) {
+        float totalScore = score * evaluationCnt + evaluationScore;
+
+        score = Math.round((totalScore / (evaluationCnt + 1)) * 100) / 100.0F;
+        evaluationCnt++;
+    }
 }
