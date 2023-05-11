@@ -40,9 +40,6 @@ public class EvaluationService {
         if (!memberId.equals(review.getRevieweeId())) {
             throw new InvalidEvaluationException(ErrorType.NOT_REVIEWEE_OF_REVIEW);
         }
-        if (reviewerMember.isNotRegisterReviewer()) {
-            throw new InvalidEvaluationException(ErrorType.REVIEWER_NOT_FOUND);
-        }
         if (!reviewerMember.getReviewer().getId().equals(review.getReviewerId())) {
             throw new InvalidEvaluationException(ErrorType.NOT_REVIEWER_OF_REVIEW);
         }
