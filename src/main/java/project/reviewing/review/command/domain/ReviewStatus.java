@@ -9,6 +9,7 @@ public enum ReviewStatus {
     ACCEPTED,
     REFUSED,
     APPROVED,
+    EVALUATED
     ;
 
     public static boolean isContain(final String name) {
