@@ -15,6 +15,7 @@ import project.reviewing.member.command.domain.Job;
 import project.reviewing.member.command.domain.Member;
 import project.reviewing.member.command.domain.Reviewer;
 import project.reviewing.review.command.domain.Review;
+import project.reviewing.review.exception.InvalidReviewException;
 
 import java.util.Set;
 
@@ -51,6 +52,11 @@ public class EvaluationServiceTest extends IntegrationTest {
                     ));
             final EvaluationCreateRequest request = new EvaluationCreateRequest(review.getId(), 3.5F, "평가 내용");
 
+            review.approve(time);
+            entityManager.merge(review);
+            entityManager.flush();
+            entityManager.clear();
+
             // when, then
             assertDoesNotThrow(
                     () -> evaluationService.createEvaluation(
@@ -78,6 +84,11 @@ public class EvaluationServiceTest extends IntegrationTest {
                     ));
             final EvaluationCreateRequest request = new EvaluationCreateRequest(review.getId(), 3.5F, "평가 내용");
 
+            review.approve(time);
+            entityManager.merge(review);
+            entityManager.flush();
+            entityManager.clear();
+
             // when, then
             assertThatThrownBy(
                     () -> evaluationService.createEvaluation(
@@ -104,12 +115,17 @@ public class EvaluationServiceTest extends IntegrationTest {
                     ));
             final EvaluationCreateRequest request = new EvaluationCreateRequest(review.getId(), 3.5F, "평가 내용");
 
+            review.approve(time);
+            entityManager.merge(review);
+            entityManager.flush();
+            entityManager.clear();
+
             // when, then
             assertThatThrownBy(
                     () -> evaluationService.createEvaluation(
                             invalidRevieweeId, reviewerMember.getReviewer().getId(), request
                     ))
-                    .isInstanceOf(InvalidEvaluationException.class)
+                    .isInstanceOf(InvalidReviewException.class)
                     .hasMessage(ErrorType.NOT_REVIEWEE_OF_REVIEW.getMessage());
         }
 
@@ -133,12 +149,17 @@ public class EvaluationServiceTest extends IntegrationTest {
                     ));
             final EvaluationCreateRequest request = new EvaluationCreateRequest(review.getId(), 3.5F, "평가 내용");
 
+            review.approve(time);
+            entityManager.merge(review);
+            entityManager.flush();
+            entityManager.clear();
+
             // when, then
             assertThatThrownBy(
                     () -> evaluationService.createEvaluation(
                             reviewee.getId(), invalidReviewerMember.getReviewer().getId(), request
                     ))
-                    .isInstanceOf(InvalidEvaluationException.class)
+                    .isInstanceOf(InvalidReviewException.class)
                     .hasMessage(ErrorType.NOT_REVIEWER_OF_REVIEW.getMessage());
         }
     }
