@@ -97,7 +97,7 @@ public class Review {
         return true;
     }
 
-    public boolean canFinish(final Long reviewerId) {
+    public boolean canClose(final Long reviewerId) {
         checkReviewer(reviewerId);
         checkStatusRefused();
         return true;

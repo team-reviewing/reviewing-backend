@@ -81,11 +81,11 @@ public class ReviewService {
         }
     }
 
-    public void finishReview(final Long memberId, final Long reviewId) {
+    public void closeReview(final Long memberId, final Long reviewId) {
         final Review review = findReviewById(reviewId);
         final Member reviewerMember = findMemberById(memberId);
 
-        if (review.canFinish(reviewerMember.getReviewer().getId())) {
+        if (review.canClose(reviewerMember.getReviewer().getId())) {
             reviewRepository.delete(review);
         }
     }
