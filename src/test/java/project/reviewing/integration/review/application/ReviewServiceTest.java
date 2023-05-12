@@ -371,11 +371,11 @@ public class ReviewServiceTest extends IntegrationTest {
 
     @DisplayName("리뷰 종료 시")
     @Nested
-    class ReviewFinishTest {
+    class ReviewCloseTest {
 
         @DisplayName("정상적으로 종료된다.")
         @Test
-        void validFinishReview() {
+        void validCloseReview() {
             final Member reviewee = createMember(new Member(1L, "Tom", "Tom@gmail.com", "imageUrl", "https://github.com/Tom"));
             final Member reviewerMember = createMemberAndRegisterReviewer(
                     new Member(2L, "bboor", "bboor@gmail.com", "imageUrl", "https://github.com/bboor"),
@@ -390,7 +390,7 @@ public class ReviewServiceTest extends IntegrationTest {
             reviewService.refuseReview(reviewerMember.getId(), review.getId());
             entityManager.flush();
             entityManager.clear();
-            reviewService.finishReview(reviewerMember.getId(), review.getId());
+            reviewService.closeReview(reviewerMember.getId(), review.getId());
             entityManager.flush();
             entityManager.clear();
 
@@ -399,20 +399,20 @@ public class ReviewServiceTest extends IntegrationTest {
 
         @DisplayName("리뷰 정보가 없으면 예외 발생한다.")
         @Test
-        void refuseWithNotExistReview() {
+        void closeWithNotExistReview() {
             final Long invalidReviewId = -1L;
             final Member reviewerMember = createMemberAndRegisterReviewer(
                     new Member(2L, "bboor", "bboor@gmail.com", "imageUrl", "https://github.com/bboor"),
                     new Reviewer(Job.BACKEND, Career.JUNIOR, Set.of(1L), "소개글")
             );
 
-            assertThatThrownBy(() -> reviewService.finishReview(reviewerMember.getId(), invalidReviewId))
+            assertThatThrownBy(() -> reviewService.closeReview(reviewerMember.getId(), invalidReviewId))
                     .isInstanceOf(ReviewNotFoundException.class);
         }
 
         @DisplayName("요청한 회원 정보가 없으면 예외 발생한다.")
         @Test
-        void refuseWithNotExistMember() {
+        void closeWithNotExistMember() {
             final Long invalidMemberId = -1L;
             final Member reviewee = createMember(new Member(1L, "Tom", "Tom@gmail.com", "imageUrl", "https://github.com/Tom"));
             final Member reviewerMember = createMemberAndRegisterReviewer(
@@ -425,7 +425,7 @@ public class ReviewServiceTest extends IntegrationTest {
                             "제목", "본문", "prUrl", reviewerMember.getId(), reviewerMember.isReviewer(), time
                     ));
 
-            assertThatThrownBy(() -> reviewService.finishReview(invalidMemberId, review.getId()))
+            assertThatThrownBy(() -> reviewService.closeReview(invalidMemberId, review.getId()))
                     .isInstanceOf(MemberNotFoundException.class);
         }
     }

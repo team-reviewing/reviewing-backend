@@ -157,6 +157,52 @@ public class ReviewQueryServiceTest extends IntegrationTest {
                             .containsAll(expectedResponse.getReviews())
             );
         }
+
+        @DisplayName("APPROVED 상태인 리뷰 목록을 조회하면 EVALUATED 상태 리뷰도 같이 조회된다.")
+        @Test
+        void validFindEvaluatedStatusWhenFindApprovedStatus() {
+            // given
+            final Member reviewee = createMember(new Member(1L, "Tom", "Tom@gmail.com", "imageUrl", "https://github.com/Tom"));
+            final Member reviewee1 = createMember(new Member(2L, "Alex", "Alex@gmail.com", "imageUrl", "https://github.com/Alex"));
+            final Member reviewerMember = createMemberAndRegisterReviewer(
+                    new Member(3L, "bboor", "bboor@gmail.com", "imageUrl", "https://github.com/bboor"),
+                    new Reviewer(Job.BACKEND, Career.JUNIOR, Set.of(1L), "소개글")
+            );
+            final Review review = createReview(
+                    Review.assign(
+                            reviewee.getId(), reviewerMember.getReviewer().getId(),
+                            "제목", "본문", "prUrl", reviewerMember.getId(), reviewerMember.isReviewer(), time
+                    ));
+            final Review review1 = createReview(
+                    Review.assign(
+                            reviewee1.getId(), reviewerMember.getReviewer().getId(),
+                            "제목1", "본문1", "prUrl1", reviewerMember.getId(), reviewerMember.isReviewer(), time
+                    ));
+
+            review.approve(time);
+            review1.evaluate();
+            entityManager.merge(review);
+            entityManager.merge(review1);
+            entityManager.flush();
+            entityManager.clear();
+
+            final ReviewsResponse expectedResponse = ReviewsResponse.from(
+                    List.of(toReviewByRoleData(review, reviewee), toReviewByRoleData(review1, reviewee1))
+            );
+
+            // when
+            final ReviewsResponse response = reviewQueryService.findReviewsByRole(
+                    reviewerMember.getId(), RoleInReview.ROLE_REVIEWER, ReviewStatus.APPROVED
+            );
+
+            // then
+            assertAll(
+                    () -> assertThat(response.getReviews()).hasSize(2),
+                    () -> assertThat(response.getReviews())
+                            .usingRecursiveFieldByFieldElementComparator()
+                            .containsAll(expectedResponse.getReviews())
+            );
+        }
     }
 
     private ReviewByRoleData toReviewByRoleData(final Review review, final Member member) {

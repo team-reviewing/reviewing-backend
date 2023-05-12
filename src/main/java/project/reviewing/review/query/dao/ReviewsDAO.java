@@ -54,6 +54,9 @@ public class ReviewsDAO {
         if (status.isNone()) {
             return "";
         }
+        if (status == ReviewStatus.APPROVED) {
+            return " AND (rv.status = :status OR rv.status = '" + ReviewStatus.EVALUATED.name() + "')";
+        }
         return " AND rv.status = :status";
     }
 
