@@ -37,19 +37,21 @@ public class ReviewSchedulerTest extends IntegrationTest {
         verify(reviewScheduler, atLeast(2)).checkExpirationForAllReview();
     }
 
-    @DisplayName("완료 된 리뷰 중 완료 시점부터 일정 기간이 지나면 삭제한다.")
+    @DisplayName("완료/평가 된 리뷰 중 완료 시점부터 일정 기간이 지나면 삭제한다.")
     @Test
-    void deleteExpiredApprovedReviews() {
+    void deleteExpiredApprovedOrEvaluatedReviews() {
         // given
-        when(time.now()).thenReturn(LocalDateTime.now().minusDays(4));
+        when(time.now()).thenReturn(LocalDateTime.now().minusDays(10));
 
-        final Review review = createReview(Review.assign(1L, 1L, "제목", "본문", "prUrl", 2L, true, time));
-        createReview(Review.assign(1L, 1L, "제목", "본문", "prUrl", 2L, true, time));
+        final Review approvedReview = createReview(Review.assign(1L, 1L, "제목", "본문", "prUrl", 2L, true, time));
+        final Review evaluatedReview = createReview(Review.assign(1L, 1L, "제목", "본문", "prUrl", 2L, true, time));
         createReview(Review.assign(1L, 1L, "제목", "본문", "prUrl", 2L, true, time));
 
-        review.accept(time);
-        review.approve(time);
-        entityManager.merge(review);
+        approvedReview.approve(time);
+        evaluatedReview.approve(time);
+        evaluatedReview.evaluate();
+        entityManager.merge(approvedReview);
+        entityManager.merge(evaluatedReview);
         entityManager.flush();
         entityManager.clear();
 
@@ -57,14 +59,14 @@ public class ReviewSchedulerTest extends IntegrationTest {
         reviewScheduler.checkExpirationForAllReview();
 
         // then
-        assertThat(reviewRepository.findAll()).hasSize(2);
+        assertThat(reviewRepository.findAll()).hasSize(1);
     }
 
     @DisplayName("거절 된 리뷰 중 거절 시점부터 일정 기간이 지나면 삭제한다.")
     @Test
     void deleteExpiredRefusedReviews() {
         // given
-        when(time.now()).thenReturn(LocalDateTime.now().minusDays(4));
+        when(time.now()).thenReturn(LocalDateTime.now().minusDays(10));
 
         final Review review = createReview(Review.assign(1L, 1L, "제목", "본문", "prUrl", 2L, true, time));
         createReview(Review.assign(1L, 1L, "제목", "본문", "prUrl", 2L, true, time));
@@ -83,9 +85,9 @@ public class ReviewSchedulerTest extends IntegrationTest {
 
     @DisplayName("생성/수락 된 리뷰 중 생성/수락 시점부터 일정 기간이 지나면 거절 상태로 변경한다.")
     @Test
-    void refuseExpiredAcceptedReviews() {
+    void refuseExpiredCreatedOrAcceptedReviews() {
         // given
-        when(time.now()).thenReturn(LocalDateTime.now().minusDays(4));
+        when(time.now()).thenReturn(LocalDateTime.now().minusDays(10));
 
         final Review review = createReview(Review.assign(1L, 1L, "제목", "본문", "prUrl", 2L, true, time));
         createReview(Review.assign(1L, 1L, "제목", "본문", "prUrl", 2L, true, time));
