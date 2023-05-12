@@ -19,9 +19,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import project.reviewing.member.command.application.request.MyInformationUpdateRequest;
-import project.reviewing.member.command.application.request.ReviewerRegistrationRequest;
-import project.reviewing.member.command.application.request.ReviewerUpdateRequest;
+import project.reviewing.member.presentation.request.MyInformationUpdateRequest;
+import project.reviewing.member.presentation.request.ReviewerRegistrationRequest;
+import project.reviewing.member.presentation.request.ReviewerUpdateRequest;
 import project.reviewing.unit.ControllerTest;
 
 @DisplayName("MemberController 는 ")
