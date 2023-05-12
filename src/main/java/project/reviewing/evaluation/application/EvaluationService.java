@@ -49,6 +49,7 @@ public class EvaluationService {
         }
     }
 
+    @Transactional(readOnly = true)
     public SingleEvaluationResponse findSingleEvaluationByReviewId(final Long reviewId) {
         final Evaluation evaluation = evaluationRepository.findByReviewId(reviewId)
                 .orElseThrow(EvaluationNotFoundException::new);
