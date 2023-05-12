@@ -12,6 +12,7 @@ import project.reviewing.evaluation.presentation.request.EvaluationCreateRequest
 import project.reviewing.unit.ControllerTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -86,6 +87,18 @@ public class EvaluationControllerTest extends ControllerTest {
                             result -> assertThat(result.getResolvedException())
                                     .isInstanceOf(MethodArgumentNotValidException.class)
                     );
+        }
+    }
+
+    @DisplayName("단일 리뷰 평가 조회 시 ")
+    @Nested
+    class SingleEvaluationReadTest {
+
+        @DisplayName("요청이 유효하면 200 반환한다.")
+        @Test
+        void validReadSingleEvaluation() throws Exception {
+            requestHttp(get("/evaluations/1"), null)
+                    .andExpect(status().isOk());
         }
     }
 }

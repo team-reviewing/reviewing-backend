@@ -110,26 +110,6 @@ public class Review {
         return true;
     }
 
-    public boolean isExpiredInCreatedStatus() {
-        return (status == ReviewStatus.CREATED) && isExpired();
-    }
-
-    public boolean isExpiredInAcceptedStatus() {
-        return (status == ReviewStatus.ACCEPTED) && isExpired();
-    }
-
-    public boolean isExpiredInRefusedStatus() {
-        return (status == ReviewStatus.REFUSED) && isExpired();
-    }
-
-    public boolean isExpiredInApprovedStatus() {
-        return (status == ReviewStatus.APPROVED) && isExpired();
-    }
-
-    public LocalDateTime findExpireDate() {
-        return statusSetAt.plusDays(3);
-    }
-
     public void checkReviewer(final Long reviewerId) {
         if (!this.reviewerId.equals(reviewerId)) {
             throw new InvalidReviewException(ErrorType.NOT_REVIEWER_OF_REVIEW);
@@ -140,6 +120,20 @@ public class Review {
         if (!this.revieweeId.equals(revieweeId)) {
             throw new InvalidReviewException(ErrorType.NOT_REVIEWEE_OF_REVIEW);
         }
+    }
+
+    public boolean isTimeToChangeToRefusedStatus() {
+        return (status == ReviewStatus.CREATED || status == ReviewStatus.ACCEPTED)
+                && isExpired();
+    }
+
+    public boolean isTimeToRemove() {
+        return (status == ReviewStatus.REFUSED || status == ReviewStatus.APPROVED || status == ReviewStatus.EVALUATED)
+                && isExpired();
+    }
+
+    public LocalDateTime findExpireDate() {
+        return statusSetAt.plusDays(status.getExpirePeriod());
     }
 
     private void checkStatusCreated() {

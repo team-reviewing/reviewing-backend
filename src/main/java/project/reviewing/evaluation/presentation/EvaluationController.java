@@ -1,12 +1,10 @@
 package project.reviewing.evaluation.presentation;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import project.reviewing.auth.presentation.AuthenticatedMember;
 import project.reviewing.evaluation.application.EvaluationService;
+import project.reviewing.evaluation.application.response.SingleEvaluationResponse;
 import project.reviewing.evaluation.presentation.request.EvaluationCreateRequest;
 
 import javax.validation.Valid;
@@ -24,5 +22,10 @@ public class EvaluationController {
             @Valid @RequestBody final EvaluationCreateRequest evaluationCreateRequest
     ) {
         evaluationService.createEvaluation(memberId, reviewerId, evaluationCreateRequest);
+    }
+
+    @GetMapping("/evaluations/{review-id}")
+    public SingleEvaluationResponse readSingleEvaluation(@PathVariable("review-id") final Long reviewId) {
+        return evaluationService.findSingleEvaluationByReviewId(reviewId);
     }
 }
