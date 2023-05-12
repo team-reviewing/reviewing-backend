@@ -17,7 +17,7 @@ public class ReviewerControllerTest extends ControllerTest {
 
     @DisplayName("리뷰어 목록 조회 시")
     @Nested
-    class ReviewerFindTest {
+    class ReviewersFindTest {
 
         @DisplayName("정상적인 경우 200을 반환한다.")
         @Test
@@ -47,6 +47,19 @@ public class ReviewerControllerTest extends ControllerTest {
                             .param("size", size))
                     .andDo(print())
                     .andExpect(status().isBadRequest());
+        }
+    }
+
+    @DisplayName("단일 리뷰 조회 시 ")
+    @Nested
+    class SingleReviewerFindTest {
+
+        @DisplayName("정상적인 경우 200 반환한다.")
+        @Test
+        void findSingleReviewer() throws Exception {
+            mockMvc.perform(get("/reviewers/1"))
+                    .andDo(print())
+                    .andExpect(status().isOk());
         }
     }
 }
