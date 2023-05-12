@@ -1,7 +1,9 @@
 package project.reviewing.evaluation.application.response;
 
+import lombok.Getter;
 import project.reviewing.evaluation.domain.Evaluation;
 
+@Getter
 public class SingleEvaluationResponse {
 
     private Long id;
