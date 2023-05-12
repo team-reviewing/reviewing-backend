@@ -56,9 +56,7 @@ public class Review {
     }
 
     public void update(final Long revieweeId, final String updatingContent) {
-        if (!this.revieweeId.equals(revieweeId)) {
-            throw new InvalidReviewException(ErrorType.NOT_REVIEWEE_OF_REVIEW);
-        }
+        checkReviewee(revieweeId);
         content = updatingContent;
     }
 
@@ -75,6 +73,10 @@ public class Review {
     public void approve(Time time) {
         status = ReviewStatus.APPROVED;
         statusSetAt = time.now();
+    }
+
+    public void evaluate() {
+        status = ReviewStatus.EVALUATED;
     }
 
     public boolean canAccept(final Long reviewerId) {
@@ -101,6 +103,13 @@ public class Review {
         return true;
     }
 
+    public boolean canEvaluate(final Long revieweeId, final long reviewerId) {
+        checkReviewee(revieweeId);
+        checkReviewer(reviewerId);
+        checkStatusApproved();
+        return true;
+    }
+
     public boolean isExpiredInCreatedStatus() {
         return (status == ReviewStatus.CREATED) && isExpired();
     }
@@ -121,9 +130,15 @@ public class Review {
         return statusSetAt.plusDays(3);
     }
 
-    private void checkReviewer(final Long reviewerId) {
+    public void checkReviewer(final Long reviewerId) {
         if (!this.reviewerId.equals(reviewerId)) {
             throw new InvalidReviewException(ErrorType.NOT_REVIEWER_OF_REVIEW);
+        }
+    }
+
+    public void checkReviewee(final Long revieweeId) {
+        if (!this.revieweeId.equals(revieweeId)) {
+            throw new InvalidReviewException(ErrorType.NOT_REVIEWEE_OF_REVIEW);
         }
     }
 
@@ -141,6 +156,12 @@ public class Review {
 
     private void checkStatusRefused() {
         if (status != ReviewStatus.REFUSED) {
+            throw new InvalidReviewException(ErrorType.NOT_PROPER_REVIEW_STATUS);
+        }
+    }
+
+    private void checkStatusApproved() {
+        if (status != ReviewStatus.APPROVED) {
             throw new InvalidReviewException(ErrorType.NOT_PROPER_REVIEW_STATUS);
         }
     }

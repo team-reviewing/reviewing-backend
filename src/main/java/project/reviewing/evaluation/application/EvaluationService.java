@@ -37,16 +37,13 @@ public class EvaluationService {
         if (evaluationRepository.existsByReviewId(evaluationCreateRequest.getReviewId())) {
             throw new InvalidEvaluationException(ErrorType.ALREADY_EVALUATED);
         }
-        if (!memberId.equals(review.getRevieweeId())) {
-            throw new InvalidEvaluationException(ErrorType.NOT_REVIEWEE_OF_REVIEW);
-        }
-        if (!reviewerMember.getReviewer().getId().equals(review.getReviewerId())) {
-            throw new InvalidEvaluationException(ErrorType.NOT_REVIEWER_OF_REVIEW);
-        }
 
-        reviewerMember.updateReviewerScore(evaluationCreateRequest.getScore());
+        if (review.canEvaluate(memberId, reviewerId)) {
+            review.evaluate();
+            reviewerMember.updateReviewerScore(evaluationCreateRequest.getScore());
 
-        Evaluation evaluation = evaluationCreateRequest.toEntity(reviewerId, memberId);
-        evaluationRepository.save(evaluation);
+            Evaluation evaluation = evaluationCreateRequest.toEntity(reviewerId, memberId);
+            evaluationRepository.save(evaluation);
+        }
     }
 }
