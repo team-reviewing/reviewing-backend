@@ -25,10 +25,7 @@ public class EvaluationController {
     }
 
     @GetMapping("/evaluations/{review-id}")
-    public SingleEvaluationResponse readSingleEvaluation(
-            @AuthenticatedMember final Long memberId,
-            @PathVariable("review-id") final Long reviewId
-    ) {
-        return new SingleEvaluationResponse();
+    public SingleEvaluationResponse readSingleEvaluation(@PathVariable("review-id") final Long reviewId) {
+        return evaluationService.findSingleEvaluationByReviewId(reviewId);
     }
 }
