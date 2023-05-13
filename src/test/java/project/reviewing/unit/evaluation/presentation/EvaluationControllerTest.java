@@ -110,17 +110,37 @@ public class EvaluationControllerTest extends ControllerTest {
         @DisplayName("요청이 유효하면 200 반환한다.")
         @Test
         void findEvaluationsForReviewer() throws Exception {
-            mockMvc.perform(get("/reviewers/1/evaluations")
-                            .param("page", "0"))
+            mockMvc.perform(get("/evaluations")
+                            .param("reviewerId", "1"))
                     .andDo(print())
                     .andExpect(status().isOk());
+        }
+
+        @DisplayName("reviewerId 파라미터가 존재하지 않는 경우 400을 반환한다.")
+        @Test
+        void findEvaluationsForReviewerByNotExistReviewerId() throws Exception {
+            mockMvc.perform(get("/evaluations"))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest());
+        }
+
+        @DisplayName("reviewerId 파라미터에 올바르지 않은 값이 입력되는 경우 400을 반환한다.")
+        @ValueSource(strings = {" ", "string"})
+        @NullAndEmptySource
+        @ParameterizedTest
+        void findEvaluationsForReviewerByInvalidReviewerId(final String reviewerId) throws Exception {
+            mockMvc.perform(get("/evaluations")
+                            .param("reviewerId", reviewerId))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest());
         }
 
         @DisplayName("page 파라미터에 올바르지 않은 값이 입력되는 경우 400을 반환한다.")
         @ValueSource(strings = {"-1", ""})
         @ParameterizedTest
-        void findReviewerByInvalidPage(final String page) throws Exception {
-            mockMvc.perform(get("/reviewers/1/evaluations")
+        void findEvaluationsForReviewerByInvalidPage(final String page) throws Exception {
+            mockMvc.perform(get("/evaluations")
+                            .param("reviewerId", "1")
                             .param("page", page))
                     .andDo(print())
                     .andExpect(status().isBadRequest());
@@ -129,8 +149,9 @@ public class EvaluationControllerTest extends ControllerTest {
         @DisplayName("size 파라미터에 올바르지 않은 값이 입력되는 경우 400을 반환한다.")
         @ValueSource(strings = {"-1", "0", ""})
         @ParameterizedTest
-        void findReviewerByInvalidSize(final String size) throws Exception {
-            mockMvc.perform(get("/reviewers/1/evaluations")
+        void findEvaluationsForReviewerByInvalidSize(final String size) throws Exception {
+            mockMvc.perform(get("/evaluations")
+                            .param("reviewerId", "1")
                             .param("size", size))
                     .andDo(print())
                     .andExpect(status().isBadRequest());
