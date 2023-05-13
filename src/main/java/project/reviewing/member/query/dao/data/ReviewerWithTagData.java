@@ -14,10 +14,11 @@ public class ReviewerWithTagData {
     private final String imageUrl;
     private final String profileUrl;
     private final TagData tagData;
+    private final Float score;
 
     public ReviewerWithTagData(
-            final Long id, final String job, final String career, final String introduction,
-            final String username, final String imageUrl, final String profileUrl, final TagData tagData
+            final Long id, final String job, final String career, final String introduction, final String username,
+            final String imageUrl, final String profileUrl, final TagData tagData, final Float score
     ) {
         this.id = id;
         this.job = job;
@@ -27,5 +28,6 @@ public class ReviewerWithTagData {
         this.imageUrl = imageUrl;
         this.profileUrl = profileUrl;
         this.tagData = tagData;
+        this.score = score;
     }
 }

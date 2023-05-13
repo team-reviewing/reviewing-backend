@@ -1,4 +1,4 @@
-package project.reviewing.member.command.application.request;
+package project.reviewing.member.presentation.request;
 
 import java.util.HashSet;
 import java.util.List;
@@ -13,7 +13,7 @@ import project.reviewing.member.command.domain.Reviewer;
 
 @Getter
 @NoArgsConstructor
-public class ReviewerUpdateRequest {
+public class ReviewerRegistrationRequest {
 
     @NotBlank(message = "직무를 입력해 주세요.")
     private String job;
@@ -28,7 +28,7 @@ public class ReviewerUpdateRequest {
     @NotBlank(message = "자기 소개를 입력해 주세요.")
     private String introduction;
 
-    public ReviewerUpdateRequest(
+    public ReviewerRegistrationRequest(
             final String job, final String career, final List<Long> techStack, final String introduction
     ) {
         this.job = job;
@@ -39,7 +39,7 @@ public class ReviewerUpdateRequest {
 
     public Reviewer toEntity() {
         return new Reviewer(
-                Job.findValue(job), Career.findByValueAndYear(career), new HashSet<>(techStack), introduction
+                Job.findValue(job), Career.findByValueAndYear(career), new HashSet<Long>(techStack), introduction
         );
     }
 }

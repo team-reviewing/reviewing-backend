@@ -4,12 +4,10 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import project.reviewing.member.query.application.MemberQueryService;
 import project.reviewing.member.query.application.response.ReviewersResponse;
+import project.reviewing.member.query.application.response.SingleReviewerResponse;
 
 @RequestMapping("/reviewers")
 @RequiredArgsConstructor
@@ -25,5 +23,12 @@ public class ReviewerController {
             @RequestParam(name = "tag", required = false) final List<Long> tagIds
     ) {
         return memberQueryService.findReviewers(pageable, categoryId, tagIds);
+    }
+
+    @GetMapping("/{reviewer-id}")
+    public SingleReviewerResponse findSingleReviewer(
+            @PathVariable("reviewer-id") final Long reviewerId
+    ) {
+        return memberQueryService.findSingleReviewer(reviewerId);
     }
 }

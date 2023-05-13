@@ -26,7 +26,7 @@ public class ReviewerDataMapper {
                     .get();
             reviewerData.add(new ReviewerData(
                     data.getId(), data.getJob(), data.getCareer(), data.getIntroduction(),
-                    data.getUsername(), data.getImageUrl(), data.getProfileUrl(), tagData
+                    data.getUsername(), data.getImageUrl(), data.getProfileUrl(), tagData, data.getScore()
             ));
         }
 
