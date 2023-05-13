@@ -29,6 +29,6 @@ public class ReviewerController {
     public SingleReviewerResponse findSingleReviewer(
             @PathVariable("reviewer-id") final Long reviewerId
     ) {
-        return memberQueryService.findReviewer(reviewerId);
+        return memberQueryService.findSingleReviewer(reviewerId);
     }
 }

@@ -21,11 +21,9 @@ import project.reviewing.member.command.domain.Job;
 import project.reviewing.member.command.domain.Member;
 import project.reviewing.member.command.domain.Reviewer;
 import project.reviewing.member.exception.MemberNotFoundException;
+import project.reviewing.member.exception.ReviewerNotFoundException;
 import project.reviewing.member.query.application.MemberQueryService;
-import project.reviewing.member.query.application.response.MyInformationResponse;
-import project.reviewing.member.query.application.response.MyReviewerInformationResponse;
-import project.reviewing.member.query.application.response.ReviewerResponse;
-import project.reviewing.member.query.application.response.ReviewersResponse;
+import project.reviewing.member.query.application.response.*;
 import project.reviewing.member.query.dao.data.MyInformationData;
 import project.reviewing.member.query.dao.data.ReviewerData;
 import project.reviewing.tag.command.domain.Category;
@@ -122,6 +120,39 @@ public class MemberQueryServiceTest extends IntegrationTest {
                             Arrays.stream(Career.values()).map(Career::getCareer).collect(Collectors.toList()),
                             tagRepository.findAll().stream().map(TagResponse::from).collect(Collectors.toList())
                     ));
+        }
+    }
+
+    @DisplayName("단일 리뷰어 목록 조회 시 ")
+    @Nested
+    class SingleReviewerFindTest {
+
+        @DisplayName("Reviewer Id로 조회한다.")
+        @Test
+        void findByReviewerId() {
+            final Category category = createCategory(new Category("백엔드"));
+            final Tag tag = createTag(new Tag("Java", category));
+            final Member reviewerMember = createMemberAndRegisterReviewer(
+                    new Member(2L, "bboor", "bboor@gmail.com", "imageUrl", "https://github.com/bboor"),
+                    new Reviewer(Job.BACKEND, Career.JUNIOR, Set.of(tag.getId()), "소개글")
+            );
+
+            reviewerMember.updateReviewerScore(3.5F);
+            entityManager.merge(reviewerMember);
+            entityManager.flush();
+            entityManager.clear();
+
+            final SingleReviewerResponse response = memberQueryService.findSingleReviewer(reviewerMember.getReviewer().getId());
+
+            assertThat(response).usingRecursiveComparison()
+                    .isEqualTo(makeSingleReviewerResponse(reviewerMember, tag));
+        }
+
+        @DisplayName("Reviewer Id로 조회했을 때 리뷰어 정보가 없으면 예외 반환한다.")
+        @Test
+        void findNotExistReviewerByReviewerId() {
+            assertThatThrownBy(() -> memberQueryService.findSingleReviewer(1L))
+                    .isInstanceOf(ReviewerNotFoundException.class);
         }
     }
 
@@ -268,6 +299,24 @@ public class MemberQueryServiceTest extends IntegrationTest {
                         member.getReviewer().getCareer().getCareer(), member.getReviewer().getIntroduction(),
                         member.getUsername(), member.getImageUrl(),
                         member.getProfileUrl(), techStack, member.getReviewer().getScore()
+                )
+        );
+    }
+
+    private SingleReviewerResponse makeSingleReviewerResponse(final Member reviewerMember, final Tag... tags) {
+        return SingleReviewerResponse.from(
+                new ReviewerData(
+                        reviewerMember.getReviewer().getId(),
+                        reviewerMember.getReviewer().getJob().getValue(),
+                        reviewerMember.getReviewer().getCareer().getCareer(),
+                        reviewerMember.getReviewer().getIntroduction(),
+                        reviewerMember.getUsername(),
+                        reviewerMember.getImageUrl(),
+                        reviewerMember.getProfileUrl(),
+                        Arrays.stream(tags)
+                                .map(t -> new TagData(t.getId(), t.getName()))
+                                .collect(Collectors.toList()),
+                        reviewerMember.getReviewer().getScore()
                 )
         );
     }
