@@ -1,4 +1,4 @@
-package project.reviewing.evaluation.domain;
+package project.reviewing.evaluation.command.domain;
 
 import lombok.AccessLevel;
 import lombok.Getter;

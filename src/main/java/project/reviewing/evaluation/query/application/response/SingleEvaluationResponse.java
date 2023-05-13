@@ -1,7 +1,7 @@
-package project.reviewing.evaluation.application.response;
+package project.reviewing.evaluation.query.application.response;
 
 import lombok.Getter;
-import project.reviewing.evaluation.domain.Evaluation;
+import project.reviewing.evaluation.command.domain.Evaluation;
 
 @Getter
 public class SingleEvaluationResponse {

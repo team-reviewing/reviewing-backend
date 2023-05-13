@@ -1,4 +1,4 @@
-package project.reviewing.evaluation.application.response;
+package project.reviewing.evaluation.command.application.response;
 
 import lombok.Getter;
 
