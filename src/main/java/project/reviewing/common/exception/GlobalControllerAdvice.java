@@ -7,6 +7,7 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import project.reviewing.common.exception.response.ErrorResponse;
 
 @RestControllerAdvice
@@ -35,7 +36,9 @@ public class GlobalControllerAdvice {
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(MissingServletRequestParameterException.class)
+    @ExceptionHandler({
+            MissingServletRequestParameterException.class, MethodArgumentTypeMismatchException.class
+    })
     public ErrorResponse handleMissingServletRequestParameterException(final MissingServletRequestParameterException e) {
         return new ErrorResponse(ErrorType.INVALID_FORMAT.getCode(), e.getMessage());
     }

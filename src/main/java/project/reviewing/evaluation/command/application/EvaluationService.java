@@ -1,13 +1,11 @@
-package project.reviewing.evaluation.application;
+package project.reviewing.evaluation.command.application;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.reviewing.common.exception.ErrorType;
-import project.reviewing.evaluation.application.response.SingleEvaluationResponse;
-import project.reviewing.evaluation.domain.Evaluation;
-import project.reviewing.evaluation.domain.EvaluationRepository;
-import project.reviewing.evaluation.exception.EvaluationNotFoundException;
+import project.reviewing.evaluation.command.domain.Evaluation;
+import project.reviewing.evaluation.command.domain.EvaluationRepository;
 import project.reviewing.evaluation.exception.InvalidEvaluationException;
 import project.reviewing.evaluation.presentation.request.EvaluationCreateRequest;
 import project.reviewing.member.command.domain.Member;
@@ -47,13 +45,5 @@ public class EvaluationService {
             Evaluation evaluation = evaluationCreateRequest.toEntity(reviewerId, memberId);
             evaluationRepository.save(evaluation);
         }
-    }
-
-    @Transactional(readOnly = true)
-    public SingleEvaluationResponse findSingleEvaluationByReviewId(final Long reviewId) {
-        final Evaluation evaluation = evaluationRepository.findByReviewId(reviewId)
-                .orElseThrow(EvaluationNotFoundException::new);
-
-        return SingleEvaluationResponse.from(evaluation);
     }
 }

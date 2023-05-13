@@ -17,7 +17,8 @@ import project.reviewing.auth.application.AuthService;
 import project.reviewing.auth.domain.RefreshTokenRepository;
 import project.reviewing.auth.infrastructure.TokenProvider;
 import project.reviewing.auth.presentation.AuthContext;
-import project.reviewing.evaluation.application.EvaluationService;
+import project.reviewing.evaluation.command.application.EvaluationService;
+import project.reviewing.evaluation.query.application.EvaluationQueryService;
 import project.reviewing.member.command.application.MemberService;
 import project.reviewing.member.query.application.MemberQueryService;
 import project.reviewing.review.query.application.ReviewQueryService;
@@ -61,6 +62,9 @@ public class ControllerTest {
 
     @MockBean
     protected EvaluationService evaluationService;
+
+    @MockBean
+    protected EvaluationQueryService evaluationQueryService;
 
     @MockBean
     protected RefreshTokenRepository refreshTokenRepository;
