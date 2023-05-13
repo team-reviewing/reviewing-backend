@@ -12,6 +12,7 @@ import project.reviewing.common.util.ReviewingTime;
 import project.reviewing.common.util.Time;
 import project.reviewing.evaluation.command.domain.Evaluation;
 import project.reviewing.evaluation.command.domain.EvaluationRepository;
+import project.reviewing.evaluation.query.dao.EvaluationsDAO;
 import project.reviewing.member.command.domain.Member;
 import project.reviewing.member.command.domain.MemberRepository;
 import project.reviewing.member.command.domain.Reviewer;
@@ -67,6 +68,9 @@ public abstract class IntegrationTest {
 
     @Autowired
     protected ReviewDAO reviewDAO;
+
+    @Autowired
+    protected EvaluationsDAO evaluationsDAO;
 
     @Autowired
     protected TestEntityManager entityManager;
