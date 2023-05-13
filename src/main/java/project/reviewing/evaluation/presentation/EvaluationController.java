@@ -34,7 +34,7 @@ public class EvaluationController {
             @PageableDefault(size = 3) final Pageable pageable,
             @RequestParam(name = "reviewerId") final Long reviewerId
     ) {
-        return new EvaluationsForReviewerResponse();
+        return evaluationQueryService.findEvaluationsForReviewerInPage(reviewerId, pageable);
     }
 
     @GetMapping("/evaluations/{review-id}")
