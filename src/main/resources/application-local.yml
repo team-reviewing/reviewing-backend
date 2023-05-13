@@ -4,9 +4,9 @@ server:
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: ${db.dev.url}
-    username: ${db.dev.username}
-    password: ${db.dev.password}
+    url: ${db.local.url}
+    username: ${db.local.username}
+    password: ${db.local.password}
 
   jpa:
     hibernate:

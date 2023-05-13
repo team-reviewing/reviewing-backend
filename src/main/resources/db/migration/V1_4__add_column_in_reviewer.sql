@@ -1,2 +1,2 @@
 ALTER TABLE reviewer ADD score FLOAT NOT NULL DEFAULT 0.0;
-ALTER TABLE reviewer ADD evaluation_cnt BIGINT NOT NULL DEFAULT 1;
+ALTER TABLE reviewer ADD evaluation_cnt BIGINT NOT NULL DEFAULT 0;
