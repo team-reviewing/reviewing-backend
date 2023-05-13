@@ -1,6 +1,8 @@
 package project.reviewing.evaluation.presentation;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 import project.reviewing.auth.presentation.AuthenticatedMember;
 import project.reviewing.evaluation.application.EvaluationService;
@@ -31,7 +33,10 @@ public class EvaluationController {
     }
 
     @GetMapping("reviewers/{reviewer-id}/evaluations")
-    public EvaluationsForReviewerResponse findEvaluationsForReviewer(@PathVariable("reviewer-id") final Long reviewerId) {
+    public EvaluationsForReviewerResponse findEvaluationsForReviewer(
+            @PageableDefault(size = 3) final Pageable pageable,
+            @PathVariable("reviewer-id") final Long reviewerId
+    ) {
         return new EvaluationsForReviewerResponse();
     }
 }
