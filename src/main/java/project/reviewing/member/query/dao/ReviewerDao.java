@@ -24,9 +24,20 @@ public class ReviewerDao {
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
+    public boolean existsById(final Long id) {
+        final String sql = "SELECT EXISTS ( "
+                + "SELECT * "
+                + "FROM reviewer "
+                + "WHERE id = :id "
+                + ")";
+        final SqlParameterSource params = new MapSqlParameterSource("id", id);
+
+        return Boolean.TRUE.equals(jdbcTemplate.queryForObject(sql, params, Boolean.class));
+    }
+
     public boolean existByMemberId(final Long memberId) {
         final String sql = "SELECT EXISTS ( "
-                + "SELECT 1 "
+                + "SELECT * "
                 + "FROM reviewer "
                 + "WHERE member_id = :memberId "
                 + ")";
