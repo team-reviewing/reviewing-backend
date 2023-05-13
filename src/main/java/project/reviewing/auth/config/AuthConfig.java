@@ -26,7 +26,9 @@ public class AuthConfig implements WebMvcConfigurer {
                         "/auth/login/*", "/auth/refresh",
                         "/tags",
                         "/reviewers", "/reviewers/{reviewer-id}",
-                        "/favicon.ico", "/error");
+                        "/reviewers/{reviewer-id}/evaluations",
+                        "/favicon.ico", "/error"
+                );
         registry.addInterceptor(refreshInterceptor)
                 .addPathPatterns("/auth/refresh");
     }
