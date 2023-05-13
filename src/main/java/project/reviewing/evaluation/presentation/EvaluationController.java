@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import project.reviewing.auth.presentation.AuthenticatedMember;
 import project.reviewing.evaluation.application.EvaluationService;
+import project.reviewing.evaluation.application.response.EvaluationsForReviewerResponse;
 import project.reviewing.evaluation.application.response.SingleEvaluationResponse;
 import project.reviewing.evaluation.presentation.request.EvaluationCreateRequest;
 
@@ -27,5 +28,10 @@ public class EvaluationController {
     @GetMapping("/evaluations/{review-id}")
     public SingleEvaluationResponse readSingleEvaluation(@PathVariable("review-id") final Long reviewId) {
         return evaluationService.findSingleEvaluationByReviewId(reviewId);
+    }
+
+    @GetMapping("reviewers/{reviewer-id}/evaluations")
+    public EvaluationsForReviewerResponse findEvaluationsForReviewer(@PathVariable("reviewer-id") final Long reviewerId) {
+        return new EvaluationsForReviewerResponse();
     }
 }
