@@ -270,7 +270,7 @@ public class MemberQueryServiceTest extends IntegrationTest {
                         member.getReviewer().getId(), member.getReviewer().getJob().getValue(),
                         member.getReviewer().getCareer().getCareer(), member.getReviewer().getIntroduction(),
                         member.getUsername(), member.getImageUrl(),
-                        member.getProfileUrl(), techStack
+                        member.getProfileUrl(), techStack, member.getReviewer().getScore()
                 )
         );
     }

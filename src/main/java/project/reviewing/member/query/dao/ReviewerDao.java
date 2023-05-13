@@ -35,6 +35,18 @@ public class ReviewerDao {
         return Boolean.TRUE.equals(jdbcTemplate.queryForObject(sql, params, Boolean.class));
     }
 
+    public List<ReviewerData> findById(final Long reviewerId) {
+        final String sql = "SELECT r.job, r.career, r.introduction, r.id, r.score, m.username, m.image_url, m.profile_url, t.id tag_id, t.name tag_name "
+                + "FROM reviewer r "
+                + "JOIN member m ON r.member_id = m.id "
+                + "JOIN reviewer_tag rt ON r.id = rt.reviewer_id "
+                + "JOIN tag t ON rt.tag_id = t.id "
+                + "WHERE r.id = :reviewerId ";
+        final SqlParameterSource params = new MapSqlParameterSource("reviewerId", reviewerId);
+
+        return ReviewerDataMapper.map(jdbcTemplate.query(sql, params, rowMapper()));
+    }
+
     public List<MyReviewerInformationData> findByMemberId(final Long memberId) {
         final String sql = "SELECT r.job job, r.career career, r.introduction introduction, t.id tag_id, t.name tag_name "
                 + "FROM reviewer r "
