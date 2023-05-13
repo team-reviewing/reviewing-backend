@@ -29,16 +29,16 @@ public class EvaluationController {
         evaluationService.createEvaluation(memberId, reviewerId, evaluationCreateRequest);
     }
 
+    @GetMapping("/evaluations")
+    public EvaluationsForReviewerResponse findEvaluationsForReviewer(
+            @PageableDefault(size = 3) final Pageable pageable,
+            @RequestParam(name = "reviewerId") final Long reviewerId
+    ) {
+        return new EvaluationsForReviewerResponse();
+    }
+
     @GetMapping("/evaluations/{review-id}")
     public SingleEvaluationResponse readSingleEvaluation(@PathVariable("review-id") final Long reviewId) {
         return evaluationQueryService.findSingleEvaluationByReviewId(reviewId);
-    }
-
-    @GetMapping("reviewers/{reviewer-id}/evaluations")
-    public EvaluationsForReviewerResponse findEvaluationsForReviewer(
-            @PageableDefault(size = 3) final Pageable pageable,
-            @PathVariable("reviewer-id") final Long reviewerId
-    ) {
-        return new EvaluationsForReviewerResponse();
     }
 }

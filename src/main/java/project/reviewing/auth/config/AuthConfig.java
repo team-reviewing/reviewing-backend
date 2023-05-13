@@ -26,7 +26,7 @@ public class AuthConfig implements WebMvcConfigurer {
                         "/auth/login/*", "/auth/refresh",
                         "/tags",
                         "/reviewers", "/reviewers/{reviewer-id}",
-                        "/reviewers/{reviewer-id}/evaluations",
+                        "/evaluations",
                         "/favicon.ico", "/error"
                 );
         registry.addInterceptor(refreshInterceptor)
