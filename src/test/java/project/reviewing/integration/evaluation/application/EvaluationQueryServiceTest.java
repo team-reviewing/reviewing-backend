@@ -22,6 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+@DisplayName("EvaluationQueryService는 ")
 public class EvaluationQueryServiceTest extends IntegrationTest {
 
     private EvaluationQueryService evaluationQueryService;

@@ -6,9 +6,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import project.reviewing.common.exception.ErrorType;
 import project.reviewing.evaluation.command.application.EvaluationService;
-import project.reviewing.evaluation.query.application.response.SingleEvaluationResponse;
 import project.reviewing.evaluation.command.domain.Evaluation;
-import project.reviewing.evaluation.exception.EvaluationNotFoundException;
 import project.reviewing.evaluation.exception.InvalidEvaluationException;
 import project.reviewing.evaluation.presentation.request.EvaluationCreateRequest;
 import project.reviewing.integration.IntegrationTest;
@@ -21,9 +19,7 @@ import project.reviewing.review.exception.InvalidReviewException;
 
 import java.util.Set;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 @DisplayName("EvaluationService는 ")
