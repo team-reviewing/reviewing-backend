@@ -101,7 +101,7 @@ public class EvaluationServiceTest extends IntegrationTest {
                     ));
             createEvaluation(
                     new Evaluation(
-                            review.getId(), reviewee.getId(), reviewerMember.getReviewer().getId(), 3.5F, "평가 내용"
+                            reviewerMember.getReviewer().getId(), reviewee.getId(), review.getId(), 3.5F, "평가 내용"
                     ));
             final EvaluationCreateRequest request = new EvaluationCreateRequest(review.getId(), 3.5F, "평가 내용");
 
