@@ -11,9 +11,11 @@ import project.reviewing.member.command.domain.Career;
 import project.reviewing.member.command.domain.Job;
 import project.reviewing.member.command.domain.MemberRepository;
 import project.reviewing.member.exception.MemberNotFoundException;
+import project.reviewing.member.exception.ReviewerNotFoundException;
 import project.reviewing.member.query.application.response.MyInformationResponse;
 import project.reviewing.member.query.application.response.MyReviewerInformationResponse;
 import project.reviewing.member.query.application.response.ReviewersResponse;
+import project.reviewing.member.query.application.response.SingleReviewerResponse;
 import project.reviewing.member.query.dao.MyInformationDao;
 import project.reviewing.member.query.dao.ReviewerDao;
 import project.reviewing.member.query.dao.data.MyInformationData;
@@ -56,6 +58,13 @@ public class MemberQueryService {
                 Arrays.stream(Career.values()).map(Career::getCareer).collect(Collectors.toList()),
                 tagRepository.findAll().stream().map(TagResponse::from).collect(Collectors.toList())
         );
+    }
+
+    public SingleReviewerResponse findSingleReviewer(final Long reviewerId) {
+        if (!reviewerDao.existsById(reviewerId)) {
+            throw new ReviewerNotFoundException();
+        }
+        return SingleReviewerResponse.from(reviewerDao.findById(reviewerId).get(0));
     }
 
     public ReviewersResponse findReviewers(final Pageable pageable, final Long categoryId, final List<Long> tagIds) {

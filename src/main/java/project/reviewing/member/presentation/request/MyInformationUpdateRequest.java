@@ -1,4 +1,4 @@
-package project.reviewing.member.command.application.request;
+package project.reviewing.member.presentation.request;
 
 import javax.validation.constraints.NotBlank;
 import lombok.Getter;

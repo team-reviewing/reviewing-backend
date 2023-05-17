@@ -38,7 +38,7 @@ public class Member {
 
     private boolean isReviewer;
 
-    @OneToOne(cascade = CascadeType.PERSIST, mappedBy = "member")
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, mappedBy = "member")
     private Reviewer reviewer;
 
     public Member(final Long githubId, final String username, final String email, final String imageUrl, final String profileUrl) {
@@ -79,5 +79,9 @@ public class Member {
             throw new InvalidMemberException(ErrorType.DO_NOT_REGISTERED);
         }
         this.isReviewer = !isReviewer;
+    }
+
+    public void updateReviewerScore(final Float evaluationScore) {
+        reviewer.updateScore(evaluationScore);
     }
 }

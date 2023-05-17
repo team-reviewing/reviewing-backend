@@ -75,4 +75,19 @@ public class MemberTest {
 
         assertThat(sut.isReviewer()).isFalse();
     }
+
+    @DisplayName("리뷰어의 평점과 평가 개수를 갱신할 수 있다.")
+    @Test
+    void updateReviewerScore() {
+        final Member sut = new Member(1L, "username", "email@gmail.com", "image.png", "github.com/profile");
+        final Reviewer reviewer = new Reviewer(Job.BACKEND, Career.JUNIOR, Set.of(1L, 2L), "안녕하세요");
+        sut.register(reviewer);
+
+        sut.updateReviewerScore(3.5F);
+
+        assertAll(
+                () -> assertThat(sut.getReviewer().getEvaluationCnt()).isEqualTo(1),
+                () -> assertThat(sut.getReviewer().getScore()).isEqualTo(3.5F)
+        );
+    }
 }

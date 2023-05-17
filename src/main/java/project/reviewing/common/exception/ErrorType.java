@@ -31,6 +31,9 @@ public enum ErrorType {
     NOT_REVIEWER_OF_REVIEW("REVIEW-005", "해당 리뷰의 리뷰어가 아닙니다."),
     NOT_PROPER_REVIEW_STATUS("REVIEW-006", "리뷰의 상태가 적절하지 않습니다."),
     ROLE_IN_REVIEW_NOT_FOUND("REVIEW-007", "해당 리뷰의 역할을 찾을 수 없습니다."),
+
+    ALREADY_EVALUATED("EVALUATION-001", "이미 해당 리뷰에 대한 평가가 되었습니다."),
+    EVALUATION_NOT_FOUND("EVALUATION-002", "해당 평가를 찾을 수 없습니다.")
     ;
 
     private final String code;

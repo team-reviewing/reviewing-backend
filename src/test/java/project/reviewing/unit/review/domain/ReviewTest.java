@@ -192,30 +192,30 @@ public class ReviewTest {
 
     @DisplayName("리뷰를 종료할 수 있는지 조건을 확인할 수 있다.")
     @Test
-    void validFinishReview() {
+    void validCloseReview() {
         final Review review = Review.assign(1L, 1L, "제목", "본문", "prUrl", 2L, true, time);
 
         review.refuse(time);
 
-        assertThat(review.canFinish(1L)).isTrue();
+        assertThat(review.canClose(1L)).isTrue();
     }
 
     @DisplayName("리뷰를 요청받은 리뷰어가 아니면 종료할 수 없다.")
     @Test
-    void finishWithNotReviewerOfReview() {
+    void closeWithNotReviewerOfReview() {
         final Review review = Review.assign(1L, 1L, "제목", "본문", "prUrl", 2L, true, time);
 
-        assertThatThrownBy(() -> review.canFinish(2L))
+        assertThatThrownBy(() -> review.canClose(2L))
                 .isInstanceOf(InvalidReviewException.class)
                 .hasMessage(ErrorType.NOT_REVIEWER_OF_REVIEW.getMessage());
     }
 
     @DisplayName("리뷰의 상태가 REFUSED(거절) 상태가 아니면 종료할 수 없다.")
     @Test
-    void finishWithNotProperStatus() {
+    void closeWithNotProperStatus() {
         final Review review = Review.assign(1L, 1L, "제목", "본문", "prUrl", 2L, true, time);
 
-        assertThatThrownBy(() -> review.canFinish(1L))
+        assertThatThrownBy(() -> review.canClose(1L))
                 .isInstanceOf(InvalidReviewException.class)
                 .hasMessage(ErrorType.NOT_PROPER_REVIEW_STATUS.getMessage());
     }

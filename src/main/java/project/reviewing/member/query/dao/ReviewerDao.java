@@ -24,15 +24,38 @@ public class ReviewerDao {
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
+    public boolean existsById(final Long id) {
+        final String sql = "SELECT EXISTS ( "
+                + "SELECT * "
+                + "FROM reviewer "
+                + "WHERE id = :id "
+                + ")";
+        final SqlParameterSource params = new MapSqlParameterSource("id", id);
+
+        return Boolean.TRUE.equals(jdbcTemplate.queryForObject(sql, params, Boolean.class));
+    }
+
     public boolean existByMemberId(final Long memberId) {
         final String sql = "SELECT EXISTS ( "
-                + "SELECT 1 "
+                + "SELECT * "
                 + "FROM reviewer "
                 + "WHERE member_id = :memberId "
                 + ")";
         final SqlParameterSource params = new MapSqlParameterSource("memberId", memberId);
 
         return Boolean.TRUE.equals(jdbcTemplate.queryForObject(sql, params, Boolean.class));
+    }
+
+    public List<ReviewerData> findById(final Long reviewerId) {
+        final String sql = "SELECT r.job, r.career, r.introduction, r.id, r.score, m.username, m.image_url, m.profile_url, t.id tag_id, t.name tag_name "
+                + "FROM reviewer r "
+                + "JOIN member m ON r.member_id = m.id "
+                + "JOIN reviewer_tag rt ON r.id = rt.reviewer_id "
+                + "JOIN tag t ON rt.tag_id = t.id "
+                + "WHERE r.id = :reviewerId ";
+        final SqlParameterSource params = new MapSqlParameterSource("reviewerId", reviewerId);
+
+        return ReviewerDataMapper.map(jdbcTemplate.query(sql, params, rowMapper()));
     }
 
     public List<MyReviewerInformationData> findByMemberId(final Long memberId) {
@@ -47,7 +70,7 @@ public class ReviewerDao {
     }
 
     public Slice<ReviewerData> findByTag(final Pageable pageable, final Long categoryId, final List<Long> tagIds) {
-        final String sql = "SELECT r.job, r.career, r.introduction, r.id, m.username, m.image_url, m.profile_url, t.id tag_id, t.name tag_name "
+        final String sql = "SELECT r.job, r.career, r.introduction, r.id, r.score, m.username, m.image_url, m.profile_url, t.id tag_id, t.name tag_name "
                 + "FROM reviewer r "
                 + "JOIN member m ON r.member_id = m.id "
                 + "JOIN reviewer_tag rt ON r.id = rt.reviewer_id "
@@ -112,7 +135,8 @@ public class ReviewerDao {
                 rs.getString("username"),
                 rs.getString("image_url"),
                 rs.getString("profile_url"),
-                new TagData(rs.getLong("tag_id"), rs.getString("tag_name"))
+                new TagData(rs.getLong("tag_id"), rs.getString("tag_name")),
+                rs.getFloat("score")
         );
     }
 

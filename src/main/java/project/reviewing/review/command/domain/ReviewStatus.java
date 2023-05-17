@@ -1,15 +1,25 @@
 package project.reviewing.review.command.domain;
 
+import lombok.Getter;
+
 import java.util.Arrays;
 
+@Getter
 public enum ReviewStatus {
 
-    NONE,
-    CREATED,
-    ACCEPTED,
-    REFUSED,
-    APPROVED,
+    NONE(0),
+    CREATED(3),
+    ACCEPTED(5),
+    REFUSED(3),
+    APPROVED(3),
+    EVALUATED(3)
     ;
+
+    private final int expirePeriod;
+
+    ReviewStatus(int expirePeriod) {
+        this.expirePeriod = expirePeriod;
+    }
 
     public static boolean isContain(final String name) {
         return Arrays.stream(values())

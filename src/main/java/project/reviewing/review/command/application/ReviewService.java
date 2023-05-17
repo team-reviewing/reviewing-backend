@@ -29,7 +29,7 @@ public class ReviewService {
     private final Time time;
 
     public void createReview(final Long revieweeId, final Long reviewerId, final ReviewCreateRequest request) {
-        if (reviewDAO.existsByRevieweeIdAndReviewerIdWithNotApproved(revieweeId, reviewerId)) {
+        if (reviewDAO.existsByRevieweeIdAndReviewerIdWithNotApprovedAndEvaluated(revieweeId, reviewerId)) {
             throw new InvalidReviewException(ErrorType.ALREADY_REQUESTED);
         }
 
@@ -81,11 +81,11 @@ public class ReviewService {
         }
     }
 
-    public void finishReview(final Long memberId, final Long reviewId) {
+    public void closeReview(final Long memberId, final Long reviewId) {
         final Review review = findReviewById(reviewId);
         final Member reviewerMember = findMemberById(memberId);
 
-        if (review.canFinish(reviewerMember.getReviewer().getId())) {
+        if (review.canClose(reviewerMember.getReviewer().getId())) {
             reviewRepository.delete(review);
         }
     }
