@@ -31,11 +31,11 @@ public class Evaluation {
     private String content;
 
     public Evaluation(
-            final Long reviewId, final Long revieweeId, final Long reviewerId, final Float score, final String content
+            final Long reviewerId, final Long revieweeId, final Long reviewId, final Float score, final String content
     ) {
-        this.reviewId = reviewId;
-        this.revieweeId = revieweeId;
         this.reviewerId = reviewerId;
+        this.revieweeId = revieweeId;
+        this.reviewId = reviewId;
         this.score = score;
         this.content = content;
     }

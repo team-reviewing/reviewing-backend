@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import project.reviewing.common.exception.ErrorType;
 import project.reviewing.evaluation.command.application.EvaluationService;
 import project.reviewing.evaluation.command.domain.Evaluation;
+import project.reviewing.evaluation.exception.EvaluationNotFoundException;
 import project.reviewing.evaluation.exception.InvalidEvaluationException;
 import project.reviewing.evaluation.presentation.request.EvaluationCreateRequest;
 import project.reviewing.integration.IntegrationTest;
@@ -19,7 +20,9 @@ import project.reviewing.review.exception.InvalidReviewException;
 
 import java.util.Set;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 @DisplayName("EvaluationService는 ")
@@ -45,15 +48,22 @@ public class EvaluationServiceTest extends IntegrationTest {
                     new Member(2L, "bboor", "bboor@gmail.com", "imageUrl", "https://github.com/bboor"),
                     new Reviewer(Job.BACKEND, Career.JUNIOR, Set.of(1L), "소개글")
             );
-            final Review review = createReview(
+            final Review review1 = createReview(
                     Review.assign(
                             reviewee.getId(), reviewerMember.getReviewer().getId(),
-                            "제목", "본문", "prUrl", reviewerMember.getId(), reviewerMember.isReviewer(), time
+                            "제목1", "본문1", "prUrl1", reviewerMember.getId(), reviewerMember.isReviewer(), time
                     ));
-            final EvaluationCreateRequest request = new EvaluationCreateRequest(review.getId(), 3.5F, "평가 내용");
+            final Review review2 = createReview(
+                    Review.assign(
+                            reviewee.getId(), reviewerMember.getReviewer().getId(),
+                            "제목2", "본문2", "prUrl2", reviewerMember.getId(), reviewerMember.isReviewer(), time
+                    ));
+            final EvaluationCreateRequest request = new EvaluationCreateRequest(review2.getId(), 3.5F, "평가 내용");
 
-            review.approve(time);
-            entityManager.merge(review);
+            review1.approve(time);
+            review2.approve(time);
+            entityManager.merge(review1);
+            entityManager.merge(review2);
             entityManager.flush();
             entityManager.clear();
 
@@ -62,6 +72,17 @@ public class EvaluationServiceTest extends IntegrationTest {
                     () -> evaluationService.createEvaluation(
                             reviewee.getId(), reviewerMember.getReviewer().getId(), request
                     ));
+
+            final Evaluation createdEvaluation = evaluationRepository.findByReviewId(review2.getId())
+                    .orElseThrow(EvaluationNotFoundException::new);
+
+            assertAll(
+                    () -> assertThat(createdEvaluation.getReviewerId()).isEqualTo(reviewerMember.getReviewer().getId()),
+                    () -> assertThat(createdEvaluation.getRevieweeId()).isEqualTo(reviewee.getId()),
+                    () -> assertThat(createdEvaluation.getReviewId()).isEqualTo(review2.getId()),
+                    () -> assertThat(createdEvaluation.getScore()).isEqualTo(request.getScore()),
+                    () -> assertThat(createdEvaluation.getContent()).isEqualTo(request.getContent())
+            );
         }
 
         @DisplayName("이미 해당 리뷰에 대한 평가가 생성되었다면 예외 반환한다.")
@@ -80,7 +101,7 @@ public class EvaluationServiceTest extends IntegrationTest {
                     ));
             createEvaluation(
                     new Evaluation(
-                            review.getId(), reviewee.getId(), reviewerMember.getReviewer().getId(), 3.5F, "평가 내용"
+                            reviewerMember.getReviewer().getId(), reviewee.getId(), review.getId(), 3.5F, "평가 내용"
                     ));
             final EvaluationCreateRequest request = new EvaluationCreateRequest(review.getId(), 3.5F, "평가 내용");
 

@@ -35,8 +35,8 @@ public class EvaluationsDAOTest extends IntegrationTest {
                 new Reviewer(Job.BACKEND, Career.JUNIOR, Set.of(1L), "소개글")
         );
 
-        createEvaluation(new Evaluation(1L, reviewee1.getId(), reviewerMember.getReviewer().getId(), 1.5F, "평가1"));
-        createEvaluation(new Evaluation(2L, reviewee2.getId(), reviewerMember.getReviewer().getId(), 2.0F, "평가2"));
+        createEvaluation(new Evaluation(reviewerMember.getReviewer().getId(), reviewee1.getId(), 1L, 1.5F, "평가1"));
+        createEvaluation(new Evaluation(reviewerMember.getReviewer().getId(), reviewee2.getId(), 2L, 2.0F, "평가2"));
 
         // when, then
         Slice<EvaluationForReviewerData> result = evaluationsDAO.findEvaluationsByReviewerId(

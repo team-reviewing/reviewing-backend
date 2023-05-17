@@ -42,7 +42,7 @@ public class EvaluationService {
             review.evaluate();
             reviewerMember.updateReviewerScore(evaluationCreateRequest.getScore());
 
-            Evaluation evaluation = evaluationCreateRequest.toEntity(reviewerId, memberId);
+            Evaluation evaluation = evaluationCreateRequest.toEntity(memberId, reviewerId);
             evaluationRepository.save(evaluation);
         }
     }

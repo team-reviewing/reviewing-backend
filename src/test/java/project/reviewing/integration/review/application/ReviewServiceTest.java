@@ -62,7 +62,7 @@ public class ReviewServiceTest extends IntegrationTest {
             );
         }
 
-        @DisplayName("동일 리뷰어에게 요청한 완료된 리뷰가 존재할 때 정상적으로 새 리뷰가 생성된다.")
+        @DisplayName("동일 리뷰어에게 요청한 완료/평가된 리뷰가 존재할 때 정상적으로 새 리뷰가 생성된다.")
         @Test
         void createAlreadyExistReviewToSameReviewerWithApproved() {
             final Member reviewee = createMember(new Member(1L, "Tom", "Tom@gmail.com", "imageUrl", "https://github.com/Tom"));
@@ -74,13 +74,21 @@ public class ReviewServiceTest extends IntegrationTest {
                     "리뷰 요청합니다.", "본문", "https://github.com/Tom/myproject/pull/1"
             );
 
-            final Review review = createReview(reviewCreateRequest.toEntity(
-                    reviewee.getId(), reviewerMember.getReviewer().getId(),
-                    reviewerMember.getId(), reviewerMember.isReviewer(), time)
-            );
+            final Review review1 = createReview(
+                    Review.assign(
+                            reviewee.getId(), reviewerMember.getReviewer().getId(),
+                            "제목1", "본문1", "prUrl1", reviewerMember.getId(), reviewerMember.isReviewer(), time
+                    ));
+            final Review review2 = createReview(
+                    Review.assign(
+                            reviewee.getId(), reviewerMember.getReviewer().getId(),
+                            "제목2", "본문2", "prUrl2", reviewerMember.getId(), reviewerMember.isReviewer(), time
+                    ));
 
-            reviewService.acceptReview(reviewerMember.getId(), review.getId());
-            reviewService.approveReview(reviewerMember.getId(), review.getId());
+            review1.approve(time);
+            review2.evaluate();
+            entityManager.merge(review1);
+            entityManager.merge(review2);
             entityManager.flush();
             entityManager.clear();
 
