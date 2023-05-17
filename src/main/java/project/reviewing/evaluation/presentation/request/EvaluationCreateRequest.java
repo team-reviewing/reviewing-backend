@@ -25,7 +25,7 @@ public class EvaluationCreateRequest {
         this.content = content;
     }
 
-    public Evaluation toEntity(final Long reviewerId, final Long revieweeId) {
+    public Evaluation toEntity(final Long revieweeId, final Long reviewerId) {
         return new Evaluation(reviewerId, revieweeId, reviewId, score, content);
     }
 }
