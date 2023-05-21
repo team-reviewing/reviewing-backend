@@ -34,7 +34,7 @@ public class EvaluationQueryServiceTest extends IntegrationTest {
 
     @BeforeEach
     void setUp() {
-        evaluationQueryService = new EvaluationQueryService(evaluationRepository, evaluationsDAO);
+        evaluationQueryService = new EvaluationQueryService(evaluationRepository, evaluationsDAO, memberRepository);
     }
 
     @DisplayName("단일 리뷰 평가 조회 시 ")
