@@ -19,6 +19,8 @@ import project.reviewing.member.command.domain.Career;
 import project.reviewing.member.command.domain.Job;
 import project.reviewing.member.command.domain.Member;
 import project.reviewing.member.command.domain.Reviewer;
+import project.reviewing.member.exception.InvalidMemberException;
+import project.reviewing.member.exception.MemberNotFoundException;
 
 import java.util.List;
 import java.util.Set;
@@ -80,7 +82,7 @@ public class EvaluationQueryServiceTest extends IntegrationTest {
         }
     }
 
-    @DisplayName("특정 리뷰어의 리뷰 목록 조회 시 ")
+    @DisplayName("특정 리뷰어의 리뷰 평가 목록 조회 시 ")
     @Nested
     class EvaluationsForReviewerFindTest {
 
@@ -119,6 +121,76 @@ public class EvaluationQueryServiceTest extends IntegrationTest {
                             .containsAll(expectedResponse.getEvaluations()),
                     () -> assertThat(response.isHasNext()).isEqualTo(expectedResponse.isHasNext())
             );
+        }
+    }
+
+    @DisplayName("내 리뷰 평가 목록 조회 시 ")
+    @Nested
+    class MyEvaluationsFindTest {
+
+        @DisplayName("정상적으로 조회된다.")
+        @Test
+        void validFindMyEvaluations() {
+            final Member reviewee1 = createMember(new Member(1L, "Tom", "Tom@gmail.com", "imageUrl", "https://github.com/Tom"));
+            final Member reviewee2 = createMember(new Member(2L, "J", "J@gmail.com", "imageUrl", "https://github.com/J"));
+            final Member reviewerMember = createMemberAndRegisterReviewer(
+                    new Member(3L, "bboor", "bboor@gmail.com", "imageUrl", "https://github.com/bboor"),
+                    new Reviewer(Job.BACKEND, Career.JUNIOR, Set.of(1L), "소개글")
+            );
+            final Pageable pageable = PageRequest.of(0, 2);
+
+            createEvaluation(new Evaluation(reviewerMember.getReviewer().getId(), reviewee1.getId(), 1L, 1.5F, "평가1"));
+            createEvaluation(new Evaluation(reviewerMember.getReviewer().getId(), reviewee2.getId(), 2L, 2.0F, "평가2"));
+
+            EvaluationsForReviewerResponse expectedResponse = EvaluationsForReviewerResponse.of(
+                    new SliceImpl<>(
+                            List.of(
+                                    new EvaluationForReviewerData(
+                                            1L, reviewee1.getUsername(), reviewee1.getImageUrl(), 1.5F, "평가1"
+                                    ),
+                                    new EvaluationForReviewerData(
+                                            2L, reviewee2.getUsername(), reviewee2.getImageUrl(), 2.0F, "평가2"
+                                    )
+                            ), pageable, false)
+            );
+
+            EvaluationsForReviewerResponse response = evaluationQueryService.findEvaluationsForReviewerInPage(
+                    reviewerMember.getReviewer().getId(), PageRequest.of(0, 2)
+            );
+
+            assertAll(
+                    () -> assertThat(response.getEvaluations()).usingRecursiveFieldByFieldElementComparator()
+                            .containsAll(expectedResponse.getEvaluations()),
+                    () -> assertThat(response.isHasNext()).isEqualTo(expectedResponse.isHasNext())
+            );
+        }
+
+        @DisplayName("유저 정보가 없으면 예외 반환한다.")
+        @Test
+        void findMyEvaluationsWithNotExistMember() {
+            final Long invalidMemberId = -1L;
+
+            assertThatThrownBy(
+                    () -> evaluationQueryService.findMyEvaluationsInPage(invalidMemberId, PageRequest.of(0, 2))
+            )
+                    .isInstanceOf(MemberNotFoundException.class)
+                    .hasMessage(ErrorType.MEMBER_NOT_FOUND.getMessage());
+        }
+
+        @DisplayName("리뷰어를 등록하지 않았다면 예외 반환한다.")
+        @Test
+        void findMyEvaluationsWithNotRegisterReviewer() {
+            // given
+            final Member reviewerMember = createMember(
+                    new Member(3L, "bboor", "bboor@gmail.com", "imageUrl", "https://github.com/bboor")
+            );
+
+            // when, then
+            assertThatThrownBy(
+                    () -> evaluationQueryService.findMyEvaluationsInPage(reviewerMember.getId(), PageRequest.of(0, 2))
+            )
+                    .isInstanceOf(InvalidMemberException.class)
+                    .hasMessage(ErrorType.DO_NOT_REGISTERED.getMessage());
         }
     }
 }
