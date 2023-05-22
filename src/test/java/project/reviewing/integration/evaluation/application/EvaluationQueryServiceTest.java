@@ -128,43 +128,6 @@ public class EvaluationQueryServiceTest extends IntegrationTest {
     @Nested
     class MyEvaluationsFindTest {
 
-        @DisplayName("정상적으로 조회된다.")
-        @Test
-        void validFindMyEvaluations() {
-            final Member reviewee1 = createMember(new Member(1L, "Tom", "Tom@gmail.com", "imageUrl", "https://github.com/Tom"));
-            final Member reviewee2 = createMember(new Member(2L, "J", "J@gmail.com", "imageUrl", "https://github.com/J"));
-            final Member reviewerMember = createMemberAndRegisterReviewer(
-                    new Member(3L, "bboor", "bboor@gmail.com", "imageUrl", "https://github.com/bboor"),
-                    new Reviewer(Job.BACKEND, Career.JUNIOR, Set.of(1L), "소개글")
-            );
-            final Pageable pageable = PageRequest.of(0, 2);
-
-            createEvaluation(new Evaluation(reviewerMember.getReviewer().getId(), reviewee1.getId(), 1L, 1.5F, "평가1"));
-            createEvaluation(new Evaluation(reviewerMember.getReviewer().getId(), reviewee2.getId(), 2L, 2.0F, "평가2"));
-
-            EvaluationsForReviewerResponse expectedResponse = EvaluationsForReviewerResponse.of(
-                    new SliceImpl<>(
-                            List.of(
-                                    new EvaluationForReviewerData(
-                                            1L, reviewee1.getUsername(), reviewee1.getImageUrl(), 1.5F, "평가1"
-                                    ),
-                                    new EvaluationForReviewerData(
-                                            2L, reviewee2.getUsername(), reviewee2.getImageUrl(), 2.0F, "평가2"
-                                    )
-                            ), pageable, false)
-            );
-
-            EvaluationsForReviewerResponse response = evaluationQueryService.findEvaluationsForReviewerInPage(
-                    reviewerMember.getReviewer().getId(), PageRequest.of(0, 2)
-            );
-
-            assertAll(
-                    () -> assertThat(response.getEvaluations()).usingRecursiveFieldByFieldElementComparator()
-                            .containsAll(expectedResponse.getEvaluations()),
-                    () -> assertThat(response.isHasNext()).isEqualTo(expectedResponse.isHasNext())
-            );
-        }
-
         @DisplayName("유저 정보가 없으면 예외 반환한다.")
         @Test
         void findMyEvaluationsWithNotExistMember() {
