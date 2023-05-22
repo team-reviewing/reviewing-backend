@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import project.reviewing.common.exception.ErrorType;
 import project.reviewing.evaluation.command.application.response.EvaluationsForReviewerResponse;
 import project.reviewing.evaluation.query.application.response.SingleEvaluationResponse;
 import project.reviewing.evaluation.command.domain.Evaluation;
@@ -12,6 +13,7 @@ import project.reviewing.evaluation.exception.EvaluationNotFoundException;
 import project.reviewing.evaluation.query.dao.EvaluationsDAO;
 import project.reviewing.member.command.domain.Member;
 import project.reviewing.member.command.domain.MemberRepository;
+import project.reviewing.member.exception.InvalidMemberException;
 import project.reviewing.member.exception.MemberNotFoundException;
 
 @RequiredArgsConstructor
@@ -37,6 +39,9 @@ public class EvaluationQueryService {
     public EvaluationsForReviewerResponse findMyEvaluationsInPage(final Long memberId, final Pageable pageable) {
         final Member member = memberRepository.findById(memberId)
                 .orElseThrow(MemberNotFoundException::new);
+        if (!member.isReviewerRegistered()) {
+            throw new InvalidMemberException(ErrorType.DO_NOT_REGISTERED);
+        }
 
         return EvaluationsForReviewerResponse.of(
                 evaluationsDAO.findEvaluationsByReviewerId(member.getReviewer().getId(), pageable)
