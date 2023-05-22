@@ -41,4 +41,12 @@ public class EvaluationController {
     public SingleEvaluationResponse readSingleEvaluation(@PathVariable("review-id") final Long reviewId) {
         return evaluationQueryService.findSingleEvaluationByReviewId(reviewId);
     }
+
+    @GetMapping("/evaluations/me")
+    public EvaluationsForReviewerResponse findMyEvaluations(
+            @AuthenticatedMember final Long memberId,
+            @PageableDefault(size = 3) final Pageable pageable
+    ) {
+        return evaluationQueryService.findMyEvaluationsInPage(memberId, pageable);
+    }
 }
