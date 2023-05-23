@@ -85,7 +85,7 @@ public class ReviewService {
         final Review review = findReviewById(reviewId);
         final Member reviewerMember = findMemberById(memberId);
 
-        if (review.canClose(reviewerMember.getReviewer().getId())) {
+        if (review.canClose(reviewerMember.getId(), reviewerMember.getReviewer().getId())) {
             reviewRepository.delete(review);
         }
     }

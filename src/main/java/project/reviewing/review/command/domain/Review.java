@@ -97,9 +97,14 @@ public class Review {
         return true;
     }
 
-    public boolean canClose(final Long reviewerId) {
-        checkReviewer(reviewerId);
-        checkStatusRefused();
+    public boolean canClose(final Long memberId, final Long reviewerId) {
+        if (memberId.equals(this.revieweeId)) {
+            checkStatusCreated();
+        } else if (reviewerId.equals(this.reviewerId)) {
+            checkStatusRefused();
+        } else {
+            throw new InvalidReviewException(ErrorType.ROLE_IN_REVIEW_NOT_FOUND);
+        }
         return true;
     }
 
