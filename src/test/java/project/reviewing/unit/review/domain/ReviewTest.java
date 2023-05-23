@@ -195,27 +195,41 @@ public class ReviewTest {
     void validCloseReview() {
         final Review review = Review.assign(1L, 1L, "제목", "본문", "prUrl", 2L, true, time);
 
+        assertThat(review.canClose(1L, -1L)).isTrue();
+
         review.refuse(time);
 
-        assertThat(review.canClose(1L)).isTrue();
+        assertThat(review.canClose(-1L, 1L)).isTrue();
     }
 
-    @DisplayName("리뷰를 요청받은 리뷰어가 아니면 종료할 수 없다.")
+    @DisplayName("리뷰를 요청받은 리뷰어나 요청한 리뷰이가 아니면 종료할 수 없다.")
     @Test
     void closeWithNotReviewerOfReview() {
         final Review review = Review.assign(1L, 1L, "제목", "본문", "prUrl", 2L, true, time);
 
-        assertThatThrownBy(() -> review.canClose(2L))
+        assertThatThrownBy(() -> review.canClose(-1L, -1L))
                 .isInstanceOf(InvalidReviewException.class)
-                .hasMessage(ErrorType.NOT_REVIEWER_OF_REVIEW.getMessage());
+                .hasMessage(ErrorType.ROLE_IN_REVIEW_NOT_FOUND.getMessage());
     }
 
-    @DisplayName("리뷰의 상태가 REFUSED(거절) 상태가 아니면 종료할 수 없다.")
+    @DisplayName("리뷰어의 입장에서 리뷰의 상태가 REFUSED(거절) 상태가 아니면 종료할 수 없다.")
     @Test
-    void closeWithNotProperStatus() {
+    void closeWithNotRefusedStatus() {
         final Review review = Review.assign(1L, 1L, "제목", "본문", "prUrl", 2L, true, time);
 
-        assertThatThrownBy(() -> review.canClose(1L))
+        assertThatThrownBy(() -> review.canClose(-1L, 1L))
+                .isInstanceOf(InvalidReviewException.class)
+                .hasMessage(ErrorType.NOT_PROPER_REVIEW_STATUS.getMessage());
+    }
+
+    @DisplayName("리뷰이의 입장에서 리뷰의 상태가 CREATED(생성) 상태가 아니면 종료할 수 없다.")
+    @Test
+    void closeWithNotCreatedStatus() {
+        final Review review = Review.assign(1L, 1L, "제목", "본문", "prUrl", 2L, true, time);
+
+        review.accept(time);
+
+        assertThatThrownBy(() -> review.canClose(1L, -1L))
                 .isInstanceOf(InvalidReviewException.class)
                 .hasMessage(ErrorType.NOT_PROPER_REVIEW_STATUS.getMessage());
     }
