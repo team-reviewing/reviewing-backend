@@ -7,6 +7,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import project.reviewing.evaluation.presentation.request.EvaluationCreateRequest;
 import project.reviewing.unit.ControllerTest;
@@ -103,7 +104,7 @@ public class EvaluationControllerTest extends ControllerTest {
         }
     }
 
-    @DisplayName("리뷰어의 리뷰 목록 조회 시 ")
+    @DisplayName("리뷰어의 리뷰 평가 목록 조회 시 ")
     @Nested
     class EvaluationsForReviewerFindTest {
 
@@ -152,6 +153,43 @@ public class EvaluationControllerTest extends ControllerTest {
         void findEvaluationsForReviewerByInvalidSize(final String size) throws Exception {
             mockMvc.perform(get("/evaluations")
                             .param("reviewerId", "1")
+                            .param("size", size))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest());
+        }
+    }
+
+    @DisplayName("내 리뷰 평가 목록 조회 시 ")
+    @Nested
+    class MyEvaluationsFindTest {
+
+        @DisplayName("요청이 유효하면 200 반환한다.")
+        @Test
+        void findMyEvaluations() throws Exception {
+            requestHttp(get("/evaluations/me"), null)
+                    .andExpect(status().isOk());
+        }
+
+        @DisplayName("page 파라미터에 올바르지 않은 값이 입력되는 경우 400을 반환한다.")
+        @ValueSource(strings = {"-1", ""})
+        @ParameterizedTest
+        void findMyEvaluationsByInvalidPage(final String page) throws Exception {
+            final String accessToken = tokenProvider.createAccessToken(1L);
+
+            mockMvc.perform(get("/evaluations/me")
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                            .param("page", page))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest());
+        }
+
+        @DisplayName("size 파라미터에 올바르지 않은 값이 입력되는 경우 400을 반환한다.")
+        @ValueSource(strings = {"-1", "0", ""})
+        @ParameterizedTest
+        void findMyEvaluationsByInvalidSize(final String size) throws Exception {
+            final String accessToken = tokenProvider.createAccessToken(1L);
+            mockMvc.perform(get("/evaluations")
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                             .param("size", size))
                     .andDo(print())
                     .andExpect(status().isBadRequest());

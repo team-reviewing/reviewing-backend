@@ -26,7 +26,7 @@
 
 ### 📕 Note
 - 2023.04.16 Organization이 삭제되어 이전까지의 Issue, Pull Request 기록이 지워졌습니다.
-- Reviewing v2.0.0이 배포되었습니다.
+- 2023.05.23 Reviewing v2.2.0이 배포되었습니다.
 
 ---
 
