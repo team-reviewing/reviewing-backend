@@ -16,6 +16,7 @@ import javax.persistence.OneToOne;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -39,9 +40,11 @@ public class Reviewer {
 
     private String introduction;
 
+    @ColumnDefault("0.0")
     @Column(nullable = false)
     private Float score;
 
+    @ColumnDefault("0")
     @Column(nullable = false)
     private Long evaluationCnt;
 
