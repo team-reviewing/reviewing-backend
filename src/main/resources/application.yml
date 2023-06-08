@@ -35,6 +35,9 @@ spring:
       settings:
         web-allow-others: true
 
+  flyway:
+    enabled: false
+
 logging:
   level:
     org.hibernate.type.descriptor.sql: trace
