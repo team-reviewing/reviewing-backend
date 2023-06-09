@@ -70,28 +70,28 @@ public class ReviewerDao {
     }
 
     public Slice<ReviewerData> findByTag(final Pageable pageable, final Long categoryId, final List<Long> tagIds) {
-        final String sql = "SELECT r.job, r.career, r.introduction, r.id, r.score, m.username, m.image_url, m.profile_url, t.id tag_id, t.name tag_name "
-                + "FROM reviewer r "
-                + "JOIN member m ON r.member_id = m.id "
-                + "JOIN reviewer_tag rt ON r.id = rt.reviewer_id "
+        final String sql = "SELECT /*! STRAIGHT_JOIN */ r.job, r.career, r.introduction, r.id, r.score, m.username, m.image_url, m.profile_url, t.id tag_id, t.name tag_name "
+                + "FROM reviewer_tag rt "
+                + "JOIN reviewer r ON rt.reviewer_id = r.id "
                 + "JOIN tag t ON rt.tag_id = t.id "
+                + "JOIN member m ON r.member_id = m.id "
                 + "WHERE r.id IN "
                 + "( "
-                + "SELECT DISTINCT subquery.sub_rid "
+                + "SELECT subquery.sub_rid "
                 + "FROM ("
-                    + "SELECT DISTINCT r.id sub_rid "
-                    + "FROM reviewer r "
-                    + "JOIN member m ON r.member_id = m.id "
-                    + "JOIN reviewer_tag rt ON r.id = rt.reviewer_id "
+                    + "SELECT /*! STRAIGHT_JOIN */ r.id sub_rid "
+                    + "FROM reviewer_tag rt "
+                    + "JOIN reviewer r ON rt.reviewer_id = r.id "
                     + "JOIN tag t ON rt.tag_id = t.id "
-                    + "WHERE m.is_reviewer = true "
+                    + "JOIN member m ON r.member_id = m.id "
+                    + "WHERE m.is_reviewer = true AND r.id > :latestId "
                     + makeWhereClause(categoryId, tagIds)
-                    + "ORDER BY r.id "
-                    + "LIMIT :limit OFFSET :offset "
+                    + "GROUP BY r.id "
+                    + "LIMIT :limit "
                     + ") subquery"
                 + ")";
         final SqlParameterSource params = new MapSqlParameterSource("limit", pageable.getPageSize() + 1)
-                .addValue("offset", pageable.getOffset())
+                .addValue("latestId", pageable.getPageNumber())
                 .addValue("categoryId", categoryId)
                 .addValue("tagIds", tagIds);
 
