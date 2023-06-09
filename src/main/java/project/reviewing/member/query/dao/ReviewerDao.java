@@ -75,28 +75,40 @@ public class ReviewerDao {
                 + "JOIN reviewer r ON rt.reviewer_id = r.id "
                 + "JOIN tag t ON rt.tag_id = t.id "
                 + "JOIN member m ON r.member_id = m.id "
-                + "WHERE r.id IN "
-                + "( "
-                + "SELECT subquery.sub_rid "
-                + "FROM ("
-                    + "SELECT /*! STRAIGHT_JOIN */ r.id sub_rid "
-                    + "FROM reviewer_tag rt "
-                    + "JOIN reviewer r ON rt.reviewer_id = r.id "
-                    + "JOIN tag t ON rt.tag_id = t.id "
-                    + "JOIN member m ON r.member_id = m.id "
-                    + "WHERE m.is_reviewer = true AND r.id > :latestId "
-                    + makeWhereClause(categoryId, tagIds)
-                    + "GROUP BY r.id "
-                    + "LIMIT :limit "
-                    + ") subquery"
-                + ")";
+                + "WHERE r.id IN (" + makeReviewerIdsCond(pageable, categoryId, tagIds) + ")";
+
+        final List<ReviewerData> reviewerData = ReviewerDataMapper.map(jdbcTemplate.query(sql, rowMapper()));
+        return new SliceImpl<>(getCurrentPageReviewers(reviewerData, pageable), pageable, hasNext(reviewerData, pageable));
+    }
+
+    private String makeReviewerIdsCond(final Pageable pageable, final Long categoryId, final List<Long> tagIds) {
+        final String sql = "SELECT /*! STRAIGHT_JOIN */ r.id "
+                + "FROM reviewer_tag rt "
+                + "JOIN reviewer r ON rt.reviewer_id = r.id "
+                + "JOIN tag t ON rt.tag_id = t.id "
+                + "JOIN member m ON r.member_id = m.id "
+                + "WHERE m.is_reviewer = true AND r.id > :latestId "
+                + makeWhereClause(categoryId, tagIds)
+                + "GROUP BY r.id "
+                + "LIMIT :limit";
         final SqlParameterSource params = new MapSqlParameterSource("limit", pageable.getPageSize() + 1)
                 .addValue("latestId", pageable.getPageNumber())
                 .addValue("categoryId", categoryId)
                 .addValue("tagIds", tagIds);
 
-        final List<ReviewerData> reviewerData = ReviewerDataMapper.map(jdbcTemplate.query(sql, params, rowMapper()));
-        return new SliceImpl<>(getCurrentPageReviewers(reviewerData, pageable), pageable, hasNext(reviewerData, pageable));
+        List<Long> reviewerIds = jdbcTemplate.query(sql, params,
+                (rs, rowNum) -> rs.getLong("id")
+        );
+
+        final StringBuilder reviewerIdsCond = new StringBuilder();
+
+        if (!reviewerIds.isEmpty()) {
+            reviewerIdsCond.append(reviewerIds.get(0));
+        }
+        for (int i = 1; i < reviewerIds.size(); i++) {
+            reviewerIdsCond.append(",").append(reviewerIds.get(i));
+        }
+        return reviewerIdsCond.toString();
     }
 
     private String makeWhereClause(final Long categoryId, final List<Long> tagIds) {
