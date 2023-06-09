@@ -268,7 +268,12 @@ public class MemberQueryServiceTest extends IntegrationTest {
             );
 
             final ReviewersResponse response1 = memberQueryService.findReviewers(PageRequest.of(0, 2), backend.getId(), null);
-            final ReviewersResponse response2 = memberQueryService.findReviewers(PageRequest.of(1, 2), backend.getId(), null);
+            final ReviewersResponse response2 = memberQueryService.findReviewers(
+                    PageRequest.of(
+                            response1.getReviewers().get(response1.getReviewers().size() - 1).getId().intValue(), 2
+                    ),
+                    backend.getId(), null
+            );
 
             assertThat(response1.getReviewers()).hasSize(2)
                     .usingRecursiveFieldByFieldElementComparator()
