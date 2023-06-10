@@ -1,6 +1,7 @@
 package project.reviewing.member.query.dao;
 
-import java.util.List;
+import java.util.*;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -70,61 +71,73 @@ public class ReviewerDao {
     }
 
     public Slice<ReviewerData> findByTag(final Pageable pageable, final Long categoryId, final List<Long> tagIds) {
-        final String sql = "SELECT /*! STRAIGHT_JOIN */ r.job, r.career, r.introduction, r.id, r.score, m.username, m.image_url, m.profile_url, t.id tag_id, t.name tag_name "
+        String sql = "SELECT /*! STRAIGHT_JOIN */ r.job, r.career, r.introduction, r.id, r.score, m.username, m.image_url, m.profile_url, t.id tag_id, t.name tag_name "
                 + "FROM reviewer r "
                 + "JOIN reviewer_tag rt ON r.id = rt.reviewer_id "
                 + "JOIN tag t ON rt.tag_id = t.id "
                 + "JOIN member m ON r.member_id = m.id "
-                + "WHERE r.id IN (" + makeReviewerIdsCond(pageable, categoryId, tagIds) + ")";
+                + "WHERE r.id IN (:reviewerIds)";
 
-        final List<ReviewerData> reviewerData = ReviewerDataMapper.map(jdbcTemplate.query(sql, rowMapper()));
+        final List<Long> reviewerIds = findReviewerIds(pageable, categoryId, tagIds);
+
+        if (reviewerIds.isEmpty()) {
+            return new SliceImpl<>(List.of(), pageable, false);
+        }
+
+        final List<ReviewerData> reviewerData = ReviewerDataMapper.map(
+                jdbcTemplate.query(sql, Map.of("reviewerIds", reviewerIds), rowMapper())
+        );
         return new SliceImpl<>(getCurrentPageReviewers(reviewerData, pageable), pageable, hasNext(reviewerData, pageable));
     }
 
-    private String makeReviewerIdsCond(final Pageable pageable, final Long categoryId, final List<Long> tagIds) {
-        final String sql = "SELECT /*! STRAIGHT_JOIN */ r.id "
-                + "FROM reviewer r "
-                + "JOIN reviewer_tag rt ON r.id = rt.reviewer_id "
-                + "JOIN tag t ON rt.tag_id = t.id "
+    private List<Long> findReviewerIds(final Pageable pageable, final Long categoryId, List<Long> tagIds) {
+        final Set<Long> tagIdSet = new HashSet<>();
+
+        if (tagIds != null) {
+            tagIdSet.addAll(tagIds);
+        }
+        final String sql = "SELECT /*! STRAIGHT_JOIN */ rt.reviewer_id "
+                + "FROM reviewer_tag rt "
+                + "JOIN reviewer r ON rt.reviewer_id = r.id "
                 + "JOIN member m ON r.member_id = m.id "
                 + "WHERE m.is_reviewer = true AND r.id > :latestId "
-                + makeWhereClause(categoryId, tagIds)
-                + "GROUP BY r.id "
+                + makeCategoryAndTagCond(categoryId, tagIdSet)
+                + "GROUP BY rt.reviewer_id "
                 + "LIMIT :limit";
         final SqlParameterSource params = new MapSqlParameterSource("limit", pageable.getPageSize() + 1)
                 .addValue("latestId", pageable.getPageNumber())
-                .addValue("categoryId", categoryId)
-                .addValue("tagIds", tagIds);
+                .addValue("tagIds", tagIdSet);
 
-        List<Long> reviewerIds = jdbcTemplate.query(sql, params,
-                (rs, rowNum) -> rs.getLong("id")
-        );
-
-        final StringBuilder reviewerIdsCond = new StringBuilder();
-
-        if (!reviewerIds.isEmpty()) {
-            reviewerIdsCond.append(reviewerIds.get(0));
-        }
-        for (int i = 1; i < reviewerIds.size(); i++) {
-            reviewerIdsCond.append(",").append(reviewerIds.get(i));
-        }
-        return reviewerIdsCond.toString();
+        return jdbcTemplate.query(sql, params, (rs, rowNum) -> rs.getLong("reviewer_id"));
     }
 
-    private String makeWhereClause(final Long categoryId, final List<Long> tagIds) {
-        final String categoryIdCond = "t.category_id = :categoryId ";
-        final String tagIdsCond = "rt.tag_id IN (:tagIds) ";
+    private String makeCategoryAndTagCond(final Long categoryId, final Set<Long> tagIdSet) {
+        final String tagIdsCond = "AND rt.tag_id IN (:tagIds) ";
 
-        if (categoryId == null && tagIds == null) {
+        if (categoryId == null && tagIdSet.isEmpty()) {
             return "";
         }
-        if (categoryId == null) {
-            return "AND " + tagIdsCond;
+
+        final String sql = "SELECT t.id "
+                + "FROM tag t "
+                + "WHERE t.category_id = :categoryId";
+
+        if (tagIdSet.isEmpty()) {
+            tagIdSet.addAll(jdbcTemplate.query(sql, Map.of("categoryId", categoryId), (rs, rowNum) -> rs.getLong("id")));
+            return tagIdsCond;
         }
-        if (tagIds == null) {
-            return "AND " + categoryIdCond;
+
+        final SqlParameterSource params = new MapSqlParameterSource("categoryId", categoryId)
+                .addValue("tagIds", tagIdSet);
+
+        List<Long> tagIds = jdbcTemplate.query(sql + " AND t.id IN (:tagIds)", params, (rs, rowNum) -> rs.getLong("id"));
+        tagIdSet.clear();
+        tagIdSet.addAll(tagIds);
+
+        if (tagIdSet.isEmpty()) {
+            return "AND rt.tag_id IN (0) ";
         }
-        return "AND " + categoryIdCond + "AND " + tagIdsCond;
+        return tagIdsCond;
     }
 
     private List<ReviewerData> getCurrentPageReviewers(final List<ReviewerData> reviewerData, final Pageable pageable) {
