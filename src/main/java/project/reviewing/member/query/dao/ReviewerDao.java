@@ -71,7 +71,7 @@ public class ReviewerDao {
     }
 
     public Slice<ReviewerData> findByTag(final Pageable pageable, final Long categoryId, final List<Long> tagIds) {
-        String sql = "SELECT /*! STRAIGHT_JOIN */ r.job, r.career, r.introduction, r.id, r.score, m.username, m.image_url, m.profile_url, t.id tag_id, t.name tag_name "
+        String sql = "SELECT r.job, r.career, r.introduction, r.id, r.score, m.username, m.image_url, m.profile_url, t.id tag_id, t.name tag_name "
                 + "FROM reviewer r "
                 + "JOIN reviewer_tag rt ON r.id = rt.reviewer_id "
                 + "JOIN tag t ON rt.tag_id = t.id "
@@ -96,7 +96,7 @@ public class ReviewerDao {
         if (tagIds != null) {
             tagIdSet.addAll(tagIds);
         }
-        final String sql = "SELECT /*! STRAIGHT_JOIN */ rt.reviewer_id "
+        final String sql = "SELECT rt.reviewer_id "
                 + "FROM reviewer_tag rt "
                 + "JOIN reviewer r ON rt.reviewer_id = r.id "
                 + "JOIN member m ON r.member_id = m.id "
