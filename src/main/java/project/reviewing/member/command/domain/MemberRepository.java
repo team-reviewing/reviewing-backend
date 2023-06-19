@@ -12,6 +12,6 @@ public interface MemberRepository extends Repository<Member, Long> {
     Optional<Member> findById(Long id);
     Optional<Member> findByGithubId(Long githubId);
 
-    @Query("SELECT m FROM Member m INNER JOIN m.reviewer r WHERE r.id = :reviewerId")
+    @Query("SELECT m FROM Member m JOIN FETCH m.reviewer r WHERE r.id = :reviewerId")
     Optional<Member> findByReviewerId(@Param("reviewerId") Long reviewerId);
 }
