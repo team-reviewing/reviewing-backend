@@ -62,7 +62,7 @@ public class AuthControllerTest extends ControllerTest {
         final RefreshResponse newRefreshResponse = new RefreshResponse("New Access Token", "New Refresh Token");
 
         given(authService.refreshTokens(memberId)).willReturn(newRefreshResponse);
-        given(refreshTokenRepository.findById(refreshToken.getId())).willReturn(Optional.of(refreshToken));
+        given(refreshTokenRepository.findById(refreshToken.getMemberId())).willReturn(Optional.of(refreshToken));
 
         mockMvc.perform(post("/auth/refresh")
                         .header("Authorization", "Bearer " + refreshToken.getToken()))
@@ -80,7 +80,7 @@ public class AuthControllerTest extends ControllerTest {
         final RefreshResponse newRefreshResponse = new RefreshResponse("New Access Token", "New Refresh Token");
 
         given(authService.refreshTokens(memberId)).willReturn(newRefreshResponse);
-        given(refreshTokenRepository.findById(refreshToken.getId())).willReturn(Optional.of(refreshToken));
+        given(refreshTokenRepository.findById(refreshToken.getMemberId())).willReturn(Optional.of(refreshToken));
 
         mockMvc.perform(post("/auth/refresh")
                         .header("Authorization", "Bearer " + refreshToken.getToken()))
@@ -96,7 +96,7 @@ public class AuthControllerTest extends ControllerTest {
         final RefreshResponse newRefreshResponse = new RefreshResponse("New Access Token", "New Refresh Token");
 
         given(authService.refreshTokens(memberId)).willReturn(newRefreshResponse);
-        given(refreshTokenRepository.findById(refreshToken.getId())).willReturn(Optional.empty());
+        given(refreshTokenRepository.findById(refreshToken.getMemberId())).willReturn(Optional.empty());
 
         mockMvc.perform(post("/auth/refresh")
                         .header("Authorization", "Bearer " + refreshToken.getToken()))

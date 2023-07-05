@@ -17,6 +17,11 @@ spring:
         show_sql: true
         format_sql: true
 
+  redis:
+    host: ${redis.dev.host}
+    port: ${redis.dev.port}
+    password: ${redis.dev.password}
+
 logging:
   level:
     org.hibernate.type.descriptor.sql: trace

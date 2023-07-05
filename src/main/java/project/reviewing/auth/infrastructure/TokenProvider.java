@@ -29,7 +29,7 @@ public class TokenProvider {
         this.accessTokenSecretKey = Keys.hmacShaKeyFor(accessTokenSecretKey.getBytes(StandardCharsets.UTF_8));
         this.refreshTokenSecretKey = Keys.hmacShaKeyFor(refreshTokenSecretKey.getBytes(StandardCharsets.UTF_8));
         this.accessTokenValidTime = accessTokenValidTime;
-        this. refreshTokenValidTime = refreshTokenValidTime;
+        this.refreshTokenValidTime = refreshTokenValidTime;
     }
 
     public String createAccessToken(final Long memberId) {
@@ -38,7 +38,7 @@ public class TokenProvider {
 
     public RefreshToken createRefreshToken(final Long memberId) {
         return new RefreshToken(
-                memberId, createJwt(memberId, refreshTokenValidTime, refreshTokenSecretKey), new Date().getTime()
+                memberId, createJwt(memberId, refreshTokenValidTime, refreshTokenSecretKey), refreshTokenValidTime
         );
     }
 
