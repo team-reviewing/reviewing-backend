@@ -1,34 +1,27 @@
 package project.reviewing.auth.domain;
 
-import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.redis.core.RedisHash;
+import org.springframework.data.redis.core.TimeToLive;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.util.TimeZone;
+import java.util.concurrent.TimeUnit;
 
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Entity
+@RedisHash("refreshToken")
 public class RefreshToken {
 
     @Id
-    @Column(name = "member_id")
-    private Long id;
+    private final Long memberId;
 
-    @Column(nullable = false, unique = true)
-    private String token;
+    private final String token;
 
-    @Column(nullable = false)
-    private LocalDateTime issuedAt;
+    @TimeToLive(unit = TimeUnit.MILLISECONDS)
+    private final long validTime;
 
-    public RefreshToken(final Long memberId, final String token, final Long issuedAt) {
-        this.id = memberId;
+    public RefreshToken(final Long memberId, final String token, final long validTime) {
+        this.memberId = memberId;
         this.token = token;
-        this.issuedAt = LocalDateTime.ofInstant(Instant.ofEpochMilli(issuedAt), TimeZone.getDefault().toZoneId());
+        this.validTime = validTime;
     }
 }
