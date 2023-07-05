@@ -14,6 +14,11 @@ spring:
         show_sql: true
         format_sql: true
 
+  redis:
+    host: localhost
+    port: 6379
+    password:
+
   profiles:
     include: security
 
