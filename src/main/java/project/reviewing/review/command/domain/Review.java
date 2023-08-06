@@ -127,16 +127,6 @@ public class Review {
         }
     }
 
-    public boolean isTimeToChangeToRefusedStatus() {
-        return (status == ReviewStatus.CREATED || status == ReviewStatus.ACCEPTED)
-                && isExpired();
-    }
-
-    public boolean isTimeToRemove() {
-        return (status == ReviewStatus.REFUSED || status == ReviewStatus.APPROVED || status == ReviewStatus.EVALUATED)
-                && isExpired();
-    }
-
     public LocalDateTime findExpireDate() {
         return statusSetAt.plusDays(status.getExpirePeriod());
     }
@@ -163,11 +153,6 @@ public class Review {
         if (status != ReviewStatus.APPROVED) {
             throw new InvalidReviewException(ErrorType.NOT_PROPER_REVIEW_STATUS);
         }
-    }
-
-    private boolean isExpired() {
-        LocalDateTime expireDate = findExpireDate();
-        return expireDate.isBefore(LocalDateTime.now()) || expireDate.isEqual(LocalDateTime.now());
     }
 
     private Review(
