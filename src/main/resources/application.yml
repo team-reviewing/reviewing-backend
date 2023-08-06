@@ -6,6 +6,7 @@ spring:
     group:
       "default": "security"
       "dev": "dev, security"
+      "local": "local, security"
       "prod": "prod, security"
 
 schedule:
