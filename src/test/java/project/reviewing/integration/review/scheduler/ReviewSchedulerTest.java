@@ -25,7 +25,7 @@ public class ReviewSchedulerTest extends IntegrationTest {
     @Mock
     private Time time;
 
-    @DisplayName("주기적으로 checkExpirationForAllReview() Method를 호출한다.")
+    @DisplayName("주기적으로 handleExpiredReviews();() Method를 호출한다.")
     @Test
     void workScheduledTask() {
         try {
@@ -34,7 +34,7 @@ public class ReviewSchedulerTest extends IntegrationTest {
             e.printStackTrace();
         }
 
-        verify(reviewScheduler, atLeast(2)).checkExpirationForAllReview();
+        verify(reviewScheduler, atLeast(2)).handleExpiredReviews();
     }
 
     @DisplayName("완료/평가 된 리뷰 중 완료 시점부터 일정 기간이 지나면 삭제한다.")
@@ -56,7 +56,7 @@ public class ReviewSchedulerTest extends IntegrationTest {
         entityManager.clear();
 
         // when
-        reviewScheduler.checkExpirationForAllReview();
+        reviewScheduler.handleExpiredReviews();
 
         // then
         assertThat(reviewRepository.findAll()).hasSize(1);
@@ -77,7 +77,7 @@ public class ReviewSchedulerTest extends IntegrationTest {
         entityManager.clear();
 
         // when
-        reviewScheduler.checkExpirationForAllReview();
+        reviewScheduler.handleExpiredReviews();
 
         // then
         assertThat(reviewRepository.findAll()).hasSize(1);
@@ -98,7 +98,7 @@ public class ReviewSchedulerTest extends IntegrationTest {
         entityManager.clear();
 
         // when
-        reviewScheduler.checkExpirationForAllReview();
+        reviewScheduler.handleExpiredReviews();
 
         // then
         final List<Review> reviews = reviewRepository.findAll();
