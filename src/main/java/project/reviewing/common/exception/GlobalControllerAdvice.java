@@ -1,5 +1,6 @@
 package project.reviewing.common.exception;
 
+import javax.persistence.OptimisticLockException;
 import javax.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -47,6 +48,12 @@ public class GlobalControllerAdvice {
     @ExceptionHandler(ConstraintViolationException.class)
     public ErrorResponse handleConstraintViolationException(final ConstraintViolationException e) {
         return new ErrorResponse(ErrorType.ERROR.getCode(), ErrorType.ERROR.getCode() + " " + e.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(OptimisticLockException.class)
+    public ErrorResponse handleOptimisticLockException(final OptimisticLockException e) {
+        return new ErrorResponse(ErrorType.CONCURRENCY_COLLISION.getCode(), ErrorType.CONCURRENCY_COLLISION.getMessage());
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
