@@ -6,14 +6,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureTestEntityManager;
 import org.springframework.boot.test.context.SpringBootTest;
 import project.reviewing.common.util.Time;
+import project.reviewing.concurrency.ConcurrencyRunner;
 import project.reviewing.member.command.domain.*;
+import project.reviewing.review.command.application.ReviewService;
 import project.reviewing.review.command.domain.Review;
 import project.reviewing.review.command.domain.ReviewRepository;
 import project.reviewing.review.exception.ReviewNotFoundException;
 
 import javax.persistence.*;
 import java.util.Set;
-import java.util.concurrent.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -36,13 +37,10 @@ public class ReviewConcurrencyTest {
 
     @DisplayName("Review Entity를 동시에 수정하면 처음 수정 내용만 반영되고 version이 하나만 증가한다.")
     @Test
-    void test() throws InterruptedException {
+    void ChangeReviewStatusConcurrencyTest() throws InterruptedException {
         // given
         int threadCnt = 3;
-
-        CountDownLatch latch = new CountDownLatch(threadCnt);
-        CyclicBarrier barrier = new CyclicBarrier(threadCnt);
-        ExecutorService executorService = Executors.newFixedThreadPool(threadCnt);
+        ConcurrencyRunner runner = new ConcurrencyRunner(threadCnt);
 
         Member reviewee = new Member(1L, "Tom", "Tom@gmail.com", "imageUrl", "https://github.com/Tom");
         Member reviewerMember = new Member(2L, "bboor", "bboor@gmail.com", "imageUrl", "https://github.com/bboor");
@@ -62,21 +60,14 @@ public class ReviewConcurrencyTest {
 
         // when
         while (threadCnt-- > 0) {
-            executorService.execute(() -> {
+            runner.execute(() -> {
                 EntityManager em = emf.createEntityManager();
                 EntityTransaction transaction = em.getTransaction();
 
                 try {
                     transaction.begin();
-                    System.out.println(transaction);
-                    Review updatingReview = reviewRepository.findById(review.getId())
-                            .orElseThrow(ReviewNotFoundException::new);
-                    updatingReview.accept(time);
-                    em.merge(updatingReview);
-
-                    barrier.await();
-                    latch.countDown();
-
+                    em.merge(review);
+                    review.evaluate();
                     em.flush();
                     transaction.commit();
                 } catch (Exception e) {
@@ -85,11 +76,9 @@ public class ReviewConcurrencyTest {
                     em.close();
                 }
                 em.close();
-            });
+            }, 0);
         }
-
-        latch.await();
-        Thread.sleep(500);
+        runner.await(500);
 
         Review updatedReview = reviewRepository.findById(review.getId())
                 .orElseThrow(ReviewNotFoundException::new);
