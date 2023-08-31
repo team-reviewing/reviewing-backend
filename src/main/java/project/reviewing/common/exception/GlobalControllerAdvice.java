@@ -1,6 +1,8 @@
 package project.reviewing.common.exception;
 
 import javax.persistence.OptimisticLockException;
+import javax.persistence.PersistenceException;
+import javax.persistence.PessimisticLockException;
 import javax.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -51,8 +53,8 @@ public class GlobalControllerAdvice {
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler(OptimisticLockException.class)
-    public ErrorResponse handleOptimisticLockException(final OptimisticLockException e) {
+    @ExceptionHandler({OptimisticLockException.class, PessimisticLockException.class})
+    public ErrorResponse handleOptimisticLockException(final PersistenceException e) {
         return new ErrorResponse(ErrorType.CONCURRENCY_COLLISION.getCode(), ErrorType.CONCURRENCY_COLLISION.getMessage());
     }
 
