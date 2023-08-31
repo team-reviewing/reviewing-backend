@@ -24,6 +24,7 @@ public enum ErrorType {
     REVIEWER_NOT_FOUND("MEMBER-006", "해당 회원의 리뷰어 정보를 찾을 수 없습니다."),
     ALREADY_REGISTERED("MEMBER-007", "이미 리뷰어 등록이 되었습니다."),
     DO_NOT_REGISTERED("MEMBER-008", "리뷰어 등록을 하지 않았습니다. 먼저 리뷰어 등록을 해주세요."),
+    REVIEWER_NOT_ACTIVE("MEMBER-009", "현재 리뷰어로 활동하고 있지 않습니다."),
 
     REVIEW_NOT_FOUND("REVIEW-001", "해당 리뷰를 찾을 수 없습니다."),
     ALREADY_REQUESTED("REVIEW-002", "이미 해당 리뷰어에게 리뷰를 요청했습니다."),

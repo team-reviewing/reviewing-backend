@@ -53,7 +53,7 @@ public class Review {
             throw new InvalidReviewException(ErrorType.SAME_REVIEWER_AS_REVIEWEE);
         }
         if (!isReviewer) {
-            throw new InvalidReviewException(ErrorType.DO_NOT_REGISTERED);
+            throw new InvalidReviewException(ErrorType.REVIEWER_NOT_ACTIVE);
         }
 
         return new Review(revieweeId, reviewerId, title, content, prUrl, ReviewStatus.CREATED, time.now());
