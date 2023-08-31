@@ -23,13 +23,13 @@ public class MemberDao {
         Map<String, Object> properties = new HashMap<>();
         properties.put("jakarta.persistence.lock.timeout", 3000L);
         Reviewer reviewer = em.find(Reviewer.class, reviewerId, LockModeType.PESSIMISTIC_READ, properties);
-        return Optional.of(reviewer.getMember());
+        return (reviewer != null) ? Optional.of(reviewer.getMember()) : Optional.empty();
     }
 
     public Optional<Member> findByReviewerIdByXlockOnReviewer(final long reviewerId) {
         Map<String, Object> properties = new HashMap<>();
         properties.put("jakarta.persistence.lock.timeout", 3000L);
         Reviewer reviewer = em.find(Reviewer.class, reviewerId, LockModeType.PESSIMISTIC_WRITE, properties);
-        return Optional.of(reviewer.getMember());
+        return (reviewer != null) ? Optional.of(reviewer.getMember()) : Optional.empty();
     }
 }
