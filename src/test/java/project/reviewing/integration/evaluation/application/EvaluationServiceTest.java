@@ -32,7 +32,7 @@ public class EvaluationServiceTest extends IntegrationTest {
 
     @BeforeEach
     void setUp() {
-        evaluationService = new EvaluationService(memberRepository, reviewRepository, evaluationRepository);
+        evaluationService = new EvaluationService(memberDao, reviewRepository, evaluationRepository);
     }
 
     @DisplayName("리뷰 평가 생성 시 ")
