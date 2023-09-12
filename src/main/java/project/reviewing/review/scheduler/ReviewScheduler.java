@@ -1,27 +1,20 @@
 package project.reviewing.review.scheduler;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
 import project.reviewing.common.util.Time;
-import project.reviewing.member.command.domain.MemberRepository;
-import project.reviewing.review.command.domain.Review;
 import project.reviewing.review.command.domain.ReviewRepository;
 import project.reviewing.review.command.domain.ReviewStatus;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
+@Profile("!schedulerExclusion")
 @RequiredArgsConstructor
 @Component
 public class ReviewScheduler {
