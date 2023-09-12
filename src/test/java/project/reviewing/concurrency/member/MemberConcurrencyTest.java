@@ -5,6 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import project.reviewing.common.util.Time;
 import project.reviewing.concurrency.ConcurrencyRunner;
 import project.reviewing.concurrency.DatabaseCleaner;
@@ -22,8 +23,9 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest
 @DisplayName("Member Entity의 동시성 관련 상황에서는 ")
+@ActiveProfiles("databaseCleaner")
+@SpringBootTest
 public class MemberConcurrencyTest {
 
     @Autowired
