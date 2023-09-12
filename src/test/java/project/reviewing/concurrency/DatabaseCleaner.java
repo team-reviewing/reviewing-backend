@@ -2,8 +2,8 @@ package project.reviewing.concurrency;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-@ActiveProfiles("test")
+@Profile("databaseCleaner")
 @RequiredArgsConstructor
 @Component
 public class DatabaseCleaner implements InitializingBean {
@@ -23,7 +23,7 @@ public class DatabaseCleaner implements InitializingBean {
     private final List<String> tableNames = new ArrayList<>();
 
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         List<Object[]> tableInfos = entityManager.createNativeQuery("SHOW TABLES").getResultList();
         for (Object[] tableInfo : tableInfos) {
             String tableName = (String) tableInfo[0];
