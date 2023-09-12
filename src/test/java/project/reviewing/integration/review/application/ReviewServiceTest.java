@@ -30,7 +30,7 @@ public class ReviewServiceTest extends IntegrationTest {
 
     @BeforeEach
     void setUp() {
-        reviewService = new ReviewService(reviewRepository, reviewDAO, memberRepository, time);
+        reviewService = new ReviewService(reviewRepository, reviewDAO, memberRepository, memberDao, time);
     }
 
     @DisplayName("리뷰 생성 시 ")

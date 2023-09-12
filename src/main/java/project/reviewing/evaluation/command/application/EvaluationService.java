@@ -11,6 +11,7 @@ import project.reviewing.evaluation.presentation.request.EvaluationCreateRequest
 import project.reviewing.member.command.domain.Member;
 import project.reviewing.member.command.domain.MemberRepository;
 import project.reviewing.member.exception.MemberNotFoundException;
+import project.reviewing.member.query.dao.MemberDao;
 import project.reviewing.review.command.domain.Review;
 import project.reviewing.review.command.domain.ReviewRepository;
 import project.reviewing.review.exception.ReviewNotFoundException;
@@ -20,7 +21,7 @@ import project.reviewing.review.exception.ReviewNotFoundException;
 @Service
 public class EvaluationService {
 
-    private final MemberRepository memberRepository;
+    private final MemberDao memberDao;
     private final ReviewRepository reviewRepository;
     private final EvaluationRepository evaluationRepository;
 
@@ -29,7 +30,7 @@ public class EvaluationService {
             final Long reviewerId,
             final EvaluationCreateRequest evaluationCreateRequest
     ) {
-        final Member reviewerMember = memberRepository.findByReviewerId(reviewerId)
+        final Member reviewerMember = memberDao.findByReviewerIdByXlockOnReviewer(reviewerId)
                 .orElseThrow(MemberNotFoundException::new);
         final Review review = reviewRepository.findById(evaluationCreateRequest.getReviewId())
                 .orElseThrow(ReviewNotFoundException::new);

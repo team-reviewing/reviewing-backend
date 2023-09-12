@@ -1,6 +1,13 @@
 package project.reviewing.common.exception;
 
+import javax.persistence.OptimisticLockException;
+import javax.persistence.PersistenceException;
+import javax.persistence.PessimisticLockException;
 import javax.validation.ConstraintViolationException;
+
+import org.springframework.dao.ConcurrencyFailureException;
+import org.springframework.dao.OptimisticLockingFailureException;
+import org.springframework.dao.PessimisticLockingFailureException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -47,6 +54,15 @@ public class GlobalControllerAdvice {
     @ExceptionHandler(ConstraintViolationException.class)
     public ErrorResponse handleConstraintViolationException(final ConstraintViolationException e) {
         return new ErrorResponse(ErrorType.ERROR.getCode(), ErrorType.ERROR.getCode() + " " + e.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler({
+            OptimisticLockException.class, PessimisticLockException.class,
+            OptimisticLockingFailureException.class, PessimisticLockingFailureException.class
+    })
+    public ErrorResponse handleLockException(final RuntimeException e) {
+        return new ErrorResponse(ErrorType.CONCURRENCY_COLLISION.getCode(), ErrorType.CONCURRENCY_COLLISION.getMessage());
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)

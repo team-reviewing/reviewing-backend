@@ -8,6 +8,7 @@ import project.reviewing.common.util.Time;
 import project.reviewing.member.command.domain.Member;
 import project.reviewing.member.command.domain.MemberRepository;
 import project.reviewing.member.exception.MemberNotFoundException;
+import project.reviewing.member.query.dao.MemberDao;
 import project.reviewing.review.command.application.response.SingleReviewReadResponse;
 import project.reviewing.review.command.domain.Review;
 import project.reviewing.review.command.domain.ReviewRepository;
@@ -25,6 +26,7 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final ReviewDAO reviewDAO;
     private final MemberRepository memberRepository;
+    private final MemberDao memberDao;
 
     private final Time time;
 
@@ -33,7 +35,7 @@ public class ReviewService {
             throw new InvalidReviewException(ErrorType.ALREADY_REQUESTED);
         }
 
-        final Member reviewerMember = memberRepository.findByReviewerId(reviewerId)
+        final Member reviewerMember = memberDao.findByReviewerIdBySlockOnReviewer(reviewerId)
                 .orElseThrow(MemberNotFoundException::new);
         final Review newReview = request.toEntity(
                 revieweeId, reviewerId, reviewerMember.getId(), reviewerMember.isReviewer(), time

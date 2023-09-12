@@ -10,6 +10,7 @@ public enum ErrorType {
     ERROR("COMMON-001", "구체적으로 정의되지 않은 내부 오류입니다."),
     INVALID_FORMAT("COMMON-002", "요청 형식이 유효하지 않습니다."),
     API_FAILED("COMMON-003", "API 요청에 실패했습니다."),
+    CONCURRENCY_COLLISION("COMMON-004", "요청이 실패했습니다. 다시 요청해 주세요."),
 
     NOT_AUTHENTICATED("AUTH-001", "인증되지 않은 요청입니다."),
     ALREADY_AUTHENTICATED("AUTH-002", "이미 인증 되었습니다."),
@@ -23,6 +24,7 @@ public enum ErrorType {
     REVIEWER_NOT_FOUND("MEMBER-006", "해당 회원의 리뷰어 정보를 찾을 수 없습니다."),
     ALREADY_REGISTERED("MEMBER-007", "이미 리뷰어 등록이 되었습니다."),
     DO_NOT_REGISTERED("MEMBER-008", "리뷰어 등록을 하지 않았습니다. 먼저 리뷰어 등록을 해주세요."),
+    REVIEWER_NOT_ACTIVE("MEMBER-009", "현재 리뷰어로 활동하고 있지 않습니다."),
 
     REVIEW_NOT_FOUND("REVIEW-001", "해당 리뷰를 찾을 수 없습니다."),
     ALREADY_REQUESTED("REVIEW-002", "이미 해당 리뷰어에게 리뷰를 요청했습니다."),

@@ -14,6 +14,7 @@ import project.reviewing.evaluation.query.dao.EvaluationsDAO;
 import project.reviewing.member.command.domain.Member;
 import project.reviewing.member.command.domain.MemberRepository;
 import project.reviewing.member.command.domain.Reviewer;
+import project.reviewing.member.query.dao.MemberDao;
 import project.reviewing.member.query.dao.MyInformationDao;
 import project.reviewing.member.query.dao.ReviewerDao;
 import project.reviewing.review.command.domain.Review;
@@ -52,6 +53,9 @@ public abstract class IntegrationTest {
 
     @Autowired
     protected Time time;
+
+    @Autowired
+    protected MemberDao memberDao;
 
     @Autowired
     protected MyInformationDao myInformationDao;

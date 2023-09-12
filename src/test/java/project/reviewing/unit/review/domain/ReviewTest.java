@@ -44,7 +44,7 @@ public class ReviewTest {
     void createWithNotRegisteredReviewer() {
         assertThatThrownBy(() -> Review.assign(1L, 2L, "제목", "본문", "github.com/bboor/project/pull/1", 2L, false, time))
                 .isInstanceOf(InvalidReviewException.class)
-                .hasMessage(ErrorType.DO_NOT_REGISTERED.getMessage());
+                .hasMessage(ErrorType.REVIEWER_NOT_ACTIVE.getMessage());
     }
 
     @DisplayName("리뷰를 수정할 수 있다.")
