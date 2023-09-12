@@ -21,7 +21,7 @@ public interface ReviewRepository extends Repository<Review, Long> {
     @Modifying
     @Query(
             "UPDATE Review r " +
-            "SET r.status = :refused, r.statusSetAt = CURRENT_TIMESTAMP " +
+            "SET r.status = :refused, r.statusSetAt = CURRENT_TIMESTAMP, r.version = r.version + 1 " +
             "WHERE (:startId < r.id AND r.id <= :endId) " +
                     "AND (" +
                         "(r.status = :created AND r.statusSetAt <= :createdExpiredTime) " +
